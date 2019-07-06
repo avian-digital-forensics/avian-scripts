@@ -130,7 +130,7 @@ module EmailAddressFixer
 end
 
 # Worker callback. The function Nuix calls.
-def nuixWorkerItemCallback(workerItem)
+def runEmailAddressFixerWss(workerItem)
 	if (communication = workerItem.getSourceItem.getCommunication).nil? or communication.getFrom.nil? or communication.getFrom.length == 0
 		return # If the item has no from, it has no from to fix.
 	end
