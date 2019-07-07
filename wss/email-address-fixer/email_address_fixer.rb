@@ -127,35 +127,35 @@ module EmailAddressFixer
 			return comFrom, 5, comFrom # If no correct com could be found.
 		end
 	end
-end
-
-# Worker callback. The function Nuix calls.
-def runEmailAddressFixerWss(workerItem)
-	if (communication = workerItem.getSourceItem.getCommunication).nil? or communication.getFrom.nil? or communication.getFrom.length == 0
-		return # If the item has no from, it has no from to fix.
+	
+	# Worker callback. The function Nuix calls.
+	def run(workerItem)
+		if (communication = workerItem.getSourceItem.getCommunication).nil? or communication.getFrom.nil? or communication.getFrom.length == 0
+			return # If the item has no from, it has no from to fix.
+		end
+		# Settings
+		levelMetadataName = "CorrectFromDEBUG" # The name of the custom metadata element used for debug information. Only used if debugMode = true.
+		fromEmailMetadataName = "CorrectFromEmail" # The name of the custom metadata element used for the corrected from emai address.
+		originalFromEmailMetadataName = "OriginalFromEmail" # The name of the custom metadata element used for the original exchange server address.
+		debugMode = true # Whether to store debug information.
+		# Settings end
+		
+		mapiFrom = 0x5d00
+		mapiTo = 0x5d10
+		
+		correctFrom, level, comFrom = EmailAddressFixer.findCorrectFrom(workerItem, mapiFrom, mapiTo)
+		
+		if debugMode
+			workerItem.addCustomMetadata(levelMetadataName, level.to_s, "text", "user")
+		end
+		workerItem.addCustomMetadata(fromEmailMetadataName, correctFrom, "text", "user")
+		workerItem.addCustomMetadata(originalFromEmailMetadataName, comFrom, "text", "user")
+		
+		com = SimpleCommunication.new(communication)
+		fromAddress = SimpleAddress.new(com.getFrom[0])
+		fromAddress.setAddress(correctFrom)
+		com.setFrom([fromAddress])
+		
+		workerItem.setItemCommunication(com)
 	end
-	# Settings
-	levelMetadataName = "CorrectFromDEBUG" # The name of the custom metadata element used for debug information. Only used if debugMode = true.
-	fromEmailMetadataName = "CorrectFromEmail" # The name of the custom metadata element used for the corrected from emai address.
-	originalFromEmailMetadataName = "OriginalFromEmail" # The name of the custom metadata element used for the original exchange server address.
-	debugMode = true # Whether to store debug information.
-	# Settings end
-	
-	mapiFrom = 0x5d00
-	mapiTo = 0x5d10
-	
-	correctFrom, level, comFrom = EmailAddressFixer.findCorrectFrom(workerItem, mapiFrom, mapiTo)
-	
-	if debugMode
-		workerItem.addCustomMetadata(levelMetadataName, level.to_s, "text", "user")
-	end
-	workerItem.addCustomMetadata(fromEmailMetadataName, correctFrom, "text", "user")
-	workerItem.addCustomMetadata(originalFromEmailMetadataName, comFrom, "text", "user")
-	
-	com = SimpleCommunication.new(communication)
-	fromAddress = SimpleAddress.new(com.getFrom[0])
-	fromAddress.setAddress(correctFrom)
-	com.setFrom([fromAddress])
-	
-	workerItem.setItemCommunication(com)
 end
