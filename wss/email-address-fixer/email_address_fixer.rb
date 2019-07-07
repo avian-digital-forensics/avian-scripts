@@ -130,6 +130,7 @@ module EmailAddressFixer
 	
 	# Worker callback. The function Nuix calls.
 	def run(workerItem)
+		puts("It twerks!")
 		if (communication = workerItem.getSourceItem.getCommunication).nil? or communication.getFrom.nil? or communication.getFrom.length == 0
 			return # If the item has no from, it has no from to fix.
 		end
