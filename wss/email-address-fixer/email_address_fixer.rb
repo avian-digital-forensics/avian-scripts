@@ -118,7 +118,7 @@ module EmailAddressFixer
 		mapiValues.each { |address| # If a mapi property's start matches the end of the communication's from.
 			name = address.split('@', 1)[0]
 			exchangeEnd = comFrom[-[name.length, 11].min..-1]
-			if name.starts_with?(exchangeEnd)
+			if name.start_with?(exchangeEnd)
 				return address, 3, comFrom
 			end
 		}
