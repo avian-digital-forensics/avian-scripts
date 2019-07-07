@@ -13,7 +13,7 @@ When loading data, in the settings menu, there should be a tab called 'Worker Sc
 Copy the contents of `wwsCaller.rb` into this field and edit the list of scripts to whichever scripts you like.
 Now simply load the case as usual.
 
-If any of the given script names cannot be matched to a available WSS, an error will be printed to the log.
+If any of the given script names cannot be matched to an available WSS, an error will be printed to the log.
 
 For details on a specific WSS please read the pertaining readme.
 
