@@ -4,6 +4,8 @@ java_import 'nuix.Address'
 java_import 'nuix.Communication'
 
 module EmailAddressFixer
+    extend self
+
 	class SimpleAddress
 		include Address
 
