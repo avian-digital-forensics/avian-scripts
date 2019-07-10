@@ -91,6 +91,7 @@ def dispatch_scripts(root_path, script_names, worker_item)
     end
     # Run all the scripts.
     for script in run_scripts
+        puts("Running script: " + script.script_name)
         script.run(worker_item)
     end
 end
