@@ -1,5 +1,12 @@
 # Menu Title: Connected Addresses
 # Needs Case: true
+script_directory = File.dirname(__FILE__)
+require File.join(script_directory,"..","..","utils","nx_utils")
+
+
+dialog = NXUtils.create_dialog("test")
+
+dialog.display
 
 # The address whose recipients are wanted.
 address = "Stabs Chef"
