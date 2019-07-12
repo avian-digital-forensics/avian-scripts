@@ -68,7 +68,6 @@ end
 
 # Runs all scripts specified in script_names on worker_item.
 def dispatch_scripts(root_path, script_names, worker_item)
-    root_path.gsub!('\\', '/')
 
     available_scripts = [ # The available scripts. Add new scripts here.
         WSS.new("email-address-fixer/email_address_fixer.rb")

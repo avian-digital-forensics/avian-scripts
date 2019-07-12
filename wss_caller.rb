@@ -1,6 +1,7 @@
 def nuix_worker_item_callback(worker_item)
     # All text after a hashtag (#) is ignored, and is used for comments.
     # EDIT: The absolute path to the avian scripts directory.
+    # The path may NOT end with a backslash.
     path = 'REPLACE WITH PATH TO DIRECTORY'
 
     scripts = [ # EDIT: List of all worker side scripts that should be executed, in order.
@@ -11,7 +12,8 @@ def nuix_worker_item_callback(worker_item)
     ]
     
     # Actually runs the scripts. Do not touch.
-    path.gsub!('\\', '/')
+    path.chomp('/')
+    path.chomp('\\')
     load (path + '/wss_dispatcher.rb')
     dispatch_scripts(path, scripts, worker_item)
 end
