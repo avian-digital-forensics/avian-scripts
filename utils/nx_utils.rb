@@ -30,6 +30,7 @@ module NXUtils
         return TabbedCustomDialog.new(title)
     end
     
+    # Returns the selected value in the out of the given radio_options.
     def radio_group_value(dialog_values, radio_options)
         radio_keys = radio_options.values # Yes, this does make sense.
         return radio_keys.select{ |key| dialog_values[key] }.first
