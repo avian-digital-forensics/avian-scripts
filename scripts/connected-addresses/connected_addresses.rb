@@ -15,12 +15,16 @@ main_tab.appendTextField("primary_address", "Primary Address", "")
 # Add file chooser for output path.
 main_tab.appendOpenFileChooser("output_path", "Output Path", "Comma Seperated Values", "csv")
 
+# The options for the delimiters.
 delimiter_options = { 'Comma (,)' => ',', 'Semicolon (;)' => ';', 'Space ( )' => ' ' , 'Other' => 'custom' }
 
+# Add radio buttons for delimiter choice.
 main_tab.appendRadioButtonGroup("Delimiter", "delimiter", delimiter_options)
 
+# Add custom delimiter text field.
 main_tab.appendTextField("custom_delimiter", "Custom Delimiter", "")
 
+# Checks the input before closing the dialog.
 dialog.validateBeforeClosing do |values|
     # Make sure primary address is not empty.
     if values["primary_address"].strip.empty?
@@ -38,6 +42,7 @@ dialog.validateBeforeClosing do |values|
         CommonDialogs.showWarning("If you choose to provide your own delimiter, please do so.", "No custom delimiter")
         next false
     end
+    # Everything is fine; close the dialog.
     next true
 end
 
