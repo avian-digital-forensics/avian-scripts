@@ -2,7 +2,7 @@
 NOT FINISHED
 The scripts creates a csv file with information about what addresses a specific address has sent messages to.
 
-## Before using the script
+## Setup
 TODO
 
 ## Output
