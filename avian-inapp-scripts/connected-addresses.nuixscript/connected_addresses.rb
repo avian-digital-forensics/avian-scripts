@@ -1,7 +1,7 @@
 # Menu Title: Connected Addresses
 # Needs Case: true
 script_directory = File.dirname(__FILE__)
-require File.join(script_directory,"..","..","utils","nx_utils")
+require File.join(script_directory,"utils","nx_utils")
 
 
 dialog = NXUtils.create_dialog("Connected Addresses")
