@@ -1,4 +1,5 @@
 # Avian Scripts
+Version 0.1
 A collection of all scripts for Nuix created by Avian
 
 ## Setup
