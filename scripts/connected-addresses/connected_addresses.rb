@@ -4,25 +4,30 @@ script_directory = File.dirname(__FILE__)
 require File.join(script_directory,"..","..","utils","nx_utils")
 
 
-dialog = NXUtils.create_dialog("test")
+dialog = NXUtils.create_dialog("Connected Addresses")
 
 # Add main tab.
 main_tab = dialog.addTab("main_tab", "Main")
 
 # Add text field for primary address.
 main_tab.appendTextField("primary_address", "Primary Address", "")
+main_tab.getControl("primary_address").setToolTipText("The address to examine")
 
 # Add file chooser for output path.
 main_tab.appendOpenFileChooser("output_path", "Output Path", "Comma Seperated Values", "csv")
 
 # The options for the delimiters.
-delimiter_options = { 'Comma (,)' => ',', 'Semicolon (;)' => ';', 'Space ( )' => ' ' , 'Other' => 'custom' }
+delimiter_options = { 'Comma (,)' => ',', 'Semicolon (;)' => ';', 'Space ( )' => ' ' , 'Custom' => 'custom' }
 
 # Add radio buttons for delimiter choice.
 main_tab.appendRadioButtonGroup("Delimiter", "delimiter", delimiter_options)
 
 # Add custom delimiter text field.
 main_tab.appendTextField("custom_delimiter", "Custom Delimiter", "")
+main_tab.getControl("custom_delimiter").setToolTipText("Used to seperate values in the resulting csv if the above is set to 'Custom'")
+
+# Add information about the script.
+main_tab.appendInformation("script_description", "", "Searches through all messages sent by the primary address and counts how often each address appears as to, cc or bcc.")
 
 # Checks the input before closing the dialog.
 dialog.validateBeforeClosing do |values|
