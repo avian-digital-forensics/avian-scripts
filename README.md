@@ -7,7 +7,7 @@ https://github.com/avian-digital-forensics/avian-scripts/archive/release.zip
 
 Unpack the contents to an empty directory and follow the guides below.
 
-## Scripts
+## In-app Scripts
 This is about the scripts that are run from within Nuix, usually with a case already open.
 To use them, first download the newest release version of the repository from the link in [Setup](##Setup).
 In Nuix open the 'Scripts' menu and select 'Open Scripts Directory'.
