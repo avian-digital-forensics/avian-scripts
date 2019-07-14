@@ -1,0 +1,1 @@
+items = currentCase.search("has-communication:1")
