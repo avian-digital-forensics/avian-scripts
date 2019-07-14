@@ -20,6 +20,7 @@ For details on a specific script please read the pertaining readme.
 
 ### Available in-app scripts
 * Connected Addresses - creates a csv file with information about what addresses a specific address has sent messages to.
+* Tag Messages Sent to Sender - tags all items sent to the sender of that item.
 
 ## Worker Side Scripts (WWS's)
 All worker side scripts are located in the directory 'wss'.
