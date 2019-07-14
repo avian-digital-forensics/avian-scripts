@@ -3,12 +3,16 @@ def nuix_worker_item_callback(worker_item)
     # EDIT: The absolute path to the avian scripts directory.
     # The path may NOT end with a backslash.
     path = 'REPLACE WITH PATH TO DIRECTORY'
-
-    scripts = [ # EDIT: List of all worker side scripts that should be executed, in order.
+    
+    # EDIT: List of all worker side scripts that should be executed, in order.
     # All available scripts are listed in the project readme on github.
-    'example script one', # This list is not case-sensitive,
-    'example_script_two', # and all spaces and underscores are ignored.
-    'eXample_scRiPtTHREe' # You can add as many as you like, just remember to end all lines but the last with a comma.
+    # This list is not case-sensitive,
+    # and all spaces and underscores are ignored.
+    # You can add as many as you like, just remember to end all lines but the last with a comma.
+    scripts = [ 
+    'example script one', 
+    'example_script_two', 
+    'eXample_scRiPtTHREe' 
     ]
     
     # Actually runs the scripts. Do not touch.
