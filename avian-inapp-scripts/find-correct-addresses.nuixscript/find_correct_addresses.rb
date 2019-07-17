@@ -61,8 +61,6 @@ class UnionFind
         end
     end
 end
-
-
     
 
 puts("Running script...")
