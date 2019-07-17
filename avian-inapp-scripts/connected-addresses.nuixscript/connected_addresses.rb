@@ -54,6 +54,7 @@ end
 dialog.display
 
 if dialog.getDialogResult == true
+    puts("Running script...")
     values = dialog.toMap
     
     # The address whose recipients are wanted.
@@ -70,104 +71,108 @@ if dialog.getDialogResult == true
     if delimiter == "custom"
         delimiter = values["custom_delimiter"]
     end
-
+    
     # Represents a recipient address.
-    # Contains information about the number of items sent from the main address 
-    # to this address as either to, cc or bcc
+    # Contains information about the number of messages sent between the primary address and this address.
     class Recipient
         # Initializes the Recipient with an address and all counters set to 0.
         def initialize(address)
             @address = address
-            @tos = 0
-            @ccs = 0
-            @bccs = 0
+            keys = ["receive_tos", "receive_ccs", "receive_bccs", "send_tos", "send_ccs", "send_bccs"]
+            @values = Hash[keys.collect{ |item| [item, 0] }]
         end
         
-        # Adds 1 to the counter for the number of times this recipient has been a to.
-        def add_to
-            @tos += 1
+        # Increments the specified value.
+        def increment_value(key)
+            @values[key] += 1
         end
         
-        # Adds 1 to the counter for the number of times this recipient has been a cc.
-        def add_cc
-            @ccs += 1
+        # Returns the specified value.
+        def get_value(key)
+            @values[key]
         end
         
-        # Adds 1 to the counter for the number of times this recipient has been a bcc.
-        def add_bcc
-            @bccs += 1
-        end
-        
-        # The number of times this recipient has been a to.
-        def tos
-            @tos
-        end
-        
-        # The number of times this recipient has been a cc.
-        def ccs
-            @ccs
-        end
-        
-        # The number of times this recipient has been the bcc.
-        def bccs
-            @bccs
-        end
-        
-        # The total number of times this recipient has received items from the from.
-        def total
-            return @tos + @ccs + @bccs
+        # The total number of times this recipient has connected with primary.
+        def total_with_prefix(prefix)
+            keys = @values.keys.select{ |key| key.start_with?(prefix) }
+            return keys.reduce(0){ |sum, key| sum + get_value(key) }
         end
         
         # Creates a string in human readable format with all information about this recipient.
         def to_s(delimiter)
-            return @address + delimiter + @tos.to_s + delimiter + @ccs.to_s + delimiter + @bccs.to_s + delimiter + total.to_s
+            return @address + delimiter + 
+                    @values["receive_tos"].to_s + delimiter + @values["receive_ccs"].to_s + delimiter + @values["receive_bccs"].to_s + delimiter + total_with_prefix("receive_").to_s + delimiter +
+                    @values["send_tos"].to_s + delimiter + @values["send_ccs"].to_s + delimiter + @values["send_bccs"].to_s + delimiter + total_with_prefix("send_").to_s + delimiter +
+                    total_with_prefix("").to_s
         end
     end
 
-    # Represents all addresses that have received items from the from.
-    class ToConnections
+    # Represents all addresses that have communicated with the primary address.
+    class Connections
         
-        # Initializes the ToConnections as empty.
+        # Initializes the Connections as empty.
         def initialize()
             @recipients = {}
         end
         
-        # Adds 1 to the addresses to counter.
-        def add_to(address)
+        # Adds 1 to the specified value of the specified address.
+        def increment_value(address, key)
             add_if_missing(address)
-            @recipients[address].add_to
+            @recipients[address].increment_value(key)
         end
         
-        # Adds 1 to the addresses cc counter.
-        def add_cc(address)
-            add_if_missing(address)
-            @recipients[address].add_cc
-        end
-        
-        # Adds 1 to the addresses bcc counter.
-        def add_bcc(address)
-            add_if_missing(address)
-            @recipients[address].add_bcc
-        end
-        
-        # Handles a communication item by updating the correct recipients.
-        def add_communication_item(item)
+        # Handles a communication item sent from the primary address.
+        def add_communication_item_from(item)
             communication = item.getCommunication()
             # Find all to, cc and bcc addresses.
-            tos = communication.getTo().map{ |to| to.getAddress() }
-            ccs = communication.getCc().map{ |cc| cc.getAddress() }
-            bccs = communication.getBcc().map{ |bcc| bcc.getAddress() }
+            receive_tos = communication.getTo().map{ |to| to.getAddress() }
+            receive_ccs = communication.getCc().map{ |cc| cc.getAddress() }
+            receive_bccs = communication.getBcc().map{ |bcc| bcc.getAddress() }
             # Update the recipients.
-            for address in tos
-                add_to(address)
+            for address in receive_tos
+                increment_value(address, "receive_tos")
             end
-            for address in ccs
-                add_cc(address)
+            for address in receive_ccs
+                increment_value(address, "receive_ccs")
             end
-            for address in bccs
-                add_bcc(address)
+            for address in receive_bccs
+                increment_value(address, "receive_bccs")
             end
             return
+        end
+        
+        # Handles a communication item sent to the primary address.
+        def add_communication_item_to(item)
+            communication = item.getCommunication()
+            send_tos = communication.from.map { |from| from.address }
+            
+            for address in send_tos
+                increment_value(address, "send_tos")
+            end
+        end
+        
+        # Handles a communication item sent cc the primary address.
+        def add_communication_item_cc(item)
+            communication = item.getCommunication()
+            send_ccs = communication.from.map { |from| from.address }
+            
+            for address in send_ccs
+                increment_value(address, "send_ccs")
+            end
+        end
+        
+        # Handles a communication item sent bcc the primary address.
+        def add_communication_item_bcc(item)
+            communication = item.getCommunication()
+            send_bccs = communication.from.map { |from| from.address }
+            
+            for address in send_bccs
+                increment_value(address, "send_bccs")
+            end
+        end
+        
+        def num_recipients
+            @recipients.length
         end
         
         # Prints all contained recipients with newlines between them.
@@ -183,22 +188,46 @@ if dialog.getDialogResult == true
                 end
             end
     end
+    
+    connections = Connections.new
 
     # All communication items with a from matching the given identifier.
     emails_from = currentCase.search("from:\"" + address + "\" has-communication:1")
-
-    to_connections = ToConnections.new
-    # Handle all communication items.
+    # Handle all communication items from.
     for item in emails_from
-        to_connections.add_communication_item(item)
+        connections.add_communication_item_from(item)
+    end
+
+    # All communication items with a to matching the given identifier.
+    emails_to = currentCase.search("to:\"" + address + "\" has-communication:1")
+    # Handle all communication items to.
+    for item in emails_to
+        connections.add_communication_item_to(item)
+    end
+
+    # All communication items with a cc matching the given identifier.
+    emails_cc = currentCase.search("cc:\"" + address + "\" has-communication:1")
+    # Handle all communication items cc.
+    for item in emails_cc
+        connections.add_communication_item_cc(item)
+    end
+
+    # All communication items with a bcc matching the given identifier.
+    emails_bcc = currentCase.search("bcc:\"" + address + "\" has-communication:1")
+    # Handle all communication items bcc.
+    for item in emails_bcc
+        connections.add_communication_item_bcc(item)
     end
 
     file = File.open(file_path, 'w')
     # Add header.
-    file.puts('address' + delimiter + 'to' + delimiter + 'cc' + delimiter + 'bcc' + delimiter + 'total')
+    file.puts('address' + delimiter + 'receive_to' + delimiter + 'receive_cc' + delimiter + 'receive_bcc' + delimiter + 'receive_total' + delimiter + 'send_to' + delimiter + 'send_cc' + delimiter + 'send_bcc' + delimiter + 'send_total' + delimiter + 'total')
     # Add data.
-    file.puts(to_connections.to_s(delimiter))
+    file.puts(connections.to_s(delimiter))
     # Close file.
     file.close
+    
+    puts("Found " + connections.num_recipients.to_s + " connected addresses")
+    puts("Results written to: " + file_path)
     
 end

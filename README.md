@@ -1,5 +1,5 @@
 # Avian Scripts
-Version 0.2
+Version 0.2.1
 
 A collection of all scripts for Nuix created by Avian
 
@@ -19,7 +19,7 @@ Now simply run the scripts from the 'Scripts' menu under 'Nuix Developed Scripts
 For details on a specific script please read the pertaining readme.
 
 ### Available in-app scripts
-* Connected Addresses - creates a csv file with information about what addresses a specific address has sent messages to.
+* Connected Addresses - creates a csv file with information about what addresses a specific address has exchanged messages with.
 * Tag Messages Sent to Sender - tags all items sent to the sender of that item.
 
 ## Worker Side Scripts (WWS's)
@@ -32,6 +32,7 @@ First download the newest release version of the repository from the link in [Se
 In the downloaded repository there is a file called `wss_caller.rb` in which you must set the `path` variable to the location of the downloaded repository.
 When loading data, in the settings menu, there should be a tab called 'Worker Script' with a single huge text field.
 Copy the contents of `wwsCaller.rb` (the file can be opened with any text editor like Notepad or Notepad++) into this field and edit the list of scripts to whichever scripts you like.
+**Read the comments carefully.**
 At the top, above the text field there is a choice between ECMAScript, python or ruby.
 Choose ruby.
 
