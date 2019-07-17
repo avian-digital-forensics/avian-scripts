@@ -19,7 +19,7 @@ Now simply run the scripts from the 'Scripts' menu under 'Nuix Developed Scripts
 For details on a specific script please read the pertaining readme.
 
 ### Available in-app scripts
-* Connected Addresses - creates a csv file with information about what addresses a specific address has sent messages to.
+* Connected Addresses - creates a csv file with information about what addresses a specific address has exchanged messages with.
 * Tag Messages Sent to Sender - tags all items sent to the sender of that item.
 
 ## Worker Side Scripts (WWS's)
