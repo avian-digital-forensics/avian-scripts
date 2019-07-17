@@ -32,6 +32,7 @@ First download the newest release version of the repository from the link in [Se
 In the downloaded repository there is a file called `wss_caller.rb` in which you must set the `path` variable to the location of the downloaded repository.
 When loading data, in the settings menu, there should be a tab called 'Worker Script' with a single huge text field.
 Copy the contents of `wwsCaller.rb` (the file can be opened with any text editor like Notepad or Notepad++) into this field and edit the list of scripts to whichever scripts you like.
+**Read the comments carefully.**
 At the top, above the text field there is a choice between ECMAScript, python or ruby.
 Choose ruby.
 
