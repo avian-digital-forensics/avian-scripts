@@ -16,15 +16,15 @@ numBcc = 0
 for item in items.each
     communication = item.communication
     from = communication.from[0]
-    if communication.to.any?{ |to| to && to.address == from.address }
+    if communication.to.any?{ |to| to && from && to.address == from.address }
         item.addTag(base_tag + to_suffix)
         numTo += 1
     end
-    if communication.cc.any?{ |cc| cc && cc.address == from.address }
+    if communication.cc.any?{ |cc| cc && from && cc.address == from.address }
         item.addTag(base_tag + cc_suffix)
         numCc += 1
     end
-    if communication.bcc.any?{ |bcc| bcc && bcc.address == from.address }
+    if communication.bcc.any?{ |bcc| bcc && from && bcc.address == from.address }
         item.addTag(base_tag + bcc_suffix)
         numBcc += 1
     end
