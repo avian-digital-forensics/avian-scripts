@@ -130,8 +130,12 @@ module EmailAddressFixer
 		end
 	end
 	
+    def run_init(wss_global)
+        puts("INIT!!!!")
+    end
+    
 	# Worker callback. The function Nuix calls.
-	def run(workerItem)
+	def run(wss_global, workerItem)
 		if (communication = workerItem.getSourceItem.getCommunication).nil? or communication.getFrom.nil? or communication.getFrom.length == 0
 			return # If the item has no from, it has no from to fix.
 		end
