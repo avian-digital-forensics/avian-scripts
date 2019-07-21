@@ -5,7 +5,7 @@ SCRIPT_PATHS = [ # The available scripts. Add new scripts here.
 # Represents a worker side script.
 # Contains information about the file path and aliases.
 class WSS
-    def initialize(file_path, aliases = [])
+    def initialize(root_path, file_path, aliases = [])
         @file_path = file_path
         @aliases = aliases
         @script_name = @file_path[(@file_path.rindex('/') + 1)..-1]
@@ -14,7 +14,7 @@ class WSS
         @aliases.uniq!
         
         @module_name = find_module_name(@script_name)
-        
+        require (root_path + "/" + @file_path.chomp(".rb"))
         @module = Object.const_get(@module_name)
     end
     
@@ -38,27 +38,23 @@ class WSS
         return @aliases.include?(transform_string(string))
     end
     
-    def require(root_path)
-        require (root_path + "/WSS/" + @file_path.chomp(".rb"))
-    end
-    
     def run_init(wss_global)
         if @module.method_defined? :run_init
-            @module.run_init
+            @module.run_init(wss_global)
         end
         return
     end
     
     def run(wss_global, worker_item)
         if @module.method_defined? :run
-            @module.run(worker_item)
+            @module.run(wss_global, worker_item)
         end
         return
     end
     
     def run_close(wss_global)
         if @module.method_defined? :run_close
-            @module.run_close
+            @module.run_close(wss_global)
         end
         return
     end
@@ -87,7 +83,8 @@ class WSS
         end
 end
 
-class WWSGlobal
+# Holds data across scripts and items.
+class WSSGlobal
     attr_reader :root_path
     attr_reader :script_names
     attr_reader :available_scripts
@@ -99,13 +96,13 @@ class WWSGlobal
         @root_path = root_path
         @script_names = script_names
         
-        # Create WWSs from all script paths.
-        @available_scripts = SCRIPT_PATHS.map{ |path| WWS.new(path) }
+        # Create WSSs from all script paths.
+        @available_scripts = SCRIPT_PATHS.map{ |script_path| WSS.new(root_path, script_path) }
     
         # Finds the scripts matching the script names.
         @run_scripts = []
         for script_name in @script_names 
-            script = find_script(script_name, @available_scripts)
+            script = find_script(script_name)
             if script.nil?
                 STDERR.puts("Could not find script matching name '" + script_name + "'.")
             else
@@ -118,25 +115,25 @@ class WWSGlobal
     
     # Find a script that matches the given name.
     def find_script(script_name)
-        return @available_scripts.find{ |script| script.match?(string) }
+        return @available_scripts.find{ |script| script.match?(script_name) }
+    end
 end
 
 def run_init(root_path, script_names)
     @wss_global = WSSGlobal.new(root_path, script_names).freeze
     for script in @wss_global.run_scripts
-        script.require(root_path)
         script.run_init(@wss_global)
     end
 end
 
 def run(worker_item)
-    for script in run_scripts
-        script.run(@wss_global)
+    for script in @wss_global.run_scripts
+        script.run(@wss_global, worker_item)
     end
 end
 
 def run_close
-    for script in run_scripts
+    for script in @wss_global.run_scripts
         script.run_close(@wss_global)
     end
 end
