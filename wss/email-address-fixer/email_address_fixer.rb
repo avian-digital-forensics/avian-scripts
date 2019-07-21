@@ -129,10 +129,6 @@ module EmailAddressFixer
 			return comFrom, 5, comFrom # If no correct com could be found.
 		end
 	end
-	
-    def run_init(wss_global)
-        puts("INIT!!!!")
-    end
     
 	# Worker callback. The function Nuix calls.
 	def run(wss_global, workerItem)
