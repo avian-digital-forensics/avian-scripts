@@ -86,7 +86,7 @@ if dialog.dialog_result
 
 
     puts("Writing output to file...")
-    output_file_path = File.join(output_dir,"output.txt")
+    output_file_path = File.join(output_dir,"find_correct_addresses_output.txt")
     file = File.open(output_file_path, 'w')
     file.puts(identifiers.to_s)
     file.close
