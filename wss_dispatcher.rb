@@ -1,5 +1,6 @@
 SCRIPT_PATHS = [ # The available scripts. Add new scripts here.
-        "WSS/email-address-fixer/email_address_fixer.rb"
+        "WSS/email-address-fixer/email_address_fixer.rb",
+        "WSS/fix-from-addresses(fix_from_addresses.rb"
 ].freeze
 
 # Represents a worker side script.
@@ -85,9 +86,13 @@ end
 
 # Holds data across scripts and items.
 class WSSGlobal
+    # The avian scripts root directory.
     attr_reader :root_path
+    # The names of all available scripts.
     attr_reader :script_names
+    # The objects representing all available scripts.
     attr_reader :available_scripts
+    # The scripts that will be run.
     attr_reader :run_scripts
     # A hash any script can use to store data.
     attr_reader :vars
