@@ -1,3 +1,5 @@
+require 'set'
+
 # Implements the union find data structure.
 class UnionFind
     def initialize(elements)
@@ -54,7 +56,7 @@ class UnionFind
     end
     
     # Connects the two elements.
-    # If the elements have equal size trees, connect element 1 to element 2.
+    # If the elements have equal size trees, connect element 2 to element 1.
     def union(element1, element2)
         raise IndexError, 'Element1 does not exist.' unless @elements.include?(element1)
         raise IndexError, 'Element2 does not exist.' unless @elements.include?(element2)
@@ -103,17 +105,7 @@ class UnionFind
     
     # Adds all the information in the string to the union.
     def load(file)
-        component_strings = []
-        index = 0
-        string_start = 0
-        while index = file.index('";"', index)
-            if file[index] == '"'
-                next
-            else
-                component_strings << file[string_start..index]
-                string_start = index + 2
-            end
-        end
+        component_strings = split_to_strings(file, ';')
         
         for component_string in component_strings
             load_component(component_string)
@@ -126,21 +118,27 @@ class UnionFind
         end
         
         def load_component(component_string)
-            component_array = []
+            component_array = split_to_strings(component_string, ',').map{ |component| component[1..-2].gsub('""', '"') }
+            puts("torsk: " + component_array[0])
+            for element in component_array
+                add_element(element)
+                union(component_array[0], element)
+            end
+        end
+        
+        def split_to_strings(string, seperator)
+            strings = [] 
             index = 0
             string_start = 0
-            while index = file.index('","', index)
-                if file[index] == '"'
+            while index = string.index('"' + seperator + '"', index + 1)
+                if string[index - 1] == '"'
                     next
                 else
-                    component_array << file[string_start+1..index-1].gsub('""', '"')
+                    strings << string[string_start..index]
                     string_start = index + 2
                 end
             end
-            
-            for element in component_array
-                add_element(element)
-                union(element, component_array[0])
-            end
+            strings << string[string_start..-1]
+            return strings
         end
 end
