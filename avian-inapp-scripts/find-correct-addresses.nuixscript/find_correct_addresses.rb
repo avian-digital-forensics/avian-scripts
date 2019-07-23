@@ -12,7 +12,8 @@ main_tab = dialog.add_tab("main_tab", "Main")
 main_tab.append_directory_chooser("output_path", "Output Path")
 
 # Add information about the script.
-main_tab.append_information("script_description", "", "TODO")
+main_tab.append_information("script_description", "", "Identifies which addresses, names, and other identifiers refer to the same 'person', and writes this information to a file named 'find\_correct\_addresses\_output.txt' in the specified location.
+This script is not useful in itself, but its output is used by other scripts.")
 
 # Checks the input before closing the dialog.
 dialog.validate_before_closing do |values|
@@ -59,13 +60,9 @@ if dialog.dialog_result
 
     puts("Found: " + messages.length.to_s + " items with communication.")
 
-    begin_time = Time.now
     # Initialize the union find.
     identifiers = UnionFind.new([])
-    end_time = Time.now
 
-    puts("helleflynder1: #{(end_time-begin_time)*1000}")
-    begin_time = Time.now
     # Add all addresses to the union find.
     for message in messages
         for address in all_addresses_in_item(message)
@@ -80,8 +77,6 @@ if dialog.dialog_result
             end
         end
     end
-    end_time = Time.now
-    puts("helleflynder2: #{(end_time-begin_time)*1000}")
 
 
 
