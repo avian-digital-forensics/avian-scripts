@@ -1,6 +1,6 @@
 SCRIPT_PATHS = [ # The available scripts. Add new scripts here.
         "WSS/email-address-fixer/email_address_fixer.rb",
-        "WSS/fix-from-addresses(fix_from_addresses.rb"
+        "WSS/fix-from-addresses/fix_from_addresses.rb"
 ].freeze
 
 # Represents a worker side script.
