@@ -74,18 +74,6 @@ module FixFromAddresses
 		end
 	end
     
-    # Returns true if the identifier is an email address.
-    # Very fuzzy.
-    def email_address?(identifier)
-        illegal_chars = ['"','(',')',':',';','<','>','[','\\',']']
-        for char in illegal_chars
-            if identifier.include?(char)
-                return false
-            end
-        end
-        return identifier.count('@') == 1
-    end
-
     # Represents a set of equivalent identifiers.
     class Person
         def initialize
@@ -107,6 +95,23 @@ module FixFromAddresses
         def email_addresses
             @email_addresses
         end
+        
+        def to_s
+            return "{" + @email_addresses.to_a.to_s + ":" + @identifiers.select{ |identifier| not @email_addresses.include?(identifier) }.to_s + "}"
+        end
+        
+        private
+            # Returns true if the identifier is an email address.
+            # Very fuzzy.
+            def email_address?(identifier)
+                illegal_chars = ['"','(',')',':',';','<','>','[','\\',']']
+                for char in illegal_chars
+                    if identifier.include?(char)
+                        return false
+                    end
+                end
+                return identifier.count('@') == 1
+            end
     end
     
     class PersonManager
@@ -125,10 +130,14 @@ module FixFromAddresses
         def person(identifier)
             return @identifier_map[identifier]
         end
+        
+        def to_s
+            @identifier_map.reduce(""){ |result,(key,val)| result + key + ": " + val.to_s + "\n" }
+        end
     end
 
     def run_init(wss_global)
-        root = wss_global.root_path
+        root_path = wss_global.root_path
         require File.join(root_path, 'utils', 'union_find')
         data = File.read(File.join(root_path, 'data', 'find_correct_addresses_output.txt'))
         union = UnionFind.new([])
@@ -149,11 +158,12 @@ module FixFromAddresses
             person_manager.add_person(person)
         end
         
+        
         wss_global.vars[:fix_from_addreses_person_manager] = person_manager
     end
     
     def run(wss_global, worker_item)
-        person_manager = [:fix_from_addreses_person_manager]
+        person_manager = wss_global.vars[:fix_from_addreses_person_manager]
         
 		if (communication = worker_item.source_item.communication).nil? or communication.from.nil? or communication.from.length == 0
 			return # If the item has no from, it has no from to fix.
@@ -163,9 +173,13 @@ module FixFromAddresses
 		original_from_address_metadata_name = "OriginalFromAddress" # The name of the custom metadata element used for the original exchange server address.
         found_email_address_metadata_name = "FoundEmailAddress" # The name of the custom metadata element saying whether the found address is an email address.
         
-        original_from_address = worker_item.communication.from[0].address
+        original_from_address = communication.from[0].address
+        
+        puts("Torsk:\n" + person_manager.to_s)
         
         person = person_manager.person(original_from_address)
+        
+        raise StandardError, 'No person with identifier ' + original_from_address + ' exists. Please try running the in-app script again' unless person
         
         if person.email_addresses.length > 0
             correct_from_address = person.email_addresses.to_a[0]
@@ -180,10 +194,10 @@ module FixFromAddresses
         worker_item.add_custom_metadata(found_email_address_metadata_name, found_email_address.to_s, "text", "user")
         
         com = SimpleCommunication.new(communication)
-		from_address = SimpleAddress.new(com.from[0])
+		from_address = SimpleAddress.new(com.getFrom[0])
 		from_address.setAddress(correct_from_address)
 		com.setFrom([from_address])
 		
-		workerItem.set_item_communication(com)
+		worker_item.set_item_communication(com)
     end
 end
