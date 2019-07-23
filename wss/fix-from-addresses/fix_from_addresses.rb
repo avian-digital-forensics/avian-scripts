@@ -175,8 +175,6 @@ module FixFromAddresses
         
         original_from_address = communication.from[0].address
         
-        puts("Torsk:\n" + person_manager.to_s)
-        
         person = person_manager.person(original_from_address)
         
         raise StandardError, 'No person with identifier ' + original_from_address + ' exists. Please try running the in-app script again' unless person
