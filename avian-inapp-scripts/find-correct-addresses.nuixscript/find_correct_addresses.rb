@@ -12,8 +12,7 @@ main_tab = dialog.add_tab("main_tab", "Main")
 main_tab.append_directory_chooser("output_path", "Output Path")
 
 # Add information about the script.
-main_tab.append_information("script_description", "", "Identifies which addresses, names, and other identifiers refer to the same 'person', and writes this information to a file named 'find\_correct\_addresses\_output.txt' in the specified location.
-This script is not useful in itself, but its output is used by other scripts.")
+main_tab.append_information("script_description", "", "Please select the 'data' directory in the Avian scripts directory.")
 
 # Checks the input before closing the dialog.
 dialog.validate_before_closing do |values|
