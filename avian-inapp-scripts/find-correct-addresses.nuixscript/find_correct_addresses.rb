@@ -77,7 +77,7 @@ if dialog.dialog_result
         end
     end
 
-    puts("Found " + identifiers.num_components + " unique persons.")
+    puts("Found " + identifiers.num_components.to_s + " unique persons.")
 
     puts("Writing output to file...")
     output_file_path = File.join(output_dir,"find_correct_addresses_output.txt")
