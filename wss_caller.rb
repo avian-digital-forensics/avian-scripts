@@ -1,6 +1,6 @@
 # All text after a hashtag (#) is ignored, and is used for comments.
 # Anywhere with uppercase 'edit' is a place you can edit.
-# Please read these comments carefully, edit what they ask they to, and leave everything else alone.
+# Please read these comments carefully, edit what they ask you to, and leave everything else alone.
 
 # EDIT: The absolute path to the avian scripts directory.
 # The path may NOT end with a backslash.
