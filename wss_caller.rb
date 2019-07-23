@@ -1,9 +1,9 @@
 # All text after a hashtag (#) is ignored, and is used for comments.
 # Anywhere with uppercase 'edit' is a place you can edit.
-# Please read these comments carefully, edit what they ask they to, and leave everything else alone.
+# Please read these comments carefully, edit what they ask you to, and leave everything else alone.
 
 # EDIT: The absolute path to the avian scripts directory.
-# The path may NOT end with a backslash.
+# The path may NOT end with a backslash '\'.
 PATH = 'REPLACE WITH PATH TO DIRECTORY'
 
 # EDIT: List of all worker side scripts that should be executed, in order.
@@ -21,8 +21,16 @@ SCRIPTS = [
 # Do not touch unless you know what you're doing.
 
 def nuixWorkerItemCallbackInit
-    load(PATH + '/wss_dispatcher.rb')
-    run_init(PATH, SCRIPTS)
+    path = PATH
+    if not File.directory?(path)
+        path = '\\' + PATH
+    end
+    if not File.directory?(path)
+        path = PATH
+        STDERR.puts("The specified path '" + PATH + "' does not exist, and neither does it prefixed with a backslash.")
+    end
+    load(path + '/wss_dispatcher.rb')
+    run_init(path, SCRIPTS)
 end
 
 def nuixWorkerItemCallback(worker_item)
