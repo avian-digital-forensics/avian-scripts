@@ -8,6 +8,7 @@ PATH = 'REPLACE WITH PATH TO DIRECTORY'
 
 # EDIT: List of all worker side scripts that should be executed, in order.
 # All available scripts are listed in the project readme on github.
+# Simply copy their names into the list below.
 # This list is not case-sensitive, and all spaces and underscores are ignored.
 # You can add as many as you like, just remember to end all lines but the last with a comma.
 SCRIPTS = [ 
