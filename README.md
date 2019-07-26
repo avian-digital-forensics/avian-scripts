@@ -23,11 +23,11 @@ Run 'Setup' again to change anything.
 
 ## Updating
 I'm afraid this means reinstalling everything.
-Delete the two directories you set up and go through [Setup](##setup) again.
+Delete the two directories you set up and go through Setup again.
 
 ## In-app Scripts
 This is about the scripts that are run from within Nuix, usually with a case already open.
-If you have followed [Setup](##setup) correctly, these can be run from the 'Scripts' dropdown menu in Nuix under 'Avian Developed Scripts'.
+If you have followed Setup correctly, these can be run from the 'Scripts' dropdown menu in Nuix under 'Avian Developed Scripts'.
 
 For details on a specific script please read the pertaining readme.
 These can be found in the script directory by following the links.
@@ -36,7 +36,7 @@ These can be found in the script directory by following the links.
 * [Connected Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/connected-addresses.nuixscript) - creates a csv file with information about what addresses a specific address has exchanged messages with.
 * [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-correct-addresses.nuixscript) - Identifies all addresses and identifiers that refer to the same person and create a file with that information.
 Used by the WSS 'Fix From Addresses'.
-* [Setup](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/setup.nuixscript) - Used to setup [WSS's](##WWS's).
+* [Setup](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/setup.nuixscript) - Used to setup WSS's.
 * [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-messages-to-self.nuixscript) - tags all items sent to the sender of that item.
 
 ## Worker Side Scripts (WSS's)
