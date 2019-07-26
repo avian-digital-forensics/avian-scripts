@@ -98,15 +98,15 @@ class UnionFind
         end
         result = ""
         for rep in components.keys
-            result += components[rep].reduce(prepare_for_save(rep)){ |total, element| total + ',' + prepare_for_save(element) } + ";"
+            result << components[rep].reduce(prepare_for_save(rep)){ |total, element| total + ',' + prepare_for_save(element) } + ";"
         end
         return result.chomp(";")
     end
     
     # Adds all the information in the string to the union.
     def load(file)
+        file.chomp!("\n")
         component_strings = split_to_strings(file, ';')
-        
         for component_string in component_strings
             load_component(component_string)
         end
@@ -119,7 +119,7 @@ class UnionFind
         
         def load_component(component_string)
             component_array = split_to_strings(component_string, ',').map{ |component| component[1..-2].gsub('""', '"') }
-            puts("torsk: " + component_array[0])
+            
             for element in component_array
                 add_element(element)
                 union(component_array[0], element)
