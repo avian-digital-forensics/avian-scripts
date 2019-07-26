@@ -17,8 +17,12 @@ main_tab.append_information("script_description", "", "Please select the 'data' 
 # Checks the input before closing the dialog.
 dialog.validate_before_closing do |values|
     # Make sure path is not empty.
-    if values["output_path"].strip.empty?
+    output_path = values["output_path"].strip
+    if output_path.empty?
         CommonDialogs.show_warning("Please provide a non-empty output path.", "No Output Path")
+        next false
+    elsif not File.file?(output_path + "/default_wss_caller.rb")
+        CommonDialogs.show_warning("Wrong output directory selected. Please select the 'data' directory in the Avian scripts directory.")
         next false
     end
     # Everything is fine; close the dialog.
