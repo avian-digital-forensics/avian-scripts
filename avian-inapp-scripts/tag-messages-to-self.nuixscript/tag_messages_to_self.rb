@@ -1,5 +1,11 @@
 puts("Running script...")
 
+script_directory = File.dirname(__FILE__)
+require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
+main_directory = get_main_directory(false)
+
+require File.join(main_directory,"utils","nx_utils")
+
 items = currentCase.search("has-communication:1")
 
 puts("Communications found: " + items.length.to_s)
@@ -33,3 +39,7 @@ end
 puts("Found " + numTo.to_s + " items with from in to.")
 puts("Found " + numCc.to_s + " items with from in cc.")
 puts("Found " + numBcc.to_s + " items with from in bcc.")
+
+CommonDialogs.show_information("Script finished. Found " + numTo.to_s + " items with from in to. Found " + numCc.to_s + " items with from in cc. Found " + numBcc.to_s + " items with from in bcc.", "Tag Messages to Self")
+
+puts("Scipt finished.")
