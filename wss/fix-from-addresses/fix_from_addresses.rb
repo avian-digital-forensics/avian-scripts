@@ -139,7 +139,11 @@ module FixFromAddresses
     def run_init(wss_global)
         root_path = wss_global.root_path
         require File.join(root_path, 'utils', 'union_find')
-        data = File.read(File.join(root_path, 'data', 'find_correct_addresses_output.txt'))
+        data_path = File.join(root_path, 'data', 'find_correct_addresses_output.txt')
+        if not File.file?(data_path)
+            STDERR.puts("Could not find data file. Did you remember to run 'Find Correct Addresses'?")
+        end
+        data = File.read(data_path)
         union = UnionFind.new([])
         union.load(data)
         
