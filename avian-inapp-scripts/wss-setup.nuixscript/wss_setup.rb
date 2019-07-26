@@ -27,8 +27,10 @@ if not File.file?(settings_file)
     FileUtils.cp(File.join(main_directory, 'data', 'default_wss_settings.yml'), settings_file)
 end
 
+# Load current settings.
 wss_settings = YAML.load(File.read(settings_file))
 
+## Create GUI.
 dialog = TabbedCustomDialog.new("Connected Addresses")
 
 # Add main tab.
@@ -44,8 +46,10 @@ dialog.validate_before_closing do |values|
     next true
 end
 
+## Display GUI.
 dialog.display
 
+## Handle GUI input.
 if dialog.get_dialog_result == true
     puts("Applying settings...")
     values = dialog.to_map
