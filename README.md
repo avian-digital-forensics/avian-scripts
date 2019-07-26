@@ -28,12 +28,12 @@ These can be found in the script directory by following the links.
 Used by the WSS 'Fix From Addresses'.
 * [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-messages-to-self.nuixscript) - tags all items sent to the sender of that item.
 
-## Worker Side Scripts (WWS's)
+## Worker Side Scripts (WSS's)
 All worker side scripts are located in the directory 'wss'.
-WWS'es are run during loading of a case, and this allows them to do things regular scripts cannot.
+WSS'es are run during loading of a case, and this allows them to do things regular scripts cannot.
 
 ### Usage
-There are several ways to use a WWS, (see [here](https://github.com/kalapakim/SmackDown2016/wiki/Worker-Side-Scripting) for more information), but for Avian scripts, there is an especially easy way.
+There are several ways to use a WSS, (see [here](https://github.com/kalapakim/SmackDown2016/wiki/Worker-Side-Scripting) for more information), but for Avian scripts, there is an especially easy way.
 First download the newest release version of the repository from the link in [Setup](##Setup).
 In the downloaded repository there is a file called `wss_caller.rb` in which you must set the `path` variable to the location of the downloaded repository.
 When loading data, in the settings menu, there should be a tab called 'Worker Script' with a single huge text field.
