@@ -2,8 +2,15 @@ require 'set'
 
 script_directory = File.dirname(__FILE__)
 require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
+
 main_directory = get_main_directory(false)
 
+if not main_directory
+    puts("Script cancelled.")
+    return
+end
+
+require File.join(main_directory,"utils","nx_utils")
 require File.join(main_directory,"utils","union_find")
 
 # Returns a list of all the addresses in the communication of the item if such exists.
@@ -62,5 +69,7 @@ output_file_path = File.join(output_dir,"find_correct_addresses_output.txt")
 file = File.open(output_file_path, 'w')
 file.puts(identifiers.to_s)
 file.close
+
+CommonDialogs.show_information("Script finished. The addresses have been written to a file.", "Find Correct Addresses")
 
 puts("Script finished.")

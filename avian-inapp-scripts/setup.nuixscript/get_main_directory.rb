@@ -2,6 +2,7 @@
 # First checks if it is in the file 'main_directory.txt' in the setup script's directory, otherwise asks user.
 # If force_user_input is true, always asks user.
 # If the user is asked, the result is written to 'main_directory.txt'.
+# If the user cancels, returns nil.
 def get_main_directory(force_user_input)
     main_directory = ""
 
@@ -34,11 +35,11 @@ def get_main_directory(force_user_input)
 
         # Checks the input before closing the dialog.
         dialog.validate_before_closing do |values|
-            main_directory = values["main_directory"].strip
-            if main_directory.empty? # Make sure path is not empty.
+            input = values["main_directory"].strip
+            if input.empty? # Make sure path is not empty.
                 CommonDialogs.show_warning("Please provide a non-empty output path.", "No Output Path")
                 next false
-            elsif not File.file?(File.join(main_directory, "/wss_dispatcher.rb")) # Make sure it is the right directory.
+            elsif not File.file?(File.join(input, "/wss_dispatcher.rb")) # Make sure it is the right directory.
                 CommonDialogs.show_warning("Wrong output directory selected. The directory required is the one with the file 'wss_dispatcher.rb'.")
                 next false
             end
@@ -49,7 +50,10 @@ def get_main_directory(force_user_input)
         dialog.display
         
         if dialog.get_dialog_result == true
+            main_directory = dialog.to_map["main_directory"]
             File.open(main_directory_file_path, "w") { |file| file.write(main_directory) }
+        else
+            main_directory = nil
         end
     end
     return main_directory
