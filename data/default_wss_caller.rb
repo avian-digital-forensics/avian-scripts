@@ -6,6 +6,7 @@ PATH = 'HAS NOT BEEN SET UP'
 def nuixWorkerItemCallbackInit
     if not File.directory?(PATH)
         STDERR.puts("Given path does not exist. Path: " + PATH)
+    end
     load(PATH + '/wss_dispatcher.rb')
     run_init(PATH)
 end
