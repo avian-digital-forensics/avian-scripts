@@ -1,5 +1,14 @@
 script_directory = File.dirname(__FILE__)
-require File.join(script_directory,"utils","nx_utils")
+require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
+
+main_directory = get_main_directory(false)
+
+if not main_directory
+    puts("Script cancelled.")
+    return
+end
+
+require File.join(main_directory,"utils","nx_utils")
 
 
 dialog = NXUtils.create_dialog("Connected Addresses")
