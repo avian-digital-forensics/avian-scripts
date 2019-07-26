@@ -1,20 +1,33 @@
 # Avian Scripts
-Version 0.3.2
+Version 0.4.0
 
 A collection of all scripts for Nuix created by Avian
 
 ## Setup
-Use this link to get the newest version of the repository:
+1. Use this link to get the newest version of the repository:
 https://github.com/avian-digital-forensics/avian-scripts/archive/release.zip
 
-Unpack the contents to an empty directory and follow the guides below.
+2. Unpack the contents to an empty directory.
+
+3. In Nuix, open the 'Scripts' menu and select 'Open Scripts Directory'.
+
+4. From the Avian Scripts directory you just unpacked, copy the `avian-inapp-scripts` sub-directory into the directory Nuix just opened.
+Not the entire directory, just the one sub-directory.
+
+5. Run the script 'Setup'.
+The first time, it will ask you for the 'Avian main script directory'. 
+This is the one you unpacked in step 2.
+
+6. And that's it.
+Run 'Setup' again to change anything.
+
+## Updating
+I'm afraid this means reinstalling everything.
+Delete the two directories you set up and go through Setup again.
 
 ## In-app Scripts
 This is about the scripts that are run from within Nuix, usually with a case already open.
-To use them, first download the newest release version of the repository from the link in [Setup](##Setup).
-In Nuix open the 'Scripts' menu and select 'Open Scripts Directory'.
-From the Avian Scripts repository, copy the `avian-inapp-scripts` directory into the directory Nuix just opened.
-Now simply run the scripts from the 'Scripts' menu under 'Nuix Developed Scripts'.
+If you have followed Setup correctly, these can be run from the 'Scripts' dropdown menu in Nuix under 'Avian Developed Scripts'.
 
 For details on a specific script please read the pertaining readme.
 These can be found in the script directory by following the links.
@@ -23,25 +36,34 @@ These can be found in the script directory by following the links.
 * [Connected Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/connected-addresses.nuixscript) - creates a csv file with information about what addresses a specific address has exchanged messages with.
 * [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-correct-addresses.nuixscript) - Identifies all addresses and identifiers that refer to the same person and create a file with that information.
 Used by the WSS 'Fix From Addresses'.
+* [Setup](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/setup.nuixscript) - Used to setup WSS's.
 * [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-messages-to-self.nuixscript) - tags all items sent to the sender of that item.
 
-## Worker Side Scripts (WWS's)
-All worker side scripts are located in the directory 'wss'.
-WWS'es are run during loading of a case, and this allows them to do things regular scripts cannot.
+## Worker Side Scripts (WSS's)
+WSS'es are run during loading of a case, and this allows them to do things regular scripts cannot.
+However, this also means that they are considerably more of a hassle to run.
 
 ### Usage
-There are several ways to use a WWS, (see [here](https://github.com/kalapakim/SmackDown2016/wiki/Worker-Side-Scripting) for more information), but for Avian scripts, there is an especially easy way.
-First download the newest release version of the repository from the link in [Setup](##Setup).
-In the downloaded repository there is a file called `wss_caller.rb` in which you must set the `path` variable to the location of the downloaded repository.
-When loading data, in the settings menu, there should be a tab called 'Worker Script' with a single huge text field.
-Copy the contents of `wss_caller.rb` (the file can be opened with any text editor like Notepad or Notepad++) into this field and edit the list of scripts to whichever scripts you like.
-**Read the comments carefully.**
-At the top, above the text field there is a choice between ECMAScript, python or ruby.
+1. Run the Avian in-app script 'Setup'.
+
+2. Choose which WSS's you want.
+
+3. Click ok.
+
+4. Setup the loading/reloading of data as you normally do, but before you start the processing...
+
+5. In the loading advanced settings, there should be a tab called 'Worker Script' with a single huge text field.
+
+6. In the main Avain script directory, there is a file called `wss_caller.rb`.
+Open it and copy the entire contents to the text field in the 'Worker Script' tab.
+
+7. At the top of the tab, above the text field, there is a choice between ECMAScript, python or ruby.
 Choose ruby.
 
-Now simply load the case as usual.
+8. Load the data, and the scripts you selected in step 2 should run.
 
-If any of the given script names cannot be matched to an available WSS, an error will be printed to the log.
+Note: Steps 5 through 7 are only necessary the first time, or if the 'Worker Script' tab has been changed.
+This means that for the most part, you only need to run the 'Setup' script to select the scripts you want to run.
 
 For details on a specific WSS please read the pertaining readme.
 

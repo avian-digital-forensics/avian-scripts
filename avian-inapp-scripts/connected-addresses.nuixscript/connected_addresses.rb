@@ -1,5 +1,3 @@
-# Menu Title: Connected Addresses
-# Needs Case: true
 script_directory = File.dirname(__FILE__)
 require File.join(script_directory,"utils","nx_utils")
 

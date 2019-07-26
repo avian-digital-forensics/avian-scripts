@@ -1,2 +1,4 @@
 data/*
-!data/dummy.txt
+!data/default_*
+
+wss_caller.rb
