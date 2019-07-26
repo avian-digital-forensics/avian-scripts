@@ -14,7 +14,10 @@ This is about the scripts that are run from within Nuix, usually with a case alr
 To use them, first download the newest release version of the repository from the link in [Setup](##Setup).
 In Nuix open the 'Scripts' menu and select 'Open Scripts Directory'.
 From the Avian Scripts repository, copy the `avian-inapp-scripts` directory into the directory Nuix just opened.
-Now simply run the scripts from the 'Scripts' menu under 'Nuix Developed Scripts'.
+Now simply run the scripts from the 'Scripts' menu under 'Avian Developed Scripts'.
+
+Note: do _not_ copy the entire `avian-scripts` directory into the Nuix scripts directory.
+Only the `avian-inapp-scripts` sub-directory.
 
 For details on a specific script please read the pertaining readme.
 These can be found in the script directory by following the links.
