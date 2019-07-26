@@ -63,4 +63,6 @@ file = File.open(output_file_path, 'w')
 file.puts(identifiers.to_s)
 file.close
 
+CommonDialogs.show_information("Script finished. The addresses have been written to a file.", "Find Correct Addresses")
+
 puts("Script finished.")
