@@ -1,3 +1,7 @@
+require 'yaml'
+
+script_directory = File.dirname(__FILE__)
+
 SCRIPT_PATHS = [ # The available scripts. Add new scripts here.
         "WSS/fix-from-addresses/fix_from_addresses.rb"
 ].freeze
@@ -87,25 +91,29 @@ end
 class WSSGlobal
     # The avian scripts root directory.
     attr_reader :root_path
-    # The names of all available scripts.
-    attr_reader :script_names
     # The objects representing all available scripts.
     attr_reader :available_scripts
     # The scripts that will be run.
     attr_reader :run_scripts
     # A hash any script can use to store data.
     attr_reader :vars
+    # The wss settings object loaded from data/wss_settings.yml.
+    attr_reader :wss_settings
     
-    def initialize(root_path, script_names)
+    def initialize(root_path)
         @root_path = root_path
-        @script_names = script_names
         
         # Create WSSs from all script paths.
         @available_scripts = SCRIPT_PATHS.map{ |script_path| WSS.new(root_path, script_path) }
-    
+        
+        wss_settings_path = File.join(script_directory, "data", "wss_settings.yml")
+        @wss_settings = YAML.load(File.read(wss_settings_path))
+        
+        run_script_names = @wss_settings[:scripts].select{ |script| script[:active] }.map{ |script| script[:identifier] }
+        
         # Finds the scripts matching the script names.
         @run_scripts = []
-        for script_name in @script_names 
+        for script_name in run_script_names
             script = find_script(script_name)
             if script.nil?
                 STDERR.puts("Could not find script matching name '" + script_name + "'.")
@@ -123,8 +131,8 @@ class WSSGlobal
     end
 end
 
-def run_init(root_path, script_names)
-    @wss_global = WSSGlobal.new(root_path, script_names).freeze
+def run_init(root_path)
+    @wss_global = WSSGlobal.new(root_path).freeze
     for script in @wss_global.run_scripts
         script.run_init(@wss_global)
     end
