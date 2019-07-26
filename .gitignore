@@ -2,3 +2,5 @@ data/*
 !data/default_*
 
 wss_caller.rb
+
+avian-inapp-scripts/setup.nuixscript/main_directory.txt
