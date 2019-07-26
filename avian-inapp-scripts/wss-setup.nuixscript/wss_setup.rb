@@ -12,8 +12,8 @@ while main_directory == ""
     elsif not File.directory?(input)
         CommonDialogs.show_warning("The specified main script directory path is not a directory.")
         next false
-    elsif not File.file?(input + "/wss_caller.rb")
-        CommonDialogs.show_warning("Wrong path specified for main script directory. The directory required is the one with the file 'wss_caller.rb'.")
+    elsif not File.file?(input + "/wss_dispatcher.rb")
+        CommonDialogs.show_warning("Wrong path specified for main script directory. The directory required is the one with the file 'wss_dispatcher.rb'.")
         next false
     else
         main_directory = input
@@ -49,9 +49,20 @@ dialog.display
 if dialog.get_dialog_result == true
     puts("Applying settings...")
     values = dialog.to_map
+    
+    # Set the new activation values for wss's.
     for script in wss_settings[:scripts]
         script[:active] = values[script[:identifier]]
     end
+    
+    # Update wss_caller.rb with the new path.
+    default_wss_caller_path = File.join(main_directory, "data", "default_wss_caller.rb")
+    wss_caller_path = File.join(main_directory, "wss_caller.rb")
+    wss_caller = File.read(default_wss_caller_path)
+    new_wss_caller = wss_caller.gsub(/PATH = '.*'/, "PATH = '" + main_directory + "'")
+    File.open(wss_caller_path, "w") { |file| file.write(new_wss_caller) }
+    
+    # Write the new settings.
     File.open(settings_file, "w") { |file| file.write(wss_settings.to_yaml) }
     puts("Scripts finished.")
 end
