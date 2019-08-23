@@ -1,5 +1,5 @@
 # Avian Scripts
-Version 0.5.0
+Version 0.5.1
 
 A collection of all scripts for Nuix created by Avian.
 
@@ -40,6 +40,7 @@ These can be found in the script directory by following the links.
 Used by the WSS 'Fix From Addresses'.
 * [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-messages-to-self.nuixscript) - tags all items sent to the sender of that item.
 * [Tag Exchange Addresses with Duplicates](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-exchange-addresses-with-duplicates.nuixscript) - (NOT TESTED) tags exchange server emails with and without archived duplicates.
+* [Number of Descendants](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/number-of-descendants.nuixscript) - gives every selected item a custom metadata value of how many descendants the item has.
 
 ## Worker Side Scripts (WSS's)
 WSS'es are run during loading of a case, and this allows them to do things regular scripts cannot.
