@@ -10,8 +10,9 @@ end
 
 require File.join(main_directory,"utils","nx_utils")
 
+gui_title = # TODO: EDIT
 
-dialog = NXUtils.create_dialog("Template")
+dialog = NXUtils.create_dialog(gui_title)
 
 # Add main tab.
 main_tab = dialog.addTab("main_tab", "Main")
@@ -39,6 +40,10 @@ if dialog.getDialogResult == true
     values = dialog.toMap
     
     # TODO: ADD SCRIPT HERE.
+    
+    CommonDialogs.show_information("Script finished. , gui_title)#TODO: ADD USER MESSAGE 
+    
+    puts("Script finished.")
 else
     puts("Script cancelled.")
 end
