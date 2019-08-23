@@ -35,4 +35,13 @@ module NXUtils
         radio_keys = radio_options.values # Yes, this does make sense.
         return radio_keys.select{ |key| dialog_values[key] }.first
     end
+    
+    def assert_non_empty_field(values, field_key, field_name)
+        if values[field_key].strip.empty?
+            CommonDialogs.showWarning("Please provide a non-empty " + field_name + ".", "Missing " + field_name.titleize)
+            return false
+        else
+            return true
+        end
+    end
 end
