@@ -1,7 +1,7 @@
 # Avian Scripts
-Version 0.4.1
+Version 0.4.2
 
-A collection of all scripts for Nuix created by Avian
+A collection of all scripts for Nuix created by Avian.
 
 ## Setup
 1. Use this link to get the newest version of the repository:
