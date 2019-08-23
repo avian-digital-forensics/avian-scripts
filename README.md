@@ -39,7 +39,7 @@ These can be found in the script directory by following the links.
 * [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-correct-addresses.nuixscript) - identifies all addresses and identifiers that refer to the same person and create a file with that information.
 Used by the WSS 'Fix From Addresses'.
 * [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-messages-to-self.nuixscript) - tags all items sent to the sender of that item.
-* [Tag Exchange Addresses with Duplicates](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-exchange-addresses-with-duplicates.nuixscript) - tags exchange server emails with and without archived duplicates.
+* [Tag Exchange Addresses with Duplicates](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-exchange-addresses-with-duplicates.nuixscript) - (NOT TESTED) tags exchange server emails with and without archived duplicates.
 
 ## Worker Side Scripts (WSS's)
 WSS'es are run during loading of a case, and this allows them to do things regular scripts cannot.
