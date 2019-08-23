@@ -1,3 +1,5 @@
+require 'set'
+
 script_directory = File.dirname(__FILE__)
 require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
 
@@ -94,10 +96,10 @@ if dialog.getDialogResult == true
         end
     end
     
-    puts("Exchange server emails without an archived duplicate: " + num_without_duplicate)
+    puts("Exchange server emails without an archived duplicate: " + num_without_duplicate.to_s)
     puts("They have been tagged with '" + has_no_archive_duplicate_tag + "'")
     
-    CommonDialogs.show_information("Script finished. A total of " + num_without_duplicate + " exchange server emails without an archived duplicate were found. They have been tagged with '" + has_no_archive_duplicate_tag + "'", "Tag Exchange Addresses with Duplicates")
+    CommonDialogs.show_information("Script finished. A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found. They have been tagged with '" + has_no_archive_duplicate_tag + "'", "Tag Exchange Addresses with Duplicates")
     
     puts("Script finished.")
 end
