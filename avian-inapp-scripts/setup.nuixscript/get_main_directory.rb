@@ -23,7 +23,7 @@ def get_main_directory(force_user_input)
         require File.join(setup_script_directory,"utils","nx_utils")
 
         ## Create GUI.
-        dialog = TabbedCustomDialog.new("Connected Addresses")
+        dialog = TabbedCustomDialog.new("Avian Main Script Directory")
 
         # Add main tab.
         main_tab = dialog.add_tab("main_tab", "Main")
