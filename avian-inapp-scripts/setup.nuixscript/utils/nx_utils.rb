@@ -38,7 +38,7 @@ module NXUtils
     
     def assert_non_empty_field(values, field_key, field_name)
         if values[field_key].strip.empty?
-            CommonDialogs.showWarning("Please provide a non-empty " + field_name + ".", "Missing " + field_name.titleize)
+            CommonDialogs.showWarning("Please provide a non-empty value for '" + field_name + "'.", "Missing " + field_name.titleize)
             return false
         else
             return true
