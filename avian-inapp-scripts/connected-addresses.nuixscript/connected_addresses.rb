@@ -237,4 +237,9 @@ if dialog.getDialogResult == true
     puts("Found " + connections.num_recipients.to_s + " connected addresses")
     puts("Results written to: " + file_path)
     
+    CommonDialogs.show_information("Script finished. Found " + connections.num_recipients.to_s + " connected addresses. Results written to " + file_path, "Connected Addresses")
+    
+    puts("Scipt finished.")
+else
+    puts("Script cancelled.")
 end
