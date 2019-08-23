@@ -236,5 +236,6 @@ if dialog.getDialogResult == true
     
     puts("Found " + connections.num_recipients.to_s + " connected addresses")
     puts("Results written to: " + file_path)
-    
+else
+    puts("Script cancelled.")
 end

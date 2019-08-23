@@ -39,4 +39,6 @@ if dialog.getDialogResult == true
     values = dialog.toMap
     
     # TODO: Add script here.
+else
+    puts("Script cancelled.")
 end
