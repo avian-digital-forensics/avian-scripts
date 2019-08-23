@@ -38,7 +38,7 @@ if dialog.getDialogResult == true
     # values contains the information the user inputted.
     values = dialog.toMap
     
-    # TODO: Add script here.
+    # TODO: ADD SCRIPT HERE.
 else
     puts("Script cancelled.")
 end
