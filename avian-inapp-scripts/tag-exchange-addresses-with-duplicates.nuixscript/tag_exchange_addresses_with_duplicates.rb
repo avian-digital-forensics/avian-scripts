@@ -27,20 +27,15 @@ main_tab.appendTextField("store_a_tag", "Exchange server email tag", "ExchangeSe
 main_tab.getControl("store_a_tag").setToolTipText("All emails containing the above prefix will receive this tag.")
 
 # Add text field for tag for exchange server emails with an archived duplicate.
-main_tab.appendTextField("has_archive_duplicate_tag", "Has archived duplicate", "HasArchivedDuplicate")
-main_tab.getControl("has_archive_duplicate_tag").setToolTipText("All exchange server emails that have an archived duplicate will receive this tag.")
-
-# Add text field for tag for exchange server emails without an archived duplicate.
-main_tab.appendTextField("has_no_archive_duplicate_tag", "Has no archived duplicate", "HasNoArchivedDuplicate")
-main_tab.getControl("has_no_archive_duplicate_tag").setToolTipText("All exchange server emails that do NOT have an archived duplicate will receive this tag.")
+main_tab.appendTextField("has_archived_duplicate_metadata_name", "Has archived duplicate", "HasArchivedDuplicate")
+main_tab.getControl("has_archived_duplicate_metadata_name").setToolTipText("All exchange server emails will receive a custom metadata field with this name saying whether they have an archived duplicate.")
 
 # Checks the input before closing the dialog.
 dialog.validateBeforeClosing do |values|
     # Make sure primary address is not empty.
     if not (NXUtils.assert_non_empty_field(values, "store_a_prefix", "exchange server email prefix") and 
             NXUtils.assert_non_empty_field(values, "store_a_tag", "exchange server email tag") and 
-            NXUtils.assert_non_empty_field(values, "has_archive_duplicate_tag", "has archived duplicate") and 
-            NXUtils.assert_non_empty_field(values, "has_no_archive_duplicate_tag", "has no archived duplicate"))
+            NXUtils.assert_non_empty_field(values, "has_archived_duplicate_metadata_name", "has archived duplicate") and 
         next false
     end
     
@@ -65,10 +60,7 @@ if dialog.getDialogResult == true
     store_a_tag = values["store_a_tag"]
     
     # All exchange server emails with an archived duplicate will receive this tag.
-    has_archive_duplicate_tag = values["has_archive_duplicate_tag"]
-    
-    # All exchange server emails without an archived duplicate will receive this tag.
-    has_no_archive_duplicate_tag = values["has_no_archive_duplicate_tag"]
+    has_archived_duplicate_metadata_name = values["has_archived_duplicate_metadata_name"]
     
     # Returns the ID of the specified email.
     def find_email_id(email)
@@ -86,20 +78,20 @@ if dialog.getDialogResult == true
     
     num_without_duplicate = 0
     
-    # Give all exchange server emails tags for whether there is an archived duplicate.
+    # Give all exchange server emails custom metadata for whether there is an archived duplicate.
     for email in current_case.search('tag:' + store_a_prefix)
         if archive_id_set.include?(find_email_id(email))
-            email.add_tag(has_archive_duplicate_tag)
+            email.custom_metadata[has_archived_duplicate_metadata_name] = TRUE
         else
-            email.add_tag(has_no_archive_duplicate_tag)
+            email.custom_metadata[has_archived_duplicate_metadata_name] = FALSE
             num_without_duplicate += 1
         end
     end
     
     puts("Exchange server emails without an archived duplicate: " + num_without_duplicate.to_s)
-    puts("They have been tagged with '" + has_no_archive_duplicate_tag + "'")
+    puts("They have been a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.")
     
-    CommonDialogs.show_information("Script finished. A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found. They have been tagged with '" + has_no_archive_duplicate_tag + "'", "Tag Exchange Addresses with Duplicates")
+    CommonDialogs.show_information("Script finished. A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found. They have been a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.", "Tag Exchange Addresses with Duplicates")
     
     puts("Script finished.")
 end
