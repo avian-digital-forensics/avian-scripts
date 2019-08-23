@@ -14,7 +14,7 @@ https://github.com/avian-digital-forensics/avian-scripts/archive/release.zip
 4. From the Avian Scripts directory you just unpacked, copy the `avian-inapp-scripts` sub-directory into the directory Nuix just opened.
 Not the entire directory, just the one sub-directory.
 
-5. Run the script 'Setup'.
+5. Run the script 'Setup' from inside NUIX.
 The first time, it will ask you for the 'Avian main script directory'. 
 This is the one you unpacked in step 2.
 
