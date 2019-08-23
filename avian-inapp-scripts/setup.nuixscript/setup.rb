@@ -22,10 +22,10 @@ end
 wss_settings = YAML.load(File.read(settings_file))
 
 ## Create GUI.
-dialog = TabbedCustomDialog.new("Connected Addresses")
+dialog = TabbedCustomDialog.new("Avian scripts setup")
 
 # Add WSS tab.
-wss_tab = dialog.add_tab("wss_tab", "WSS")
+wss_tab = dialog.add_tab("wss_tab", "Worker Side Scripts")
 
 for script in wss_settings[:scripts]
     wss_tab.append_check_box(script[:identifier], script[:label], script[:active])
