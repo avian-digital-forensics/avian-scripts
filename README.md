@@ -28,6 +28,7 @@ Delete the two directories you set up and go through Setup again.
 ## In-app Scripts
 This is about the scripts that are run from within Nuix, usually with a case already open.
 If you have followed Setup correctly, these can be run from the 'Scripts' dropdown menu in Nuix under 'Avian Developed Scripts'.
+Warning: For some reason NUIX always waits 10 seconds before running in-app scripts, so don't be alarmed when nothing happens.
 
 For details on a specific script please read the pertaining readme.
 These can be found in the script directory by following the links.
