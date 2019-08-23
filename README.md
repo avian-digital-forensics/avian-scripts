@@ -1,5 +1,5 @@
 # Avian Scripts
-Version 0.4.2
+Version 0.5.0
 
 A collection of all scripts for Nuix created by Avian.
 
@@ -34,11 +34,12 @@ For details on a specific script please read the pertaining readme.
 These can be found in the script directory by following the links.
 
 ### Available in-app scripts
+* [Setup](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/setup.nuixscript) - used to setup WSS's.
 * [Connected Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/connected-addresses.nuixscript) - creates a csv file with information about what addresses a specific address has exchanged messages with.
-* [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-correct-addresses.nuixscript) - Identifies all addresses and identifiers that refer to the same person and create a file with that information.
+* [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-correct-addresses.nuixscript) - identifies all addresses and identifiers that refer to the same person and create a file with that information.
 Used by the WSS 'Fix From Addresses'.
-* [Setup](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/setup.nuixscript) - Used to setup WSS's.
 * [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-messages-to-self.nuixscript) - tags all items sent to the sender of that item.
+* [Tag Exchange Addresses with Duplicates](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-exchange-addresses-with-duplicates.nuixscript) - (NOT TESTED) tags exchange server emails with and without archived duplicates.
 
 ## Worker Side Scripts (WSS's)
 WSS'es are run during loading of a case, and this allows them to do things regular scripts cannot.
