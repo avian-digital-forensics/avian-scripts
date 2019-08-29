@@ -1,4 +1,52 @@
 java_import "java.util.regex.Pattern"
+
+# Holds a collection of EntityKeyLists.
+class EntityKeyListManager
+    # Initializes an empty EntityKeyListManager.
+    def initialize
+        @entity_key_lists = {}
+    end
+    
+    # Add an EntityKeyList.
+    # The entity_name must be unique.
+    def add(entity_key_list)
+        raise ArgumentError, 'Already contains entity key list with same name.' unless not @entity_key_lists.key?(entity_key_list.entity_name)
+        @entity_key_lists[entity_key_list.entity_name] = entity_key_list
+    end
+    
+    # Add an EntityKeyList.
+    # The entity_name must be unique.
+    # Alias of add(entity_key_list).
+    def add_entity_key_list(entity_key_list)
+        add(entity_key_list)
+    end
+    
+    # Finds the entity key list with the given name.
+    def [](entity_name)
+        return @entity_key_lists[entity_name]
+    end
+    
+    # Returns hash of names to key list patterns that can be given to the worker item's scan_item methods.
+    def regex_hash
+        return Hash[ @entity_key_lists.values.collect { |key_list| [key_list.entity_name, key_list.pattern] }]
+    end
+    
+    # Returns a list of all entity key lists present in the item text.
+    # The key list occurs once in the list for each time it occurs in the item text.
+    def entities_in_item_text(worker_item)
+        # Uses Nuix's entity scanning to find occurrences of the keys, and uses the result to determine how many of each entity the item has.
+        return worker_item.scan_item_text(regex_hash).map{ |entity| @entity_key_lists[entity.type] }
+    end 
+    
+    # Returns a list of all entity key lists present in the item properties.
+    # The key list occurs once in the list for each time it occurs in the item properties.
+    def entities_in_item_properties(worker_item)
+        # Uses Nuix's entity scanning to find occurrences of the keys, and uses the result to determine how many of each entity the item has.
+        return worker_item.scan_item_properties(regex_hash).map{ |entity| @entity_key_lists[entity.type] }
+    end 
+end
+
+# Represents an entity with a type and a name/value, and a key list containing the aliases of the entity.
 class EntityKeyList
     attr_accessor :entity_type, :entity_name, :key_list, :pattern
 
