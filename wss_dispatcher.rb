@@ -1,7 +1,8 @@
 require 'yaml'
 
 SCRIPT_PATHS = [ # The available scripts. Add new scripts here.
-        "WSS/fix-from-addresses/fix_from_addresses.rb"
+        "WSS/fix-from-addresses/fix_from_addresses.rb",
+        "WSS/entities-from-lists/entities_from_lists.rb"
 ].freeze
 
 # Represents a worker side script.
