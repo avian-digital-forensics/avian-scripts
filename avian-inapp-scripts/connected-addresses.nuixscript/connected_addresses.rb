@@ -1,3 +1,4 @@
+# Standard code for finding main directory.
 script_directory = File.dirname(__FILE__)
 require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
 
@@ -8,6 +9,7 @@ if not main_directory
     return
 end
 
+# For GUI.
 require File.join(main_directory,"utils","nx_utils")
 
 
