@@ -69,11 +69,13 @@ end
 puts("Found " + identifiers.num_components.to_s + " unique persons.")
 
 puts("Writing output to file...")
+# Write results to file.
 output_file_path = File.join(output_dir,"find_correct_addresses_output.txt")
 file = File.open(output_file_path, 'w')
 file.puts(identifiers.to_s)
 file.close
 
-CommonDialogs.show_information("Script finished. The result has been stored and is ready for use by other scripts.", "Find Correct Addresses")
+# Inform user of finished script.
+CommonDialogs.show_information("Script finished. Found " + identifiers.num_components.to_s + " unique persons. \nThe result has been stored and is ready for use by other scripts.", "Find Correct Addresses")
 
 puts("Script finished.")
