@@ -1,5 +1,6 @@
 require 'set'
 
+# Standard code for finding main directory.
 script_directory = File.dirname(__FILE__)
 require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
 
@@ -10,6 +11,7 @@ if not main_directory
     return
 end
 
+# For GUI.
 require File.join(main_directory,"utils","nx_utils")
 
 
@@ -91,6 +93,7 @@ if dialog.getDialogResult == true
     puts("Exchange server emails without an archived duplicate: " + num_without_duplicate.to_s)
     puts("They have been a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.")
     
+    # Tell the user the script has finished.
     CommonDialogs.show_information("Script finished. A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found. They have been a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.", "Tag Exchange Addresses with Duplicates")
     
     puts("Script finished.")
