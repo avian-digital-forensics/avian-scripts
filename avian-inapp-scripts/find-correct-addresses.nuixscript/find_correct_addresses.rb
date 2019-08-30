@@ -1,5 +1,6 @@
 require 'set'
 
+# Standard code for finding main directory.
 script_directory = File.dirname(__FILE__)
 require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
 
@@ -10,8 +11,10 @@ if not main_directory
     return
 end
 
+# For GUI messages.
 require File.join(main_directory,"utils","nx_utils")
 require File.join(main_directory,"utils","union_find")
+# For storing result.
 require File.join(main_directory,"utils","settings_utils")
 
 # Returns a list of all the addresses in the communication of the item if such exists.
@@ -38,7 +41,7 @@ end
 puts("Running script...")
 
 # The output directory.
-output_dir = case_data_dir(main_directory, current_case)
+output_dir = SettingsUtils.case_data_dir(main_directory, current_case)
 
 # Find all items with a communication.
 messages = current_case.search("has-communication:1")
