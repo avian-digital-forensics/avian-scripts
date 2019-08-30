@@ -12,6 +12,7 @@ end
 
 require File.join(main_directory,"utils","nx_utils")
 require File.join(main_directory,"utils","union_find")
+require File.join(main_directory,"utils","settings_utils")
 
 # Returns a list of all the addresses in the communication of the item if such exists.
 def all_addresses_in_item(item)
@@ -37,12 +38,12 @@ end
 puts("Running script...")
 
 # The output directory.
-output_dir = File.join(main_directory, "data")
+output_dir = case_data_dir(main_directory, current_case)
 
 # Find all items with a communication.
-messages = currentCase.search("has-communication:1")
+messages = current_case.search("has-communication:1")
 
-puts("Found: " + messages.length.to_s + " items with communication.")
+puts("Found " + messages.length.to_s + " items with communication.")
 
 # Initialize the union find.
 identifiers = UnionFind.new([])
@@ -70,6 +71,6 @@ file = File.open(output_file_path, 'w')
 file.puts(identifiers.to_s)
 file.close
 
-CommonDialogs.show_information("Script finished. The addresses have been written to a file.", "Find Correct Addresses")
+CommonDialogs.show_information("Script finished. The result has been stored and is ready for use by other scripts.", "Find Correct Addresses")
 
 puts("Script finished.")
