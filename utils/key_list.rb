@@ -1,4 +1,6 @@
 java_import "java.util.regex.Pattern"
+# For saving and loading key lists.
+require 'csv'
 
 # Holds a collection of EntityKeyLists.
 class EntityKeyListManager
@@ -43,7 +45,23 @@ class EntityKeyListManager
     def entities_in_item_properties(worker_item)
         # Uses Nuix's entity scanning to find occurrences of the keys, and uses the result to determine how many of each entity the item has.
         return worker_item.scan_item_properties(regex_hash).map{ |entity| @entity_key_lists[entity.type] }
-    end 
+    end
+    
+    # Saves to a csv file.
+    def save_to_file(path)
+        CSV.open(path, "wb") do |csv|
+            for ekl in @entity_key_lists.values
+                csv << ekl.to_string_array
+            end
+        end
+    end
+    
+    # Adds all EntityKeyLists in the file to the EntityKeyListManager.
+    def load(path)
+        CSV.foreach(path) do |row|
+            add_entity_key_list(EntityKeyList.load(row))
+        end
+    end
 end
 
 # Represents an entity with a type and a name/value, and a key list containing the aliases of the entity.
@@ -55,6 +73,18 @@ class EntityKeyList
         @entity_name = entity_name
         @key_list = key_list
         @pattern = Pattern.compile(key_list.join("|"))
+    end
+    
+    # Creates a string array representing the key list that can be saved to csv.
+    def to_string_array
+        # Turns the EntityKeyList into an array for more compact storing.
+        array = [entity_type, entity_name] + key_list
+        return array
+    end
+    
+    # Loads an EntityKeyList from a csv row.
+    def self.load(csv_row)
+        return EntityKeyList.new(csv_row[0], csv_row[1], csv_row[2..-1])
     end
 end
     
