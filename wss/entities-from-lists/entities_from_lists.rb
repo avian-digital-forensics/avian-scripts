@@ -2,9 +2,10 @@ module EntitiesFromLists
     extend self
     
     def run_init(wss_global)
+        # For EntityKeyLists
         require File.join(wss_global.root_path, 'utils', 'key_list') 
         manager = EntityKeyListManager.new()
-        manager.add(EntityKeyList.new("Test", "Jeg", ["Jeg", "jeg", "Mig", "mig", "Vi", "vi"]))
+        manager.load(wss_global.root_path, 'data', 'entity_key_lists')
         wss_global.vars[:entities_from_lists_key_list_manager] = manager
     end
     
@@ -13,6 +14,9 @@ module EntitiesFromLists
         settings = wss_global.wss_settings[:entities_from_lists]
         extract_from_text = settings[:extract_from_text]
         extract_from_properties = settings[:extract_from_properties]
+        
+        key_lists_yaml = settings[:key_lists]
+        
         
         # Constructs the list of entity key lists that appear in the item.
         entity_key_lists = []
