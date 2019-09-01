@@ -5,7 +5,11 @@ module EntitiesFromLists
         # For EntityKeyLists
         require File.join(wss_global.root_path, 'utils', 'key_list') 
         manager = EntityKeyListManager.new()
-        manager.load(wss_global.root_path, 'data', 'entity_key_lists.csv')
+        key_lists_path = File.join(wss_global.root_path, 'data', 'entity_key_lists.csv')
+        unless File.exist?(key_lists_path)
+            raise "No key list file. Cannot run script"
+        end
+        manager.load(key_lists_path)
         wss_global.vars[:entities_from_lists_key_list_manager] = manager
     end
     
@@ -15,17 +19,18 @@ module EntitiesFromLists
         extract_from_text = settings[:extract_from_text]
         extract_from_properties = settings[:extract_from_properties]
         
-        # Constructs the list of entity key lists that appear in the item.
-        entity_key_lists = []
-        if extract_from_text
-            entities_from_lists += wss_global.vars[:entities_from_lists_key_list_manager].entities_in_item_text(worker_item)
-        end
-        if extract_from_properties
-            entities_from_lists += wss_global.vars[:entities_from_lists_key_list_manager].entities_in_item_properties(worker_item)
-        end
+        manager = wss_global.vars[:entities_from_lists_key_list_manager]
         
-        # Add the found entities to the item.
-        worker_item.add_named_entities(entity_key_lists.map{ |key_list| worker_item.create_entity(key_list.entity_type, key_list.entity_name)})
+        text = worker_item.source_item.text.to_s
+        
+        # Constructs the list of entity key lists that appear in the item.
+        entities = manager.entities_in_text(text)
+        
+        for ekl,occurences in entities
+            for i in 1..occurences
+                worker_item.add_named_entity(worker_item.create_entity(ekl.entity_type, ekl.entity_name))
+            end
+        end
     end
     
     def run_close(wss_global)

@@ -1,4 +1,3 @@
-java_import "java.util.regex.Pattern"
 # For saving and loading key lists.
 require 'csv'
 
@@ -28,24 +27,14 @@ class EntityKeyListManager
         return @entity_key_lists[entity_name]
     end
     
-    # Returns hash of names to key list patterns that can be given to the worker item's scan_item methods.
-    def regex_hash
-        return Hash[ @entity_key_lists.values.collect { |key_list| [key_list.entity_name, key_list.pattern] }]
-    end
-    
-    # Returns a list of all entity key lists present in the item text.
-    # The key list occurs once in the list for each time it occurs in the item text.
-    def entities_in_item_text(worker_item)
-        # Uses Nuix's entity scanning to find occurrences of the keys, and uses the result to determine how many of each entity the item has.
-        return worker_item.scan_item_text(regex_hash).map{ |entity| @entity_key_lists[entity.type] }
+    # Returns a hash with the number of occurrences of each entity_key_list.
+    def entities_in_text(text)
+        result = {}
+        for ekl in @entity_key_lists.values do
+            result[ekl] = text.scan(ekl.regexp).length
+        end
+        return result
     end 
-    
-    # Returns a list of all entity key lists present in the item properties.
-    # The key list occurs once in the list for each time it occurs in the item properties.
-    def entities_in_item_properties(worker_item)
-        # Uses Nuix's entity scanning to find occurrences of the keys, and uses the result to determine how many of each entity the item has.
-        return worker_item.scan_item_properties(regex_hash).map{ |entity| @entity_key_lists[entity.type] }
-    end
     
     # Saves to a csv file.
     def save_to_file(path)
@@ -66,13 +55,13 @@ end
 
 # Represents an entity with a type and a name/value, and a key list containing the aliases of the entity.
 class EntityKeyList
-    attr_accessor :entity_type, :entity_name, :key_list, :pattern
+    attr_accessor :entity_type, :entity_name, :key_list, :regexp
 
     def initialize(entity_type, entity_name, key_list)
         @entity_type = entity_type
         @entity_name = entity_name
         @key_list = key_list
-        @pattern = Pattern.compile(key_list.join("|"))
+        @regexp = Regexp.compile("(?i)" + key_list.join("|"))
     end
     
     # Creates a string array representing the key list that can be saved to csv.
