@@ -14,11 +14,6 @@ module EntitiesFromLists
     end
     
     def run(wss_global, worker_item)
-        # Reads the relevant settings.
-        settings = wss_global.wss_settings[:entities_from_lists]
-        extract_from_text = settings[:extract_from_text]
-        extract_from_properties = settings[:extract_from_properties]
-        
         manager = wss_global.vars[:entities_from_lists_key_list_manager]
         
         text = worker_item.source_item.text.to_s
