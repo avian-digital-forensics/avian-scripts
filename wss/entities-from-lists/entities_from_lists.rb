@@ -15,9 +15,6 @@ module EntitiesFromLists
         extract_from_text = settings[:extract_from_text]
         extract_from_properties = settings[:extract_from_properties]
         
-        key_lists_yaml = settings[:key_lists]
-        
-        
         # Constructs the list of entity key lists that appear in the item.
         entity_key_lists = []
         if extract_from_text
