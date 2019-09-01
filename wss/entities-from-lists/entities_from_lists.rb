@@ -5,7 +5,7 @@ module EntitiesFromLists
         # For EntityKeyLists
         require File.join(wss_global.root_path, 'utils', 'key_list') 
         manager = EntityKeyListManager.new()
-        manager.load(wss_global.root_path, 'data', 'entity_key_lists')
+        manager.load(wss_global.root_path, 'data', 'entity_key_lists.csv')
         wss_global.vars[:entities_from_lists_key_list_manager] = manager
     end
     
