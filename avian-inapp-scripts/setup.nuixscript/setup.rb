@@ -25,18 +25,11 @@ wss_settings = YAML.load(File.read(settings_file))
 dialog = TabbedCustomDialog.new("Avian Scripts Setup")
 
 # Add WSS tab.
-wss_tab = dialog.add_tab("wss_tab", "WSS setup")
+wss_tab = dialog.add_tab("wss_tab", "WSS Setup")
 
 for script in wss_settings[:scripts]
     wss_tab.append_check_box(script[:identifier], script[:label], script[:active])
 end
-
-# Add tab for entities-from-lists
-entities_from_lists_settings = wss_settings[:entities_from_lists]
-entities_from_lists_tab = dialog.add_tab("entities_from_lists_tab", "Entities From Lists")
-
-entities_from_lists_tab.append_check_box("extract_from_text", "Extract From Text", entities_from_lists_settings[:extract_from_text])
-entities_from_lists_tab.append_check_box("extract_from_properties", "Extract From Properties", entities_from_lists_settings[:extract_from_properties])
 
 dialog.validate_before_closing do |values|
     
@@ -57,10 +50,6 @@ if dialog.get_dialog_result == true
         script[:active] = values[script[:identifier]]
     end
     
-    # Set the new settings for entities-from-lists
-    entities_from_lists_settings[:extract_from_text] = values["extract_from_text"]
-    entities_from_lists_settings[:extract_from_properties] = values["extract_from_properties"]
-    
     # Update wss_caller.rb with the new path.
     default_wss_caller_path = File.join(main_directory, "data", "default_wss_caller.rb")
     wss_caller_path = File.join(main_directory, "wss_caller.rb")
@@ -70,5 +59,9 @@ if dialog.get_dialog_result == true
     
     # Write the new settings.
     File.open(settings_file, "w") { |file| file.write(wss_settings.to_yaml) }
+    
+    # Inform user of finished script.
+    CommonDialogs.show_information("Settings succesfully saved.", "WSS Setup")
+    
     puts("Scripts finished.")
 end
