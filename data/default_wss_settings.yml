@@ -3,3 +3,9 @@
 - :identifier: fix_from_addresses
   :label: Fix From Addresses
   :active: false
+- :identifier: entities_from_lists
+  :label: Entities From Addresses
+  :active: false
+:entities_from_lists:
+  :extract_from_text: true
+  :extract_from_properties: true
