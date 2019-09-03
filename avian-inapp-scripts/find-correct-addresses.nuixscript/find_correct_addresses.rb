@@ -1,5 +1,6 @@
 require 'set'
 
+# Standard code for finding main directory.
 script_directory = File.dirname(__FILE__)
 require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
 
@@ -10,8 +11,12 @@ if not main_directory
     return
 end
 
+# For GUI messages.
 require File.join(main_directory,"utils","nx_utils")
 require File.join(main_directory,"utils","union_find")
+# For storing result.
+require File.join(main_directory,"utils","settings_utils")
+require File.join(main_directory,"utils","identifier_graph")
 
 # Returns a list of all the addresses in the communication of the item if such exists.
 def all_addresses_in_item(item)
@@ -37,39 +42,39 @@ end
 puts("Running script...")
 
 # The output directory.
-output_dir = File.join(main_directory, "data")
+output_dir = SettingsUtils::case_data_dir(main_directory, current_case)
 
 # Find all items with a communication.
-messages = currentCase.search("has-communication:1")
+messages = current_case.search("has-communication:1")
 
-puts("Found: " + messages.length.to_s + " items with communication.")
+puts("Found " + messages.length.to_s + " items with communication.")
 
-# Initialize the union find.
-identifiers = UnionFind.new([])
+identifier_graph = IdentifierGraph::IdentifierGraph.new
 
-# Add all addresses to the union find.
+# Add all addresses to the graph.
 for message in messages
     for address in all_addresses_in_item(message)
-        if address.personal
-            identifiers.add_element(address.personal)
-        end
-        if address.address
-            identifiers.add_element(address.address)
-        end
-        if address.personal and address.address # Only union the two identifiers if they both exist.
-            identifiers.union(address.personal, address.address)
-        end
+        identifier_graph.add_address(address)
     end
 end
+
+graph_file_path = File.join(output_dir, "find_correct_addresses_graph.csv")
+CSV.open(graph_file_path, "wb") do |csv|
+    identifier_graph.to_csv(csv)
+end
+
+identifiers = identifier_graph.to_union_find
 
 puts("Found " + identifiers.num_components.to_s + " unique persons.")
 
 puts("Writing output to file...")
+# Write results to file.
 output_file_path = File.join(output_dir,"find_correct_addresses_output.txt")
 file = File.open(output_file_path, 'w')
 file.puts(identifiers.to_s)
 file.close
 
-CommonDialogs.show_information("Script finished. The addresses have been written to a file.", "Find Correct Addresses")
+# Inform user of finished script.
+CommonDialogs.show_information("Script finished. Found " + identifiers.num_components.to_s + " unique persons. \nThe result has been stored and is ready for use by other scripts.", "Find Correct Addresses")
 
 puts("Script finished.")

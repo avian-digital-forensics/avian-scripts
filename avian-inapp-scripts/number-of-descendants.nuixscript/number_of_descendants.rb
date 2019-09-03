@@ -1,3 +1,4 @@
+# Standard code for finding main directory.
 script_directory = File.dirname(__FILE__)
 require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
 
@@ -8,6 +9,7 @@ if not main_directory
     return
 end
 
+# For GUI.
 require File.join(main_directory,"utils","nx_utils")
 
 gui_title = "Number of Descendants"
@@ -53,10 +55,12 @@ if dialog.getDialogResult == true
     items = current_selected_items
     puts("Processing " + current_selected_items.length.to_s + " items...")
     
+    # Add a custom metadata field to each item with the number of descendants.
     for item in items
         item.custom_metadata[metadata_key] = num_descendants(item)
     end
     
+    # Tell the user the script has finished.
     CommonDialogs.show_information("Script finished." , gui_title)
     
     puts("Script finished.")
