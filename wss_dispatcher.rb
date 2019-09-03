@@ -113,7 +113,6 @@ class WSSGlobal
         end
         @wss_settings = YAML.load(File.read(wss_settings_path))
         
-        require File.join(root_path,"utils","settings_utils")
         @case_data_path = @wss_settings[:case][:data_path]
         
         run_script_names = @wss_settings[:scripts].select{ |script| script[:active] }.map{ |script| script[:identifier] }
@@ -129,10 +128,6 @@ class WSSGlobal
             end
         end
         
-        for wss in @run_scripts
-            puts("Running: " + wss.script_name)
-        end
-        
         @vars = {}
     end
     
@@ -143,10 +138,13 @@ class WSSGlobal
 end
 
 def run_init(root_path)
+    puts('Starting WSS setup...')
     @wss_global = WSSGlobal.new(root_path).freeze
     for script in @wss_global.run_scripts
+        puts('Setting up WSS "' + script.script_name.chomp(".rb") + "'.")
         script.run_init(@wss_global)
     end
+    puts('WSS setup finished. Case name is "' + @wss_global.wss_settings[:case][:name] + '".')
 end
 
 def run(worker_item)
