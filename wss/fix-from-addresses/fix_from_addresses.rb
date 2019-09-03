@@ -139,8 +139,8 @@ module FixFromAddresses
     def run_init(wss_global)
         root_path = wss_global.root_path
         require File.join(root_path, 'utils', 'union_find')
-        data_path = File.join(root_path, 'data', 'find_correct_addresses_output.txt')
-        if not File.file?(data_path)
+        data_path = File.join(wss_global.case_data_path, 'find_correct_addresses_output.txt')
+        unless File.file?(data_path)
             STDERR.puts("Could not find data file. Did you remember to run 'Find Correct Addresses'?")
         end
         data = File.read(data_path)
@@ -163,11 +163,11 @@ module FixFromAddresses
         end
         
         
-        wss_global.vars[:fix_from_addreses_person_manager] = person_manager
+        wss_global.vars[:fix_from_addresses_person_manager] = person_manager
     end
     
     def run(wss_global, worker_item)
-        person_manager = wss_global.vars[:fix_from_addreses_person_manager]
+        person_manager = wss_global.vars[:fix_from_addresses_person_manager]
         
 		if (communication = worker_item.source_item.communication).nil? or communication.from.nil? or communication.from.length == 0
 			return # If the item has no from, it has no from to fix.
