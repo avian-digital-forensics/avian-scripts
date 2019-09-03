@@ -17,7 +17,7 @@ class UnionFind
     end
     
     def add_element(element)
-        raise ArgumentError, 'Element may not be nil.' unless not element.nil?
+        raise ArgumentError, 'Element may not be nil.' if element.nil?
         if @elements.add?(element)
             @parent[element] = element
             @tree_size[element] = 1
