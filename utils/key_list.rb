@@ -11,7 +11,7 @@ class EntityKeyListManager
     # Add an EntityKeyList.
     # The entity_name must be unique.
     def add(entity_key_list)
-        raise ArgumentError, 'Already contains entity key list with same name.' unless not @entity_key_lists.key?(entity_key_list.entity_name)
+        raise ArgumentError, 'Already contains entity key list with same name.' if @entity_key_lists.key?(entity_key_list.entity_name)
         @entity_key_lists[entity_key_list.entity_name] = entity_key_list
     end
     

@@ -5,7 +5,7 @@ require File.join(script_directory,"get_main_directory")
 
 main_directory = get_main_directory(false)
 
-if not main_directory
+unless main_directory
     puts("Script cancelled.")
     return
 end
@@ -16,7 +16,7 @@ require File.join(main_directory, 'utils', 'nx_utils')
 settings_file = File.join(main_directory, 'data', 'wss_settings.yml')
 
 # If the settings file does not exist, create it from defaults.
-if not File.file?(settings_file)
+unless File.file?(settings_file)
     FileUtils.cp(File.join(main_directory, 'data', 'default_wss_settings.yml'), settings_file)
 end
 

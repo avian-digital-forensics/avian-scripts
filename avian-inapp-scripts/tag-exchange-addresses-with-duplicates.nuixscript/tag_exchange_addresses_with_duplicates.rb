@@ -6,7 +6,7 @@ require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
 
 main_directory = get_main_directory(false)
 
-if not main_directory
+unless main_directory
     puts("Script cancelled.")
     return
 end
@@ -35,7 +35,7 @@ main_tab.getControl("has_archived_duplicate_metadata_name").setToolTipText("All 
 # Checks the input before closing the dialog.
 dialog.validateBeforeClosing do |values|
     # Make sure primary address is not empty.
-    if not (NXUtils.assert_non_empty_field(values, "store_a_prefix", "exchange server email prefix") and 
+    unless (NXUtils.assert_non_empty_field(values, "store_a_prefix", "exchange server email prefix") and 
             NXUtils.assert_non_empty_field(values, "store_a_tag", "exchange server email tag") and 
             NXUtils.assert_non_empty_field(values, "has_archived_duplicate_metadata_name", "has archived duplicate")
         next false

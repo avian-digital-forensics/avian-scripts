@@ -82,7 +82,7 @@ module FixFromAddresses
         end
         
         def add_identifier(identifier)
-            raise ArgumentError, 'Identifier may not be nil.' unless not identifier.nil?
+            raise ArgumentError, 'Identifier may not be nil.' if identifier.nil?
             if @identifiers.add?(identifier) and email_address?(identifier)
                 @email_addresses.add(identifier)
             end
@@ -149,7 +149,7 @@ module FixFromAddresses
             persons = {}
             for identifier in union.elements
                 representative = union.representative(identifier)
-                if not persons.has_key?(representative)
+                unless persons.has_key?(representative)
                     persons[representative] = Person.new
                 end
                 persons[representative].add_identifier(identifier)

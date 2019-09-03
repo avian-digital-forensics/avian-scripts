@@ -4,7 +4,7 @@ require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
 
 main_directory = get_main_directory(false)
 
-if not main_directory
+unless main_directory
     puts("Script cancelled.")
     return
 end
@@ -27,7 +27,7 @@ main_tab.getControl("metadata_key").setToolTipText("The metadata field items rec
 # Checks the input before closing the dialog.
 dialog.validateBeforeClosing do |values|
     
-    if not NXUtils.assert_non_empty_field(values, "metadata_key", "custom metadata name")
+    unless NXUtils.assert_non_empty_field(values, "metadata_key", "custom metadata name")
         next false
     end
     
