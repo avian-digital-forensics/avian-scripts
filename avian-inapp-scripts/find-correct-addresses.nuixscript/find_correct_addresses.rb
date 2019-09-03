@@ -16,6 +16,7 @@ require File.join(main_directory,"utils","nx_utils")
 require File.join(main_directory,"utils","union_find")
 # For storing result.
 require File.join(main_directory,"utils","settings_utils")
+require File.join(main_directory,"utils","identifier_graph")
 
 # Returns a list of all the addresses in the communication of the item if such exists.
 def all_addresses_in_item(item)
@@ -48,23 +49,21 @@ messages = current_case.search("has-communication:1")
 
 puts("Found " + messages.length.to_s + " items with communication.")
 
-# Initialize the union find.
-identifiers = UnionFind.new([])
+identifier_graph = IdentifierGraph::IdentifierGraph.new
 
-# Add all addresses to the union find.
+# Add all addresses to the graph.
 for message in messages
     for address in all_addresses_in_item(message)
-        if address.personal
-            identifiers.add_element(address.personal)
-        end
-        if address.address
-            identifiers.add_element(address.address)
-        end
-        if address.personal and address.address # Only union the two identifiers if they both exist.
-            identifiers.union(address.personal, address.address)
-        end
+        identifier_graph.add_address(address)
     end
 end
+
+graph_file_path = File.join(output_dir, "find_correct_addresses_graph.csv")
+CSV.open(graph_file_path, "wb") do |csv|
+    identifier_graph.to_csv(csv)
+end
+
+identifiers = identifier_graph.to_union_find
 
 puts("Found " + identifiers.num_components.to_s + " unique persons.")
 
