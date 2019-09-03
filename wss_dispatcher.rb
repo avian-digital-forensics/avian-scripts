@@ -90,6 +90,8 @@ end
 class WSSGlobal
     # The avian scripts root directory.
     attr_reader :root_path
+    # The directory for current-case-specific data.
+    attr_reader :case_data_path
     # The objects representing all available scripts.
     attr_reader :available_scripts
     # The scripts that will be run.
@@ -110,6 +112,9 @@ class WSSGlobal
             STDERR.puts("Could not find Avian scripts WSS settings file. Have you remembered to run 'Setup WSS's?")
         end
         @wss_settings = YAML.load(File.read(wss_settings_path))
+        
+        require File.join(root_path,"utils","settings_utils")
+        @case_data_path = @wss_settings[:case][:data_path]
         
         run_script_names = @wss_settings[:scripts].select{ |script| script[:active] }.map{ |script| script[:identifier] }
         
