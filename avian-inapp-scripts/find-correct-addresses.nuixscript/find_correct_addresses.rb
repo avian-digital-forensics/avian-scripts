@@ -41,7 +41,7 @@ end
 puts("Running script...")
 
 # The output directory.
-output_dir = SettingsUtils.case_data_dir(main_directory, current_case)
+output_dir = SettingsUtils::case_data_dir(main_directory, current_case)
 
 # Find all items with a communication.
 messages = current_case.search("has-communication:1")
