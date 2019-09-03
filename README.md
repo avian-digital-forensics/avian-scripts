@@ -66,7 +66,6 @@ Choose ruby.
 8. Load the data, and the scripts you selected in step 2 should run.
 
 Note: Steps 5 through 7 are only necessary the first time, or if the 'Worker Script' tab has been changed.
-This means that for the most part, you only need to run the 'Setup' script to select the scripts you want to run.
 
 For details on a specific WSS please read the pertaining readme.
 
