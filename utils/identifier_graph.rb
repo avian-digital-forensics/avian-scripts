@@ -75,7 +75,7 @@ module IdentifierGraph
         end
         
         def to_union_find
-            union_find = UnionFind.new(@graph.keys)
+            union_find = UnionFind::UnionFind.new(@graph.keys)
             for identifier,values in @graph
                 for connection in values
                     union_find.union(identifier, connection)
