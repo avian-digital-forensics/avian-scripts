@@ -1,5 +1,6 @@
 require 'java'
 require 'json'
+require 'csv'
 java_import 'nuix.Address'
 java_import 'nuix.Communication'
 
@@ -142,8 +143,10 @@ module FixFromAddresses
         data_path = File.join(wss_global.case_data_path, 'find_correct_addresses_output.txt')
         if File.file?(data_path)
             data = File.read(data_path)
-            union = UnionFind.new([])
-            union.load(data)
+            union = UnionFind::UnionFind.new([])
+            CSV.foreach("path/to/file.csv", **options) do |row|
+                union.load_csv_row(row)
+            end
             
             # Create persons from the components in the union find.
             persons = {}
