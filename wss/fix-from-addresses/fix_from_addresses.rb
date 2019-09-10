@@ -142,15 +142,14 @@ module FixFromAddresses
         require File.join(root_path, 'utils', 'union_find')
         data_path = File.join(wss_global.case_data_path, 'find_correct_addresses_output.txt')
         if File.file?(data_path)
-            data = File.read(data_path)
             union = UnionFind::UnionFind.new([])
-            CSV.foreach("path/to/file.csv", **options) do |row|
+            CSV.foreach(data_path, "r") do |row|
                 union.load_csv_row(row)
             end
             
             # Create persons from the components in the union find.
             persons = {}
-            for identifier in union.elements
+            for identifier in union
                 representative = union.representative(identifier)
                 unless persons.has_key?(representative)
                     persons[representative] = Person.new
