@@ -73,9 +73,22 @@ if dialog.getDialogResult == true
         return email.properties["Mapi-Smtp-Message-Id"]
     end
     
+    puts("Finding exchange server emails...")
     # Tag all exchange server emails.
-    for email in current_case.search('kind:email AND content:"' + store_a_prefix + '"')
+    store_a_items = current_case.search('kind:email AND content:"' + store_a_prefix + '"')
+    store_a_size = store_a_items.length
+    one_percent = (store_a_size/100).floor
+    puts(one_percent.to_s)
+    cur_count = 0
+    for email in store_a_items
         email.add_tag(store_a_tag)
+        cur_count += 1
+        if cur_count % one_percent == 0
+            percent = cur_count / one_percent
+            if percent % 5 == 0
+                puts(percent.to_s + "%")
+            end
+        end
     end
     
     # All ID's used by archived emails.
