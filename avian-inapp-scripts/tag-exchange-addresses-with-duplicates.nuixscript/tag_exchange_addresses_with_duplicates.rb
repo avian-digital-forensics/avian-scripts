@@ -15,7 +15,10 @@ end
 require File.join(main_directory,"utils","nx_utils")
 
 
-dialog = NXUtils.create_dialog("Tag Exchange Addresses with Duplicates")
+## Setup GUI.
+gui_title = "Tag Exchange Addresses with Duplicates"
+
+dialog = NXUtils.create_dialog(gui_title)
 
 # Add main tab.
 main_tab = dialog.addTab("main_tab", "Main")
@@ -35,7 +38,7 @@ main_tab.getControl("has_archived_duplicate_metadata_name").setToolTipText("All 
 # Checks the input before closing the dialog.
 dialog.validateBeforeClosing do |values|
     # Make sure primary address is not empty.
-    unless (NXUtils.assert_non_empty_field(values, "store_a_prefix", "exchange server email prefix") and 
+    unless NXUtils.assert_non_empty_field(values, "store_a_prefix", "exchange server email prefix") and 
             NXUtils.assert_non_empty_field(values, "store_a_tag", "exchange server email tag") and 
             NXUtils.assert_non_empty_field(values, "has_archived_duplicate_metadata_name", "has archived duplicate")
         next false
@@ -90,11 +93,17 @@ if dialog.getDialogResult == true
         end
     end
     
-    puts("Exchange server emails without an archived duplicate: " + num_without_duplicate.to_s)
-    puts("They have been a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.")
+    # Tell the user if emails without archived duplicates were found.
+    if num_without_duplicate > 0
+        puts("Exchange server emails without an archived duplicate: " + num_without_duplicate.to_s)
+        puts("They have been a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.")
+        CommonDialogs.show_information("A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found.")
+    end
     
     # Tell the user the script has finished.
-    CommonDialogs.show_information("Script finished. A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found. They have been a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.", "Tag Exchange Addresses with Duplicates")
+    CommonDialogs.show_information("Script finished.", gui_title)
     
     puts("Script finished.")
+else
+    puts("Script cancelled.")
 end
