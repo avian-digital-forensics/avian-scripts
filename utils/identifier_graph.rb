@@ -70,6 +70,7 @@ module IdentifierGraph
         end
         
         # Loads a single CSV row into the graph.
+        # Meant to be used in conjunction with CSV methods like CSV.foreach("path/to/file.csv", **options) do |row|
         def load_csv_row(csv_row)
             add_identifier(csv_row[0], csv_row[1..-1])
         end
