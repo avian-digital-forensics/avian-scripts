@@ -4,7 +4,7 @@ module EntitiesFromLists
     def run_init(wss_global)
         # For EntityKeyLists
         require File.join(wss_global.root_path, 'utils', 'key_list') 
-        manager = EntityKeyListManager.new()
+        manager = EntityKeyList::EntityKeyListManager.new()
         key_lists_path = File.join(wss_global.root_path, 'data', 'entity_key_lists.csv')
         unless File.exist?(key_lists_path)
             raise "No key list file. Cannot run script"
