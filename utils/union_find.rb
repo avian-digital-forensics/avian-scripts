@@ -98,7 +98,7 @@ module UnionFind
         end
         
         # Loads a single row of CSV data into the union find.
-        # Meant to be used in conjunction with CSV methods like CSV.foreach("path/to/file.csv", **options) do |row|
+        # Meant to be used in conjunction with CSV methods like CSV.foreach("path/to/file.csv", "wb") do |row|
         def load_csv_row(csv_row)
             add_elements(csv_row)
             for element in csv_row[1..-1]
