@@ -1,10 +1,5 @@
 require 'yaml'
 
-SCRIPT_PATHS = [ # The available scripts. Add new scripts here.
-        "WSS/fix-from-addresses/fix_from_addresses.rb",
-        "WSS/entities-from-lists/entities_from_lists.rb"
-].freeze
-
 # Represents a worker side script.
 # Contains information about the file path and aliases.
 class WSS
@@ -104,9 +99,6 @@ class WSSGlobal
     def initialize(root_path)
         @root_path = root_path
         
-        # Create WSSs from all script paths.
-        @available_scripts = SCRIPT_PATHS.map{ |script_path| WSS.new(root_path, script_path) }
-        
         wss_settings_path = File.join(root_path, "data", "wss_settings.yml")
         unless File.file?(wss_settings_path)
             STDERR.puts("Could not find Avian scripts WSS settings file. Have you remembered to run 'Setup WSS's?")
@@ -114,6 +106,9 @@ class WSSGlobal
         @wss_settings = YAML.load(File.read(wss_settings_path))
         
         @case_data_path = @wss_settings[:case][:data_path]
+        
+        # Create WSSs from all script paths.
+        @available_scripts = @wss_settings[:scripts].map{ |script| WSS.new(root_path, script[:path])
         
         run_script_names = @wss_settings[:scripts].select{ |script| script[:active] }.map{ |script| script[:identifier] }
         
