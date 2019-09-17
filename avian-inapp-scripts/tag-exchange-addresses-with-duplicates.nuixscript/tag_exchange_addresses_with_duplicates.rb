@@ -13,6 +13,7 @@ end
 
 # For GUI.
 require File.join(main_directory,"utils","nx_utils")
+require File.join(main_directory,"utils","timer")
 
 
 ## Setup GUI.
@@ -55,6 +56,9 @@ dialog.display
 if dialog.getDialogResult == true
     puts("Running script...")
     
+    timer = Timer::Timer.new
+    timer.start("total")
+    
     # values contains the information the user inputted.
     values = dialog.toMap
     
@@ -74,6 +78,7 @@ if dialog.getDialogResult == true
     end
     
     puts("Finding exchange server emails...")
+    timer.start("find_store_a")
     # Tag all exchange server emails.
     store_a_items = current_case.search('kind:email AND content:"' + store_a_prefix + '"')
     store_a_size = store_a_items.length
@@ -90,8 +95,10 @@ if dialog.getDialogResult == true
             end
         end
     end
+    timer.stop("find_store_a")
     
     # All ID's used by archived emails.
+    timer.start
     archive_id_set = Set.new(current_case.search('kind:email AND NOT tag:' + store_a_prefix)){ |archived_email| find_email_id(archived_email) }
     
     num_without_duplicate = 0
@@ -112,6 +119,7 @@ if dialog.getDialogResult == true
         puts("They have been a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.")
         CommonDialogs.show_information("A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found.")
     end
+    timer.stop("total")
     
     # Tell the user the script has finished.
     CommonDialogs.show_information("Script finished.", gui_title)
