@@ -4,7 +4,7 @@ require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
 
 main_directory = get_main_directory(false)
 
-if not main_directory
+unless main_directory
     puts("Script cancelled.")
     return
 end
@@ -62,7 +62,7 @@ end
 
 dialog.display
 
-if dialog.getDialogResult == true
+if dialog.getDialogResult
     puts("Running script...")
     values = dialog.toMap
     
@@ -71,7 +71,7 @@ if dialog.getDialogResult == true
 
     # The output path.
     file_path = values["output_path"]
-    if !file_path.end_with?(".csv")
+    unless file_path.end_with?(".csv")
         file_path += ".csv"
     end
 
@@ -192,7 +192,7 @@ if dialog.getDialogResult == true
         private
             # Adds a new recipient with the address if none exists.
             def add_if_missing(address)
-                if !@recipients.key?(address)
+                unless @recipients.key?(address)
                     @recipients[address] = Recipient.new(address)
                 end
             end

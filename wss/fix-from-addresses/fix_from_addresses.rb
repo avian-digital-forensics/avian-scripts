@@ -1,5 +1,6 @@
 require 'java'
 require 'json'
+require 'csv'
 java_import 'nuix.Address'
 java_import 'nuix.Communication'
 
@@ -82,7 +83,7 @@ module FixFromAddresses
         end
         
         def add_identifier(identifier)
-            raise ArgumentError, 'Identifier may not be nil.' unless not identifier.nil?
+            raise ArgumentError, 'Identifier may not be nil.' if identifier.nil?
             if @identifiers.add?(identifier) and email_address?(identifier)
                 @email_addresses.add(identifier)
             end
@@ -141,15 +142,16 @@ module FixFromAddresses
         require File.join(root_path, 'utils', 'union_find')
         data_path = File.join(wss_global.case_data_path, 'find_correct_addresses_output.txt')
         if File.file?(data_path)
-            data = File.read(data_path)
-            union = UnionFind.new([])
-            union.load(data)
+            union = UnionFind::UnionFind.new([])
+            CSV.foreach(data_path, "r") do |row|
+                union.load_csv_row(row)
+            end
             
             # Create persons from the components in the union find.
             persons = {}
-            for identifier in union.elements
+            for identifier in union
                 representative = union.representative(identifier)
-                if not persons.has_key?(representative)
+                unless persons.has_key?(representative)
                     persons[representative] = Person.new
                 end
                 persons[representative].add_identifier(identifier)

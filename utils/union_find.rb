@@ -1,144 +1,133 @@
 require 'set'
+require 'csv'
 
-# Implements the union find data structure.
-class UnionFind
-    def initialize(elements)
-        @elements = Set[]
-        @parent = {}
-        @tree_size = {}
-        @num_components = 0
-        for element in elements
-            add_element(element)
+module UnionFind
+    # Implements the union find data structure.
+    class UnionFind
+        include Enumerable
+        
+        def initialize(elements)
+            @elements = Set[]
+            @parent = {}
+            @tree_size = {}
+            @num_components = 0
+            for element in elements
+                add_element(element)
+            end
         end
-    end
-    
-    def elements
-        @elements
-    end
-    
-    def add_element(element)
-        raise ArgumentError, 'Element may not be nil.' if element.nil?
-        if @elements.add?(element)
-            @parent[element] = element
-            @tree_size[element] = 1
-            @num_components += 1
-        end
-        return element
-    end
-    
-    def add_elements(elements)
-        for element in elements
-            add_element(element)
-        end
-    end
-    
-    def num_elements
-        @elements.length
-    end
-    
-    def num_components
-        @num_components
-    end
-    
-    def representative(element)
-        raise IndexError, 'Element does not exist.' unless @elements.include?(element)
-        if @parent[element] == element
+        
+        # Adds the specified element to the union find.
+        def add_element(element)
+            raise ArgumentError, 'Element may not be nil.' if element.nil?
+            if @elements.add?(element)
+                @parent[element] = element
+                @tree_size[element] = 1
+                @num_components += 1
+            end
             return element
         end
-        @parent[element] = representative(@parent[element])
-        return @parent[element]
-    end
-    
-    def connected?(element1, element2)
-        raise IndexError, 'Element1 does not exist.' unless @elements.include?(element1)
-        raise IndexError, 'Element2 does not exist.' unless @elements.include?(element2)
-        representative(element1) == representative(element2)
-    end
-    
-    # Connects the two elements.
-    # If the elements have equal size trees, connect element 2 to element 1.
-    def union(element1, element2)
-        raise IndexError, 'Element1 does not exist.' unless @elements.include?(element1)
-        raise IndexError, 'Element2 does not exist.' unless @elements.include?(element2)
-        rep1 = representative(element1)
-        rep2 = representative(element2)
         
-        if rep1 == rep2
-            return nil
-        end
-        
-        @num_components -= 1
-        
-        if @tree_size[rep1] >= @tree_size[rep2]
-            @tree_size[rep1] += @tree_size[rep2]
-            @parent[rep2] = rep1
-            return rep1
-        else
-            @tree_size[rep2] += @tree_size[rep1]
-            @parent[rep1] = rep2
-            return rep2
-        end
-    end
-    
-    # Creates a string representation of the union find with the representatives in the first column.
-    def to_s
-        components = {}
-        for element in elements.select
-            if components.key?(representative(element))
-                if representative(element) != element
-                    components[representative(element)] << element
-                end
-            else
-                if representative(element) != element
-                    components[representative(element)] = [element]
-                else
-                    components[representative(element)] = []
-                end
-            end
-        end
-        result = ""
-        for rep in components.keys
-            result << components[rep].reduce(prepare_for_save(rep)){ |total, element| total + ',' + prepare_for_save(element) } + ";"
-        end
-        return result.chomp(";")
-    end
-    
-    # Adds all the information in the string to the union.
-    def load(file)
-        file.chomp!("\n")
-        component_strings = split_to_strings(file, ';')
-        for component_string in component_strings
-            load_component(component_string)
-        end
-    end
-    
-    private
-        def prepare_for_save(element)
-            return '"' + element.gsub('"', '""') + '"'
-        end
-        
-        def load_component(component_string)
-            component_array = split_to_strings(component_string, ',').map{ |component| component[1..-2].gsub('""', '"') }
-            
-            for element in component_array
+        # Adds all the specified elements to the union find.
+        # Equivalent to calling add_element for every element.
+        def add_elements(elements)
+            for element in elements
                 add_element(element)
-                union(component_array[0], element)
             end
         end
         
-        def split_to_strings(string, seperator)
-            strings = [] 
-            index = 0
-            string_start = 0
-            while index = string.index('"' + seperator + '"', index + 1)
-                if string[index - 1] == '"'
-                    next
+        # The current number of elements in the union find.
+        def num_elements
+            @elements.length
+        end
+        
+        # The current number of unconnected components in the union find.
+        def num_components
+            @num_components
+        end
+        
+        # Returns the representative of the specified element.
+        # Fails if the element is not in the union find.
+        def representative(element)
+            raise IndexError, 'Element does not exist.' unless @elements.include?(element)
+            if @parent[element] == element
+                return element
+            end
+            @parent[element] = representative(@parent[element])
+            return @parent[element]
+        end
+        
+        # Whether the two elements are connected.
+        def connected?(element1, element2)
+            raise IndexError, 'Element1 does not exist.' unless @elements.include?(element1)
+            raise IndexError, 'Element2 does not exist.' unless @elements.include?(element2)
+            representative(element1) == representative(element2)
+        end
+        
+        # Connects the two elements.
+        # If the elements have equal size trees, connect element 2 to element 1.
+        def union(element1, element2)
+            raise IndexError, 'Element1 does not exist.' unless @elements.include?(element1)
+            raise IndexError, 'Element2 does not exist.' unless @elements.include?(element2)
+            rep1 = representative(element1)
+            rep2 = representative(element2)
+            
+            if rep1 == rep2
+                return nil
+            end
+            
+            @num_components -= 1
+            
+            if @tree_size[rep1] >= @tree_size[rep2]
+                @tree_size[rep1] += @tree_size[rep2]
+                @parent[rep2] = rep1
+                return rep1
+            else
+                @tree_size[rep2] += @tree_size[rep1]
+                @parent[rep1] = rep2
+                return rep2
+            end
+        end
+            
+        # Writes the union find to the specified CSV object to be loaded at a later point.
+        # Meant to be used in conjunction with CSV methods like CSV.open("path/to/file.csv", "wb") do |csv|
+        def to_csv(csv)
+            components = to_component_hash
+            for representative,elements in components
+                csv << [representative] + elements.to_a
+            end
+        end
+        
+        # Loads a single row of CSV data into the union find.
+        # Meant to be used in conjunction with CSV methods like CSV.foreach("path/to/file.csv", "r") do |row|
+        def load_csv_row(csv_row)
+            add_elements(csv_row)
+            for element in csv_row[1..-1]
+                union(csv_row[0],element)
+            end
+        end
+        
+        # Returns a hash with representatives as keys and lists of the elements they are representatives for as values.
+        def to_component_hash
+            components = {}
+            for element in @elements
+                if components.key?(representative(element))
+                    if representative(element) != element
+                        components[representative(element)] << element
+                    end
                 else
-                    strings << string[string_start..index]
-                    string_start = index + 2
+                    if representative(element) != element
+                        components[representative(element)] = [element]
+                    else
+                        components[representative(element)] = []
+                    end
                 end
             end
-            strings << string[string_start..-1]
-            return strings
+            return components
         end
+        
+        # Implements Enumerable.each
+        def each(&block)
+            @elements.each{ |element| block.call(element) }
+        end
+    end
 end

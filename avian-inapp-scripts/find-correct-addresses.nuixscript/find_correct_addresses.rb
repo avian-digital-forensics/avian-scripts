@@ -1,4 +1,5 @@
 require 'set'
+require 'csv'
 
 # Standard code for finding main directory.
 script_directory = File.dirname(__FILE__)
@@ -6,7 +7,7 @@ require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
 
 main_directory = get_main_directory(false)
 
-if not main_directory
+unless main_directory
     puts("Script cancelled.")
     return
 end
@@ -70,9 +71,9 @@ puts("Found " + identifiers.num_components.to_s + " unique persons.")
 puts("Writing output to file...")
 # Write results to file.
 output_file_path = File.join(output_dir,"find_correct_addresses_output.txt")
-file = File.open(output_file_path, 'w')
-file.puts(identifiers.to_s)
-file.close
+CSV.open(output_file_path, 'wb') do |csv|
+    identifiers.to_csv(csv)
+end
 
 # Inform user of finished script.
 CommonDialogs.show_information("Script finished. Found " + identifiers.num_components.to_s + " unique persons. \nThe result has been stored and is ready for use by other scripts.", "Find Correct Addresses")

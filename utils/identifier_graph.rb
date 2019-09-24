@@ -70,12 +70,13 @@ module IdentifierGraph
         end
         
         # Loads a single CSV row into the graph.
+        # Meant to be used in conjunction with CSV methods like CSV.foreach("path/to/file.csv", "r") do |row|
         def load_csv_row(csv_row)
             add_identifier(csv_row[0], csv_row[1..-1])
         end
         
         def to_union_find
-            union_find = UnionFind.new(@graph.keys)
+            union_find = UnionFind::UnionFind.new(@graph.keys)
             for identifier,values in @graph
                 for connection in values
                     union_find.union(identifier, connection)

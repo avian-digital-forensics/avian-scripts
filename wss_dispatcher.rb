@@ -108,7 +108,7 @@ class WSSGlobal
         @available_scripts = SCRIPT_PATHS.map{ |script_path| WSS.new(root_path, script_path) }
         
         wss_settings_path = File.join(root_path, "data", "wss_settings.yml")
-        if not File.file?(wss_settings_path)
+        unless File.file?(wss_settings_path)
             STDERR.puts("Could not find Avian scripts WSS settings file. Have you remembered to run 'Setup WSS's?")
         end
         @wss_settings = YAML.load(File.read(wss_settings_path))
