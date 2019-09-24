@@ -108,7 +108,7 @@ class WSSGlobal
         @case_data_path = @wss_settings[:case][:data_path]
         
         # Create WSSs from all script paths.
-        @available_scripts = @wss_settings[:scripts].map{ |script| WSS.new(root_path, script[:path])
+        @available_scripts = @wss_settings[:scripts].map{ |script| WSS.new(root_path, script[:path]) }
         
         run_script_names = @wss_settings[:scripts].select{ |script| script[:active] }.map{ |script| script[:identifier] }
         
