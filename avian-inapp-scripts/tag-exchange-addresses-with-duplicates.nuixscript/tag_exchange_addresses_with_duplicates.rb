@@ -60,7 +60,7 @@ if dialog.getDialogResult == true
     
     timer.start("total")
     runs = 0
-    while timer.total_time("total") < 60
+    while timer.total_time("total") < 10
         runs += 1
         # values contains the information the user inputted.
         values = dialog.toMap
@@ -84,19 +84,8 @@ if dialog.getDialogResult == true
         timer.start("find_store_a")
         # Tag all exchange server emails.
         store_a_items = current_case.search('kind:email AND content:"' + store_a_prefix + '"')
-        store_a_size = store_a_items.length
-        one_percent = (store_a_size/100).floor
-        puts(one_percent.to_s)
-        cur_count = 0
         for email in store_a_items
             email.add_tag(store_a_tag)
-            cur_count += 1
-            if cur_count % one_percent == 0
-                percent = cur_count / one_percent
-                if percent % 5 == 0
-                    puts(percent.to_s + "%")
-                end
-            end
         end
         timer.stop("find_store_a")
         
@@ -120,10 +109,10 @@ if dialog.getDialogResult == true
         timer.stop("has_duplicate")
     end
     puts("Timings:")
-    puts("    total: " + Timer::seconds_to_string(timer.total_time("total")/runs))
-    puts("    find_store_a: " + Timer::seconds_to_string(timer.total_time("find_store_a")/runs))
-    puts("    non_store_a_search: " + Timer::seconds_to_string(timer.total_time("non_store_a_search")/runs))
-    puts("    has_duplicate: " + Timer::seconds_to_string(timer.total_time("has_duplicate")/runs))
+    puts("    total: " + Timer.seconds_to_string(timer.total_time("total")/runs))
+    puts("    find_store_a: " + Timer.seconds_to_string(timer.total_time("find_store_a")/runs))
+    puts("    non_store_a_search: " + Timer.seconds_to_string(timer.total_time("non_store_a_search")/runs))
+    puts("    has_duplicate: " + Timer.seconds_to_string(timer.total_time("has_duplicate")/runs))
     
     # Tell the user if emails without archived duplicates were found.
     if num_without_duplicate > 0
