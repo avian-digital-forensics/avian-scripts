@@ -97,17 +97,23 @@ module Timer
         end
     end
     
+    # Round down to nearest whole number.
+    # Not a great way of doing it, but simple.
+    def self.round_down(x)
+        x.to_i
+    end
+    
     # Takes a time span in seconds and returns hours, minutes, and seconds.
-    def hours_and_minutes_from_seconds(total_seconds)
+    def self.hours_and_minutes_from_seconds(total_seconds)
         hours = round_down(total_seconds / (60 * 60))
         minutes = round_down(total_seconds / 60) % 60
-        seconds = round_down(total_seconds % 60)
-        return hours.to_s.split('.')[0], minutes.to_s.split('.')[0], seconds.to_s.split('.')[0]
+        seconds = total_seconds % 60
+        return hours, minutes, seconds
     end
 
     # Returns a human readable string representation of the given time interval.
-    def seconds_to_string(seconds)
+    def self.seconds_to_string(seconds)
         hours, minutes, seconds = hours_and_minutes_from_seconds(seconds)
-        return hours + "h" + minutes + "m" + seconds + "s"
+        return hours.to_s + "h" + minutes.to_s + "m" + seconds.round(3).to_s + "s"
     end
 end
