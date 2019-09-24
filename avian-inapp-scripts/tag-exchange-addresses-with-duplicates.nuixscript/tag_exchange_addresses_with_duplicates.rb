@@ -120,6 +120,7 @@ if dialog.getDialogResult == true
         puts("They have been a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.")
         CommonDialogs.show_information("A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found.")
     end
+    timer.stop("total")
     
     timer.stop("total")
     
