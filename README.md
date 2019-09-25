@@ -1,11 +1,11 @@
 # Avian Scripts
-Version 0.5.3
+Version 0.5.4
 
 A collection of all scripts for Nuix created by Avian.
 
 ## Setup
-1. Use this link to get the newest version of the repository:
-https://github.com/avian-digital-forensics/avian-scripts/archive/release.zip
+1. Download the newest version of the repository here:
+https://github.com/avian-digital-forensics/avian-scripts/releases/latest
 
 2. Unpack the contents to an empty directory.
 

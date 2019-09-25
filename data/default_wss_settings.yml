@@ -2,7 +2,9 @@
 :scripts:
 - :identifier: fix_from_addresses
   :label: Fix From Addresses
+  :path: wss/fix-from-addresses/fix_from_addresses.rb
   :active: false
 - :identifier: entities_from_lists
   :label: Entities From Addresses
+  :path: wss/entities-from-lists/entities_from_lists.rb
   :active: false
