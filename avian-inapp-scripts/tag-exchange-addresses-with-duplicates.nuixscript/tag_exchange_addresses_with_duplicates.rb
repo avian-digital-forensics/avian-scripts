@@ -77,7 +77,7 @@ if dialog.dialog_result == true
     while runs == 0
         runs += 1
         # values contains the information the user inputted.
-        values = dialog.toMap
+        values = dialog.to_map
         
         # If item text starts with this, the item is from store A.
         store_a_prefix = values["store_a_prefix"]
