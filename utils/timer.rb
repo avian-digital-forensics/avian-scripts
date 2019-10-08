@@ -33,7 +33,7 @@ module Timing
             @timers[stop_watch_name].reset
         end
         
-        def print_timings(stop_watch_names, runs=1)
+        def print_timings(stop_watch_names: [], runs: 1)
             if stop_watch_names.empty? and not all_timers.empty?
                 print_timings(all_timers)
             else
