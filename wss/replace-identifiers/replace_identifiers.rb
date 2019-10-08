@@ -1,86 +1,15 @@
 require 'java'
 require 'json'
 require 'csv'
-java_import 'nuix.Address'
-java_import 'nuix.Communication'
+
+require File.join("..", "..", "utils", "custom_communication")
 
 module ReplaceIdentifiers
     extend self
     
-    class SimpleAddress
-		include Address
-        
-        attr_accessor :personal, :address
-
-		def initialize(address)
-			@personal = address.personal
-			@address = address.address
-		end
-
-		def getPersonal
-			@personal
-		end
-
-		def getAddress
-			@address
-		end
-		
-		def setAddress(address)
-			@address = address
-		end
-
-		def getType
-			"internet-mail"
-		end
-
-		def toRfc822String
-			@address
-		end
-
-		def toDisplayString
-			@address
-		end
-
-		def equals(address)
-			address == @address
-		end
-	end
-
-	class SimpleCommunication
-		include Communication
-        attr_accessor :date_time, :from_addresses, :to_addresses, :cc_addresses, :bcc_addresses
-
-		def initialize(communication)
-			@date_time = communication.date_time
-			@from_addresses = if communication.from then communication.from else [] end
-			@to_addresses = if communication.to then communication.to else [] end
-			@cc_addresses = if communication.cc then communication.cc else [] end
-			@bcc_addresses = if communication.bcc then communication.bcc else [] end
-		end
-
-		def getDateTime
-			@date_time
-		end
-		def getFrom
-			@from_addresses
-		end
-		def set_from(from_addresses)
-			@from_addresses = from_addresses
-		end
-		def getTo
-			@to_addresses
-		end
-		def getCc
-			@cc_addresses
-		end
-		def getBcc
-			@bcc_addresses
-		end
-	end
-    
     # Returns the given address with address and personal part replaced if appropriate.
     def update_address(replace_identifiers_hash, address)
-        result = SimpleAddress.new(address)
+        result = Custom::CustomAddress.new(address)
         if result.address and replace_identifiers_hash.key?(result.address)
             result.address = replace_identifiers_hash[result.address]
         end
@@ -97,7 +26,7 @@ module ReplaceIdentifiers
    
     # Returns a communcation with all identifiers updated.
     def update_communication(replace_identifiers_hash, communication)
-        com = SimpleCommunication.new(communication)
+        com = Custom::CustomCommunication.new(communication)
         com.from_addresses = update_address_list(replace_identifiers_hash, com.from_addresses)
         com.to_addresses = update_address_list(replace_identifiers_hash, com.to_addresses)
         com.cc_addresses = update_address_list(replace_identifiers_hash, com.cc_addresses)
@@ -125,7 +54,7 @@ module ReplaceIdentifiers
         replace_identifiers_hash = wss_global.vars[:replace_identifiers_hash]
         
         # Create a communication object.
-        com = SimpleCommunication.new(communication)
+        com = Custom::CustomCommunication.new(communication)
         # Replace identifiers in communication object.
         com = update_communication(replace_identifiers_hash, com)
         # Set the items communication object.
