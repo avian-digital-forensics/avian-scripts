@@ -73,7 +73,7 @@ dialog.display
 if dialog.dialog_result == true
     Utils.print_progress("Running script...")
     
-    timer = Timer::Timer.new
+    timer = Timing::Timer.new
     
     timer.start("total")
     runs = 0
@@ -134,12 +134,7 @@ if dialog.dialog_result == true
         timer.stop("has_duplicate")
     end
 
-    puts("Timings:")
-    puts("    total: " + Timer.seconds_to_string(timer.total_time("total")/runs))
-    puts("    find_store_a: " + Timer.seconds_to_string(timer.total_time("find_store_a")/runs))
-    puts("    non_store_a_search: " + Timer.seconds_to_string(timer.total_time("non_store_a_search")/runs))
-    puts("    has_duplicate: " + Timer.seconds_to_string(timer.total_time("has_duplicate")/runs))
-    puts("    missing_attachments: " + Timer.seconds_to_string(timer.total_time("has_duplicate")/runs))
+    timer.print_timings(runs: runs)
     
     # Tell the user if emails without archived duplicates were found.
     if num_without_duplicate > 0
