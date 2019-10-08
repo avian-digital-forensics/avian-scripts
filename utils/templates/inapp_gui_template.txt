@@ -15,13 +15,13 @@ gui_title = # TODO: EDIT
 dialog = NXUtils.create_dialog(gui_title)
 
 # Add main tab.
-main_tab = dialog.addTab("main_tab", "Main")
+main_tab = dialog.add_tab("main_tab", "Main")
 
 # TODO: ADD GUI HERE
 
 
 # Checks the input before closing the dialog.
-dialog.validateBeforeClosing do |values|
+dialog.validate_before_closing do |values|
     
     # TODO: ADD CHECKS HERE
     
@@ -33,11 +33,11 @@ end
 dialog.display
 
 # If dialog result is false, the user has cancelled.
-if dialog.getDialogResult == true
+if dialog.dialog_result == true
     puts("Running script...")
     
     # values contains the information the user inputted.
-    values = dialog.toMap
+    values = dialog.to_map
     
     # TODO: ADD SCRIPT HERE.
     
