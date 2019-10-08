@@ -18,9 +18,12 @@ require File.join(main_directory,"utils","union_find")
 # For storing result.
 require File.join(main_directory,"utils","settings_utils")
 require File.join(main_directory,"utils","identifier_graph")
+# Timings.
 require File.join(main_directory,"utils","timer")
 # Graph correction heuristics.
 require File.join(script_directory,"identifier_graph_heuristics")
+# Progress messages.
+require File.join(main_directory,"utils","utils")
 
 # Returns a list of all the addresses in the communication of the item if such exists.
 def all_addresses_in_item(item)
@@ -83,7 +86,7 @@ dialog.display
 
 # If dialog result is false, the user has cancelled.
 if dialog.get_dialog_result == true
-    puts("Running script...")
+    Utils.print_progress("Running script...")
     
     timer = Timer::Timer.new
     timer.start("total")
@@ -105,6 +108,7 @@ if dialog.get_dialog_result == true
 
     identifier_graph = IdentifierGraph::IdentifierGraph.new
     
+    Utils.print_progress("Building graph of identifiers...")
     timer.start("build_graph")
     # Add all addresses to the graph.
     for message in messages
@@ -114,11 +118,13 @@ if dialog.get_dialog_result == true
     end
     timer.stop("build_graph")
 
+    Utils.print_progress("Running heuristics on graph...")
     timer.start("heuristics")
     # Run graph heuristics.
     run_identifier_graph_heuristics(identifier_graph, heuristics_settings)
     timer.stop("heuristics")
-
+    
+    Utils.print_progress("Saving graph...")
     timer.start("save_graph")
     # Save identifier graph.
     graph_file_path = File.join(output_dir, "find_correct_addresses_graph.csv")
@@ -126,14 +132,15 @@ if dialog.get_dialog_result == true
         identifier_graph.to_csv(csv)
     end
     timer.stop("save_graph")
-
+    
+    Utils.print_progress("Creating union find from graph...")
     timer.start("graph_to_union_find")
     identifiers = identifier_graph.to_union_find
     timer.stop("graph_to_union_find")
 
     puts("Found " + identifiers.num_components.to_s + " unique persons.")
-
-    puts("Writing output to file...")
+    
+    Utils.print_progress("Saving union find...")
     timer.start("write_union_find")
     # Write results to file.
     output_file_path = File.join(output_dir,"find_correct_addresses_output.txt")
@@ -144,17 +151,11 @@ if dialog.get_dialog_result == true
     
     timer.stop("total")
     
-    puts("Timings:")
-    puts("    total: " + Timer.seconds_to_string(timer["total"]))
-    puts("    build_graph: " + Timer.seconds_to_string(timer["build_graph"]))
-    puts("    heuristics: " + Timer.seconds_to_string(timer["heuristics"]))
-    puts("    save_graph: " + Timer.seconds_to_string(timer["save_graph"]))
-    puts("    graph_to_union_find: " + Timer.seconds_to_string(timer["graph_to_union_find"]))
-    puts("    write_union_find: " + Timer.seconds_to_string(timer["write_union_find"]))
+    timer.print_timings
     
     CommonDialogs.show_information("Script finished. Found " + identifiers.num_components.to_s + " unique persons. \nThe result has been stored and is ready for use by other scripts.", gui_title)
     
-    puts("Script finished.")
+    Utils.print_progress("Script finished.")
 else
-    puts("Script cancelled.")
+    Utils.print_progress("Script cancelled.")
 end
