@@ -68,7 +68,7 @@ dialog.display
 
 # If dialog result is false, the user has cancelled.
 if dialog.dialog_result == true
-    puts("Running script...")
+    Utils.print_progress("Running script...")
     
     timer = Timer::Timer.new
     
@@ -93,14 +93,14 @@ if dialog.dialog_result == true
         
         bulk_annotater = utilities.get_bulk_annotater
         
-        puts("Finding exchange server emails...")
+        Utils.print_progress("Finding exchange server emails...")
         timer.start("find_store_a")
         # Tag all exchange server emails.
         store_a_items = current_case.search('kind:email AND content:"' + store_a_prefix + '"')
         bulk_annotater.add_tag(store_a_tag, store_a_items)
         timer.stop("find_store_a")
         
-        puts("Searching for archived emails...")
+        Utils.print_progress("Searching for archived emails...")
         timer.start("non_store_a_search")
         # All ID's used by archived emails.
         archive_id_set = Set.new(current_case.search('kind:email AND NOT tag:' + store_a_prefix)){ |archived_email| find_email_id(archived_email) }
@@ -109,7 +109,7 @@ if dialog.dialog_result == true
         num_without_duplicate = 0
         num_missing_attachments = 0
         
-        puts("Checking for exchange server emails without an archived duplicate...")
+        Utils.print_progress("Checking for exchange server emails without an archived duplicate...")
         timer.start("has_duplicate")
         # Give all exchange server emails custom metadata for whether there is an archived duplicate.
         # True if there is an archived duplicate:
@@ -118,7 +118,7 @@ if dialog.dialog_result == true
         items_without_duplicate = store_a_items.select{ |email| not archive_id_set.include?(find_email_id(email)) }
         bulk_annotater.put_custom_metadata(has_archived_duplicate_metadata_name, FALSE, items_without_duplicate, nil)
         
-        puts("    Checking for missing attachments...")
+        Utils.print_progress("    Checking for missing attachments...")
         timer.start("missing_attachments")
         num_without_duplicate = items_without_duplicate.length
             # If the item with missing duplicate has children:
