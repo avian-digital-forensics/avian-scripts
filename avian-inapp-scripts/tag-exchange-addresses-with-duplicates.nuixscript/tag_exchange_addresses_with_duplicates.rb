@@ -91,15 +91,16 @@ if dialog.dialog_result == true
         # Whether the exchange server email has missing attachments.
         has_missing_attachments_metadata_name = values["has_missing_attachments_metadata_name"]
         
+        bulk_annotater = utilities.get_bulk_annotater
+        
         puts("Finding exchange server emails...")
         timer.start("find_store_a")
         # Tag all exchange server emails.
         store_a_items = current_case.search('kind:email AND content:"' + store_a_prefix + '"')
-        for email in store_a_items
-            email.add_tag(store_a_tag)
-        end
+        bulk_annotater.add_tag(store_a_tag, store_a_items)
         timer.stop("find_store_a")
         
+        puts("Searching for archived emails...")
         timer.start("non_store_a_search")
         # All ID's used by archived emails.
         archive_id_set = Set.new(current_case.search('kind:email AND NOT tag:' + store_a_prefix)){ |archived_email| find_email_id(archived_email) }
@@ -108,28 +109,25 @@ if dialog.dialog_result == true
         num_without_duplicate = 0
         num_missing_attachments = 0
         
+        puts("Checking for exchange server emails without an archived duplicate...")
         timer.start("has_duplicate")
         # Give all exchange server emails custom metadata for whether there is an archived duplicate.
-        for email in current_case.search('tag:' + store_a_prefix)
-            if archive_id_set.include?(find_email_id(email))
-                email.custom_metadata[has_archived_duplicate_metadata_name] = TRUE
-            else
-                email.custom_metadata[has_archived_duplicate_metadata_name] = FALSE
-                num_without_duplicate += 1
-                # Give the item custom metadata for whether it has missing attachments.
-                if email.children.length > 0
-                    email.custom_metadata[has_missing_attachments_metadata_name] = TRUE
-                    num_missing_attachments += email.children.length
-                else
-                    email.custom_metadata[has_missing_attachments_metadata_name] = FALSE
-                end
-            end
-        end
+        # True if there is an archived duplicate:
+        bulk_annotater.put_custom_metadata(has_archived_duplicate_metadata_name, TRUE, store_a_items.select{ |email| archive_id_set.include?(find_email_id(email)) }, nil)
+        # And if there isn't:
+        items_without_duplicate = store_a_items.select{ |email| not archive_id_set.include?(find_email_id(email)) }
+        bulk_annotater.put_custom_metadata(has_archived_duplicate_metadata_name, FALSE, items_without_duplicate, nil)
         
-        for email in current_case.search("has-communication:1")
-            
-        end
-        
+        puts("    Checking for missing attachments...")
+        timer.start("missing_attachments")
+        num_without_duplicate = items_without_duplicate.length
+            # If the item with missing duplicate has children:
+            items_without_duplicate_with_children = items_without_duplicate.select{ |email| email.children.length > 0 }
+            num_missing_attachments = items_without_duplicate_with_children.reduce(0) { |sum, email| sum + email.children.length }
+            bulk_annotater.put_custom_metadata(has_missing_attachments_metadata_name, TRUE, items_without_duplicate_with_children, nil)
+            # If the item with missing duplicate has no children:
+            bulk_annotater.put_custom_metadata(has_missing_attachments_metadata_name, TRUE, items_without_duplicate.select{ |email| not email.children.length > 0 }, nil)
+        timer.stop("missing_attachments")
         timer.stop("has_duplicate")
     end
 
@@ -138,6 +136,7 @@ if dialog.dialog_result == true
     puts("    find_store_a: " + Timer.seconds_to_string(timer.total_time("find_store_a")/runs))
     puts("    non_store_a_search: " + Timer.seconds_to_string(timer.total_time("non_store_a_search")/runs))
     puts("    has_duplicate: " + Timer.seconds_to_string(timer.total_time("has_duplicate")/runs))
+    puts("    missing_attachments: " + Timer.seconds_to_string(timer.total_time("has_duplicate")/runs))
     
     # Tell the user if emails without archived duplicates were found.
     if num_without_duplicate > 0
