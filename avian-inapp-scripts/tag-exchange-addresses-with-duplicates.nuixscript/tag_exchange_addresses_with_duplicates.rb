@@ -135,12 +135,6 @@ if dialog.dialog_result == true
     end
 
     timer.print_timings(runs: runs)
-    puts("Timings:")
-    puts("    total: " + Timing.seconds_to_string(timer.total_time("total")/runs))
-    puts("    find_store_a: " + Timing.seconds_to_string(timer.total_time("find_store_a")/runs))
-    puts("    non_store_a_search: " + Timing.seconds_to_string(timer.total_time("non_store_a_search")/runs))
-    puts("    has_duplicate: " + Timing.seconds_to_string(timer.total_time("has_duplicate")/runs))
-    puts("    missing_attachments: " + Timing.seconds_to_string(timer.total_time("has_duplicate")/runs))
     
     # Tell the user if emails without archived duplicates were found.
     if num_without_duplicate > 0
