@@ -88,7 +88,7 @@ if dialog.dialog_result == true
         # All exchange server emails with an archived duplicate will receive this tag.
         has_archived_duplicate_metadata_name = values["has_archived_duplicate_metadata_name"]
         
-        # All exchange server emails with missing attachments.
+        # Whether the exchange server email has missing attachments.
         has_missing_attachments_metadata_name = values["has_missing_attachments_metadata_name"]
         
         puts("Finding exchange server emails...")
@@ -116,6 +116,7 @@ if dialog.dialog_result == true
             else
                 email.custom_metadata[has_archived_duplicate_metadata_name] = FALSE
                 num_without_duplicate += 1
+                # Give the item custom metadata for whether it has missing attachments.
                 if email.children.length > 0
                     email.custom_metadata[has_missing_attachments_metadata_name] = TRUE
                     num_missing_attachments += email.children.length
@@ -124,6 +125,11 @@ if dialog.dialog_result == true
                 end
             end
         end
+        
+        for email in current_case.search("has-communication:1")
+            
+        end
+        
         timer.stop("has_duplicate")
     end
 
