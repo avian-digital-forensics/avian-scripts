@@ -13,7 +13,10 @@ end
 
 # For GUI.
 require File.join(main_directory,"utils","nx_utils")
+# Timings.
 require File.join(main_directory,"utils","timer")
+# Progress messages.
+require File.join(main_directory,"utils","utils")
 
 
 
