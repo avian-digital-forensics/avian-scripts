@@ -2,8 +2,6 @@ require 'java'
 require 'json'
 require 'csv'
 
-require File.join("..", "..", "utils", "custom_communication")
-
 module ReplaceIdentifiers
     extend self
     
@@ -31,32 +29,35 @@ module ReplaceIdentifiers
         com.to_addresses = update_address_list(replace_identifiers_hash, com.to_addresses)
         com.cc_addresses = update_address_list(replace_identifiers_hash, com.cc_addresses)
         com.bcc_addresses = update_address_list(replace_identifiers_hash, com.bcc_addresses)
+        return com
     end
     
     def run_init(wss_global)
         # Will be run once before loading items.
         replace_identifiers_hash = {}
-        file_path = File.join(wss_global.root_path, "utils", "replace_identifiers.csv")
+        file_path = File.join(wss_global.root_path, "data", "replace_identifiers.csv")
         CSV.foreach(file_path, "r") do |row|
             for item in row[1..-1]
                 replace_identifiers_hash[item] = row[0]
             end
         end
-        wss_global.vars[:replace_identifiers_hash]
+        wss_global.vars[:replace_identifiers_hash] = replace_identifiers_hash
     end
     
     def run(wss_global, worker_item)
+        root_path = wss_global.root_path
+        require File.join(root_path, 'utils', 'custom_communication')
+    
         # Will be run for each item.
-        if (communication = worker_item.source_item.communication).nil? or communication.from.nil? or communication.from.length == 0
-            return # If the item has no from, it has no from to fix.
+        if (communication = worker_item.source_item.communication).nil?
+            return # If the item has no communication, it has no communication to fix.
         end
         
         replace_identifiers_hash = wss_global.vars[:replace_identifiers_hash]
+        puts(replace_identifiers_hash.to_s)
         
-        # Create a communication object.
-        com = Custom::CustomCommunication.new(communication)
         # Replace identifiers in communication object.
-        com = update_communication(replace_identifiers_hash, com)
+        com = update_communication(replace_identifiers_hash, communication)
         # Set the items communication object.
         worker_item.set_item_communication(com)
     end
