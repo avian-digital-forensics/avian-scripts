@@ -2,7 +2,7 @@ require 'set'
 require 'csv'
 
 module IdentifierGraph
-    # Represents a set of identifiers and infromation about which share and address.
+    # Represents a set of identifiers and information about which share addresses.
     class IdentifierGraph
         include Enumerable
     
@@ -59,6 +59,19 @@ module IdentifierGraph
             if address.personal and address.address # Only union the two identifiers if they both exist.
                 connect_identifiers(address.personal, address.address)
             end
+        end
+        
+        # Returns the number of identifiers connected to the specified identifier.
+        def num_connected_identifiers(identifier)
+            return @graph[identifier].size
+        end
+        
+        # Removes all edges to and from the specified identifier.
+        def isolate_vertex(identifier)
+            for connection in @graph[identifier]
+                @graph[connection].delete(identifier)
+            end
+            @graph[identifier].clear
         end
         
         # Writes the graph to the specified csv object to be loaded at a later point.
