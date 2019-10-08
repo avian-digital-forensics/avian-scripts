@@ -1,4 +1,4 @@
-module Timer
+module Timing
     # Provides a way of timing several different things with one object.
     class Timer
         def initialize
@@ -31,6 +31,20 @@ module Timer
             ensure_stop_watch(stop_watch_name)
             
             @timers[stop_watch_name].reset
+        end
+        
+        def print_timings(stop_watch_names, runs=1)
+            if stop_watch_names.empty? and not all_timers.empty?
+                print_timings(all_timers)
+            else
+                puts("Timings:")
+                for stop_watch_name in stop_watch_names
+                    puts("    " + stop_watch_name + ": " + Timing.seconds_to_string(total_time(stop_watch_name)/runs))
+                end
+            end
+        end
+        def all_timers
+            return @timers.keys
         end
             
         private
