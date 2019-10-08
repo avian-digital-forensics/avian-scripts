@@ -83,7 +83,7 @@ if dialog.dialog_result == true
         store_a_prefix = values["store_a_prefix"]
         
         # All exchange server emails will receive this tag.
-        store_a_tag = values["store_a_tag"]
+        store_a_tag = "Avian|" + values["store_a_tag"]
         
         # All exchange server emails with an archived duplicate will receive this tag.
         has_archived_duplicate_metadata_name = values["has_archived_duplicate_metadata_name"]
