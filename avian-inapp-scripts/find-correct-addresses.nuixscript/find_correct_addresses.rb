@@ -88,7 +88,7 @@ dialog.display
 if dialog.get_dialog_result == true
     Utils.print_progress("Running script...")
     
-    timer = Timer::Timer.new
+    timer = Timing::Timer.new
     timer.start("total")
     
     # values contains the information the user inputted.
