@@ -35,7 +35,7 @@ module Timing
         
         def print_timings(stop_watch_names: [], runs: 1)
             if stop_watch_names.empty? and not all_timers.empty?
-                print_timings(all_timers)
+                print_timings(stop_watch_names: all_timers, runs: runs)
             else
                 puts("Timings:")
                 for stop_watch_name in stop_watch_names
