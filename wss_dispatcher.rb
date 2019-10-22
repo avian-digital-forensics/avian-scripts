@@ -13,6 +13,9 @@ class WSS
         
         @module_name = find_module_name(@script_name)
         require (root_path + "/" + @file_path.chomp(".rb"))
+        unless Object.const_defined?(@module_name)
+            STDERR.puts('No module with name "' + @module_name + '" exists. Make sure WSS directories and modules have matching names.')
+        end
         @module = Object.const_get(@module_name)
     end
     
@@ -99,7 +102,7 @@ class WSSGlobal
     def initialize(root_path)
         @root_path = root_path
         
-        wss_settings_path = File.join(root_path, "data", "wss_settings.yml")
+        wss_settings_path = WSSGlobal.wss_settings_path(root_path)
         unless File.file?(wss_settings_path)
             STDERR.puts("Could not find Avian scripts WSS settings file. Have you remembered to run 'Setup WSS's?")
         end
@@ -130,26 +133,41 @@ class WSSGlobal
     def find_script(script_name)
         return @available_scripts.find{ |script| script.match?(script_name) }
     end
+    
+    def self.wss_settings_path(root_path)
+        return File.join(root_path, "data", "wss_settings.yml")
+    end
 end
 
 def run_init(root_path)
     puts('Starting WSS setup...')
-    @wss_global = WSSGlobal.new(root_path).freeze
-    for script in @wss_global.run_scripts
-        puts('Setting up WSS "' + script.script_name.chomp(".rb") + "'.")
-        script.run_init(@wss_global)
+    @setup_success = true
+    if File.file?(WSSGlobal.wss_settings_path(root_path))
+        @wss_global = WSSGlobal.new(root_path).freeze
+        
+        for script in @wss_global.run_scripts
+            puts('Setting up WSS "' + script.script_name.chomp(".rb") + "'.")
+            script.run_init(@wss_global)
+        end
+        puts('WSS setup finished. Case name is "' + @wss_global.wss_settings[:case][:name] + '".')
+    else
+        STDERR.puts("Could not find Avian scripts WSS settings file. Skipping all WSS's. Have you remembered to run 'Setup WSS's?")
+        @setup_success = false
     end
-    puts('WSS setup finished. Case name is "' + @wss_global.wss_settings[:case][:name] + '".')
 end
 
 def run(worker_item)
-    for script in @wss_global.run_scripts
-        script.run(@wss_global, worker_item)
+    if @setup_success
+        for script in @wss_global.run_scripts
+            script.run(@wss_global, worker_item)
+        end
     end
 end
 
 def run_close
-    for script in @wss_global.run_scripts
-        script.run_close(@wss_global)
+    if @setup_success
+        for script in @wss_global.run_scripts
+            script.run_close(@wss_global)
+        end
     end
 end
