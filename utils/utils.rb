@@ -16,7 +16,7 @@ module Utils
     # Creates a sample of size num_elements, from array.
     def self.sample(array, num_elements, with_replacement=false)
         if with_replacement
-            return Array.new(num_elements) { rand(0..array.length-1) }.map { |index| chars[index] }
+            return Array.new(num_elements) { rand(0..array.length-1) }.map { |index| array[index] }
         else
             return array.sample(num_elements)
         end
@@ -34,6 +34,6 @@ module Utils
     
     # Returns a random string of length num_chars from the given char_set.
     def self.random_string(num_chars, char_set)
-        return sample(char_set, num_chars, true)
+        return sample(char_set, num_chars, true).join
     end
 end
