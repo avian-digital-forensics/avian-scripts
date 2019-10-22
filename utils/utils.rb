@@ -1,5 +1,7 @@
 module Utils
-    alpha_num_char_set = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map(&:to_a).flatten
+    def self.alpha_num_char_set 
+        [('a'..'z'), ('A'..'Z'), ('0'..'9')].map(&:to_a).flatten
+    end
     
     # Returns a string time stamp with the current time.
     def self.time_stamp()
