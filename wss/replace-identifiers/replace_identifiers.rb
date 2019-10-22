@@ -36,9 +36,11 @@ module ReplaceIdentifiers
         # Will be run once before loading items.
         replace_identifiers_hash = {}
         file_path = File.join(wss_global.root_path, "data", "replace_identifiers.csv")
-        CSV.foreach(file_path, "r") do |row|
-            for item in row[1..-1]
-                replace_identifiers_hash[item] = row[0]
+        if File.file?(file_path)
+            CSV.foreach(file_path, "r") do |row|
+                for item in row[1..-1]
+                    replace_identifiers_hash[item] = row[0]
+                end
             end
         end
         wss_global.vars[:replace_identifiers_hash] = replace_identifiers_hash
@@ -54,7 +56,6 @@ module ReplaceIdentifiers
         end
         
         replace_identifiers_hash = wss_global.vars[:replace_identifiers_hash]
-        puts(replace_identifiers_hash.to_s)
         
         # Replace identifiers in communication object.
         com = update_communication(replace_identifiers_hash, communication)
