@@ -32,6 +32,16 @@ end
 # Display dialog. Duh.
 dialog.display
 
+def non_ascii_characters(string)
+    if string.ascii_only?
+        return []
+    elsif string.length == 1
+        return [string[0]]
+    else
+        return non_ascii_characters(string[0..string.length/2-1])+non_ascii_characters(string[string.length/2..-1])
+    end
+end
+
 # If dialog result is false, the user has cancelled.
 if dialog.dialog_result == true
     puts("Running script...")
@@ -60,13 +70,3 @@ else
     puts("Script cancelled.")
 end
 
-
-def non_ascii_characters(string)
-    if string.ascii_only
-        return []
-    elsif string.length == 1
-        return [string[0]]
-    else
-        return non_ascii_characters(string[0..string.length/2-1])+non_ascii_characters(string[string.length/2..-1])
-    end
-end
