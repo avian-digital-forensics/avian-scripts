@@ -37,6 +37,10 @@ end
 # Display dialog. Duh.
 dialog.display
 
+def weird_character?(char_code)
+    return char_code > 127 && ![198, 216, 197, 230, 248, 229].include?(char_code)
+end
+
 # If dialog result is false, the user has cancelled.
 if dialog.dialog_result == true
     puts("Running script...")
@@ -51,7 +55,7 @@ if dialog.dialog_result == true
     items = current_case.search("")
     
     timer.start("find_items")
-    tag_items = items.select{ |item| !item.name.ascii_only? }
+    tag_items = items.select{ |item| item.name.codepoints.any? { |char_code| weird_character?(char_code) } }
     timer.stop("find_items")
     
     tag = "Avian|NonASCIIName"
@@ -66,7 +70,7 @@ if dialog.dialog_result == true
     
     CommonDialogs.show_information("Script finished.", gui_title)
     
-    timer.print_timings(runs: items.length)
+    timer.print_timings()
     
     puts("Script finished.")
 else
