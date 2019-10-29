@@ -15,11 +15,13 @@ module LoadTimer
     
     def run_close(wss_global)
         # Will be run after loading all items.
+        wss_global.vars[:load_timer_end_time] = Utils::nano_now
         id_char_set = Utils::alpha_num_char_set
         id = Utils::random_string(8, id_char_set)
         data_path = File.join(wss_global.case_data_path, 'load_times_' + id + '.txt')
         File.open(data_path, 'w') { |file| 
             file.puts("start_time:" + wss_global.vars[:load_timer_start_time].to_s)
+            file.puts("end_time:" + wss_global.vars[:load_timer_end_time].to_s)
             wss_global.vars[:load_timer_item_times].each do |guid, time|
                 file.puts(guid + ':' + time.to_s)
             end
