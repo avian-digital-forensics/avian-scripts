@@ -9,7 +9,9 @@ module EntitiesFromLists
         unless File.exist?(key_lists_path)
             raise "No key list file. Cannot run script"
         end
+        puts("Loading entity key lists...")
         manager.load(key_lists_path)
+        puts("Finished loading entity key lists.")
         wss_global.vars[:entities_from_lists_key_list_manager] = manager
     end
     
