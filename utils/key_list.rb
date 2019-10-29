@@ -10,14 +10,20 @@ module EntityKeyList
         end
         
         # Add an EntityKeyList.
-        # The entity_name must be unique.
+        # If an EntityKeyList already exists, their key lists will be joined, unless their type doesn't match in which case an error will occur.
         def add(entity_key_list)
-            raise ArgumentError, 'Already contains entity key list with same name.' if @entity_key_lists.key?(entity_key_list.entity_name)
-            @entity_key_lists[entity_key_list.entity_name] = entity_key_list
+            if @entity_key_lists.key?(entity_key_list.entity_name)
+                if @entity_key_lists[entity_key_list.entity_name].entity_type != entity_key_list.entity_type
+                    raise ArgumentError, "Already contains entity key list with the same name and different type."
+                end
+                @entity_key_lists[entity_key_list.entity_name].join!(entity_key_list)
+            else
+                @entity_key_lists[entity_key_list.entity_name] = entity_key_list
+            end
         end
         
         # Add an EntityKeyList.
-        # The entity_name must be unique.
+        # If an EntityKeyList already exists, their key lists will be joined, unless their type doesn't match in which case an error will occur.
         # Alias of add(entity_key_list).
         def add_entity_key_list(entity_key_list)
             add(entity_key_list)
@@ -63,6 +69,11 @@ module EntityKeyList
             @entity_name = entity_name
             @key_list = key_list
             @regexp = Regexp.compile("(?i)" + key_list.join("|"))
+        end
+        
+        # Adds the given EntityKeyList's key_list to this EntityKeyList.
+        def join!(entity_key_list)
+            @key_list += entity_key_list.key_list
         end
         
         # Creates a string array representing the key list that can be saved to csv.
