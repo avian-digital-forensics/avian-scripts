@@ -13,9 +13,8 @@ end
 
 # Progress messages.
 require File.join(main_directory,"utils","utils")
-
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,"Nx.jar")
+# For GUI messages.
+require File.join(main_directory,"utils","nx_utils")
 java_import "com.nuix.nx.NuixConnection"
 java_import "com.nuix.nx.LookAndFeelHelper"
 java_import "com.nuix.nx.dialogs.ChoiceDialog"
