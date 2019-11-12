@@ -4,7 +4,7 @@ This script is not useful in itself, but its output is used by other scripts.
 
 # How it works
 ## Basic algorithm
-In nuix, every address is actually stored as two seperate identifiers: a "personal" identifier, which is typically the persons name e.g. 'Alice', and an "address" identifier, which is ideally an email address e.g. 'alice@ex<span></span>.com' or '/fmrio:984'.
+In nuix, every address is actually stored as two seperate identifiers: a "personal" identifier, which is typically the persons name e.g. 'Alice', and an "address" identifier, which is ideally an email address e.g. 'alice@ex<span></span>.com', but often it is some other identifier like e.g. '/fmrio:984'.
 Naturally, one would assume that such a pair of identifiers refer to the same person.
 This is the core observation used in the script.
 ![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/master/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/address_example.png "Address example")
