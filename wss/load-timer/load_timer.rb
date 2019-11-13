@@ -18,7 +18,7 @@ module LoadTimer
         wss_global.vars[:load_timer_item_times][worker_item.item_guid] = current_time_nano
         worker_item.add_custom_metadata('TimeOfLoad', current_time.to_s, 'text', 'user')
         seconds_since_load_start = (current_time_nano - wss_global.vars[:load_timer_start_time]).to_f/(10**9)
-        worker_item.add_custom_metadata('TimeSinceLoadStart', Timing::seconds_to_string(seconds_since_load_start), 'text', 'user')
+        worker_item.add_custom_metadata('TimeSinceLoadStart', seconds_since_load_start, 'float', 'user')
         if wss_global.vars[:load_timer_last_item_guid] # If this is not the first item.
             seconds_since_prev = (current_time_nano-wss_global.vars[:load_timer_last_item_time]).to_f/(10**9)
             worker_item.add_custom_metadata('LoadTimeSincePrev', seconds_since_prev, 'float', 'user')
