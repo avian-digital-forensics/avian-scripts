@@ -12,6 +12,8 @@ end
 
 # GUI.
 require File.join(main_directory,"utils","nx_utils")
+# Logging.
+require File.join(main_directory,"utils","utils")
 # Timings.
 require File.join(main_directory,"utils","timer")
 
@@ -52,20 +54,33 @@ if dialog.dialog_result == true
     
     timer.start("total")
     
-    items = current_case.search("")
+    ProgressDialog.for_block do |progress_dialog|
+        progress_dialog.set_title(gui_title)
+        progress_dialog.on_message_logged do |message|
+            Utils.print_progress(message)
+        end
     
-    timer.start("find_items")
-    # Find items with weird characters.
-    tag_items = items.select{ |item| item.name.codepoints.any? {&:weird_character?} }
-    timer.stop("find_items")
-    
-    tag = "Avian|NonASCIIName"
-    
-    bulk_annotater = utilities.get_bulk_annotater
-    
-    timer.start("tag_items")
-    bulk_annotater.add_tag(tag, tag_items)
-    timer.stop("tag_items")
+        items = current_case.search("")
+        
+        progress_dialog.set_main_status_and_log_it('Searching for items with weird characters...')
+        progress_dialog.set_main_progress(0,items.size)
+        timer.start("find_items")
+        # Find items with weird characters.
+        tag_items = items.select do |item|
+            progress_dialog.increment_main_progress
+            item.name.codepoints.any?{ |codepoint| weird_character?(codepoint) }
+        end
+        timer.stop("find_items")
+        
+        tag = "Avian|NonASCIIName"
+        
+        bulk_annotater = utilities.get_bulk_annotater
+        
+        progress_dialog.set_main_status_and_log_it('Tagging items with weird characters...')
+        timer.start("tag_items")
+        bulk_annotater.add_tag(tag, tag_items)
+        timer.stop("tag_items")
+    end
     
     timer.stop("total")
     
