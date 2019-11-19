@@ -55,7 +55,8 @@ if dialog.dialog_result == true
     items = current_case.search("")
     
     timer.start("find_items")
-    tag_items = items.select{ |item| item.name.codepoints.any? { |char_code| weird_character?(char_code) } }
+    # Find items with weird characters.
+    tag_items = items.select{ |item| item.name.codepoints.any? {&:weird_character?} }
     timer.stop("find_items")
     
     tag = "Avian|NonASCIIName"
