@@ -128,6 +128,6 @@ module Timing
     # Returns a human readable string representation of the given time interval.
     def self.seconds_to_string(seconds)
         hours, minutes, seconds = hours_and_minutes_from_seconds(seconds)
-        return hours.to_s + "h" + minutes.to_s + "m" + seconds.round(3).to_s + "s"
+        return hours.to_s + "h" + minutes.to_s + "m" + seconds.round(9).to_s + "s"
     end
 end

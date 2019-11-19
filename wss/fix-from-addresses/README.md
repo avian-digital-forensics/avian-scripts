@@ -3,7 +3,7 @@ Uses the output of the in-app script 'Find correct addresses' to replace as many
 
 ## Usage
 To use this script the data must already be loaded in to Nuix.
-First, run the in-app script 'Find correct addresses' on the case, settings the output directory to the `data` directory in the Avian scripts directory.
+First, run the in-app script 'Find correct addresses' on the case, setting the output directory to the `data` directory in the Avian scripts directory.
 Then reload all items on which you would like to run this script.
 See the main readme for instruction on how to run this script.
 To reload all items that could possibly be affected by this script, search for has-communication:1 and select all.

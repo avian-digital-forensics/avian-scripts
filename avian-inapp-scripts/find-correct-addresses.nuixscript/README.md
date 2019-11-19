@@ -4,10 +4,10 @@ This script is not useful in itself, but its output is used by other scripts.
 
 # How it works
 ## Basic algorithm
-In nuix, every address is actually stored as two seperate identifiers: a "personal" identifier, which is typically the persons name e.g. 'Alice', and an "address" identifier, which is ideally an email address e.g. 'alice@ex<span></span>.com' or '/fmrio:984'.
+In nuix, every address is actually stored as two seperate identifiers: a "personal" identifier, which is typically the persons name e.g. 'Alice', and an "address" identifier, which is ideally an email address e.g. 'alice@ex<span></span>.com', but often it is some other identifier like e.g. '/fmrio:984'.
 Naturally, one would assume that such a pair of identifiers refer to the same person.
 This is the core observation used in the script.
-![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/find-better-from-addresses/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/address_example.png "Address example")
+![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/master/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/address_example.png "Address example")
 
 The idea is to build a graph of all identifiers and connect those that refer to the same person.
 That way, when all addresses in all items' communications have been processed, the graph will contain all identifiers in the case and all identifiers referring to the same person will be connected.
@@ -16,15 +16,15 @@ Finding out which graph vertices (identifiers) are connected and finding which s
 ### Example
 Suppose our script encounters an address with the "personal" identifier 'Alice' and "address" identifier '/fmrio:984'.
 First it adds the identifiers to the graph if they aren't already there, and then it assumes they refer to the same person by creating an edge between their vertices:
-![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/find-better-from-addresses/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/step1.png)
+![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/master/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/step1.png "Graph of Alice connected to /fmrio:984")
 
 Sometime later it encounters another address with "personal" identifier 'Bob' and "address" identifier 'bob@ex<span></span>.com'.
 These are both added and an edge is created between them:
-![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/find-better-from-addresses/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/step2.png)
+![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/master/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/step2.png "Graph of Alice connected to /fmrio:984 and Bob connected to bob@ex.com")
 
 Finally an address is found with "personal" identifier 'Alice' and "address" identifier 'alice@ex<span></span>.com'.
 Since 'Alice' is already in the graph, only 'alice@ex<span></span>.com' is added, but the two are still connected:
-![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/find-better-from-addresses/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/step3.png)
+![alt text](https://github.com/avian-digital-forensics/avian-scripts/blob/master/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/step3.png "Graph of Alice connected to /fmrio:984 and alice@ex.com, and Bob connected to bob@ex.com")
 
 This not only means that 'Alice' refers to the same person as both '/fmrio:984' and 'alice@ex<span></span>.com', but that '/fmrio:984' and 'alice@ex<span></span>.com' also refer to the same person.
 
@@ -49,15 +49,15 @@ Suppose there were a mailing list with the email address 'ml@ex<span></span>.com
 In some email systems, each email sent would have the "personal" identifier of the person sending the mail, but the "address" identifier of the mailing list.
 One might think the mailing list would have its own "personal" identifier, but this is not always the case.
 Instead, continuing from the main example, when the script reaches a message sent by Alice from the mailing list, we get this graph:
-![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/find-better-from-addresses/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/mailing_list_alice.png)
+![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/master/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/mailing_list_alice.png "Alice connected to a mailing list")
 
 And when it finds a message sent by Bob from the mailing list, it naively connects Bob's "personal" identifier with the mailing list's "address" identifier:
-![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/find-better-from-addresses/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/mailing_list_bob.png)
+![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/master/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/mailing_list_bob.png "Alice and Bob connected to the same mailing list")
 
 Now it seems exceedingly unlikely that Bob and Alice are in fact the same person, yet that is exactly what the script believes.
 Avoiding situations like these is the purpose of this heuristic.
 Normally, a mailing list won't just have two persons connected to it but many, while it is rare that an actual person's identifiers have very many other identifiers connected to them.
-Therefore, this kind of problematic identifiers can be rooted out by finding identifiers with especially many direct connections.
+Therefore, some of this kind of problematic identifiers can be rooted out by finding identifiers with especially many direct connections.
 
 The graph when many people have sent emails from the mailing list:
-![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/find-better-from-addresses/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/mailing_list_many_connections.png)
+![alt text](https://github.com/avian-digital-forensics/avian-scripts/raw/master/avian-inapp-scripts/find-correct-addresses.nuixscript/readme-images/mailing_list_many_connections.png "Alice and Bob connected to the same mailing list as many others")

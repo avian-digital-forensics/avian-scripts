@@ -8,3 +8,12 @@
   :label: Entities From Addresses
   :path: wss/entities-from-lists/entities_from_lists.rb
   :active: false
+- :identifier: replace_identifiers
+  :label: Replace Identifiers
+  :path: wss/replace-identifiers/replace_identifiers.rb
+  :active: false
+- :identifier: load_timer
+  :label: Load Timer
+  :path: wss/load-timer/load_timer.rb
+  :active: false
+  
