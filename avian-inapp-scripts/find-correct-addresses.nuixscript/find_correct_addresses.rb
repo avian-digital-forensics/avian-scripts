@@ -154,7 +154,7 @@ if dialog.get_dialog_result == true
         progress_dialog.set_main_status_and_log_it('Saving union find...')
         timer.start('write_union_find')
         # Write results to file.
-        output_file_path = File.join(output_dir,'find_correct_addresses_output.txt')
+        output_file_path = File.join(output_dir,'find_correct_addresses_output.csv')
         CSV.open(output_file_path, 'wb') do |csv|
             identifiers.to_csv(csv)
         end
