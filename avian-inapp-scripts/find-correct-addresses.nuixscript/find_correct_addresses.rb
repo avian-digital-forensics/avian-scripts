@@ -159,6 +159,8 @@ if dialog.get_dialog_result == true
             identifiers.to_csv(csv)
         end
         timer.stop('write_union_find')
+
+        progress_dialog.set_main_status_and_log_it('Script finished.')
     
         timer.stop('total')
         
