@@ -6,7 +6,7 @@ module Timing
         end
         
         def running?(stop_watch_name)
-            return @timers.key?(stop_watch_name) && @timers[stop_watch_name].running
+            return @timers.key?(stop_watch_name) && @timers[stop_watch_name].running?
         end    
             
         def start(stop_watch_name)
@@ -34,8 +34,8 @@ module Timing
         end
         
         def print_timings(stop_watch_names: [], runs: 1)
-            if stop_watch_names.empty? and not all_timers.empty?
-                print_timings(stop_watch_names: all_timers, runs: runs)
+            if stop_watch_names.empty? and not all_timer_names.empty?
+                print_timings(stop_watch_names: all_timer_names, runs: runs)
             else
                 puts("Timings:")
                 for stop_watch_name in stop_watch_names
@@ -43,7 +43,7 @@ module Timing
                 end
             end
         end
-        def all_timers
+        def all_timer_names
             return @timers.keys
         end
             
