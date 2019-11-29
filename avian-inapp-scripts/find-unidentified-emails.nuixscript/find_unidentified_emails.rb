@@ -115,7 +115,8 @@ if dialog.dialog_result == true
         progress_dialog.set_main_status_and_log_it('Making preliminary search...')
         timer.start('preliminary_search')
         # Finds all items that have text containing 'From:' or 'Fra:' and aren't Outlook files.
-        items = current_case.search("NOT mime-type:application/vnd.ms-outlook-* AND content:/from|fra/")
+        search_term = 'NOT mime-type:application/vnd.ms-outlook-* AND content:((from AND \to AND subject) OR (fra AND til AND emne))'
+        items = current_case.search(search_term)
         timer.stop('preliminary_search')
         progress_dialog.log_message('Preliminary search found ' + items.length.to_s + ' possible emails.')
 
