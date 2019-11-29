@@ -16,7 +16,7 @@ require File.join(main_directory,'utils','timer')
 
 def is_email?(item, allowed_start_offset, start_area_size, timer)
     raise ArgumentError, 'Item must contain text' unless item.text_object
-    
+
     trimmed_content = item.text_object.sub_sequence(0, [start_area_size, item.text_object.length].min).to_s.strip
 
     # Find email start.
@@ -151,6 +151,7 @@ if dialog.dialog_result == true
         progress_dialog.set_main_status_and_log_it('Script finished. Found ' + emails.length.to_s + ' emails.')
 
         CommonDialogs.show_information('Script finished.', gui_title)
+        progress_dialog.set_completed
     end
 
     puts('Script finished.')
