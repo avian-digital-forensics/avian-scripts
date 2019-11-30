@@ -180,15 +180,20 @@ if dialog.get_dialog_result == true
         progress_dialog.set_main_status_and_log_it('Running heuristics on persons...')
         timer.start('person_heuristics')
         # Run person heuristics.
-        run_person_heuristics(persons, heuristics_settings)
+        progress_dialog.set_main_progress(0,persons.num_persons)
+        cur_index = 0
+        run_person_heuristics(persons, heuristics_settings) do
+            progress_dialog.increment_main_progress
+            progress_dialog.set_sub_status("#{cur_index+=1}/#{persons.num_persons}")
+        end
         timer.stop('person_heuristics')
 
         progress_dialog.set_main_status_and_log_it('Saving person manager...')
         timer.start('write_person_manager')
         # Write results to file.
-        output_file_path = File.join(output_dir,'find_correct_addresses_output.csv')
         progress_dialog.set_main_progress(0,persons.num_persons)
         cur_index = 0
+        output_file_path = File.join(output_dir,'find_correct_addresses_output.csv')
         CSV.open(output_file_path, 'wb') do |csv|
             persons.to_csv(csv) do
                 progress_dialog.increment_main_progress
