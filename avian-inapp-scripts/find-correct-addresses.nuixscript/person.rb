@@ -36,8 +36,7 @@ module FindCorrectAddresses
         end
 
         def to_csv_array
-            primary_email_address = primary_email_address()
-            return [primary_email_address] + identifiers.to_a.select{ |identifier| identifier!= primary_email_address } + (@flagged ? ['flagged'] : [])
+            return @email_addresses.to_a + @identifiers.select{ |identifier| not @email_addresses.include?(identifier) }
         end
         
         private
@@ -52,10 +51,6 @@ module FindCorrectAddresses
                 end
                 return identifier.count('@') == 1
             end
-
-            def primary_email_address
-                @email_addresses.to_a[0]
-            end
     end
 
     class PersonManager
@@ -69,6 +64,7 @@ module FindCorrectAddresses
             person_manager = PersonManager.new
             union_find.to_component_hash.each do |representative, identifiers|
                 person = Person.new
+                person.add_identifier(representative)
                 for identifier in identifiers
                     person.add_identifier(identifier)
                 end
