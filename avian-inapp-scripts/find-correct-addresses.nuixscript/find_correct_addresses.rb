@@ -157,7 +157,7 @@ if dialog.get_dialog_result == true
         
         progress_dialog.set_main_status_and_log_it('Saving union find...')
         timer.start('write_union_find')
-        # Write results to file.
+        # Write union find to file.
         output_file_path = File.join(output_dir,'find_correct_addresses_union_find.csv')
         CSV.open(output_file_path, 'wb') do |csv|
             identifiers.to_csv(csv)
@@ -174,6 +174,20 @@ if dialog.get_dialog_result == true
 			progress_dialog.set_sub_status("#{cur_index+=1}/#{identifiers.num_components}")
         end
         timer.stop('union_find_to_persons')
+
+        progress_dialog.set_main_status_and_log_it('Saving person manager...')
+        timer.start('write_person_manager')
+        # Write results to file.
+        output_file_path = File.join(output_dir,'find_correct_addresses_output.csv')
+        progress_dialog.set_main_progress(0,persons.num_persons)
+        cur_index = 0
+        CSV.open(output_file_path, 'wb') do |csv|
+            persons.to_csv(csv) do
+                progress_dialog.increment_main_progress
+                progress_dialog.set_sub_status("#{cur_index+=1}/#{persons.num_persons}")
+            end
+        end
+        timer.stop('write_person_manager')
 
 
         progress_dialog.set_main_status_and_log_it('Script finished.')

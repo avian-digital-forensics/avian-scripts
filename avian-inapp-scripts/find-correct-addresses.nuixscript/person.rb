@@ -34,6 +34,11 @@ module FindCorrectAddresses
         def to_s
             return "{" + @email_addresses.to_a.to_s + ":" + @identifiers.select{ |identifier| not @email_addresses.include?(identifier) }.to_s + "}"
         end
+
+        def to_csv_array
+            primary_email_address = primary_email_address()
+            return [primary_email_address] + identifiers.to_a.select{ |identifier| identifier!= primary_email_address } + (@flagged ? ['flagged'] : [])
+        end
         
         private
             # Returns true if the identifier is an email address.
@@ -46,6 +51,10 @@ module FindCorrectAddresses
                     end
                 end
                 return identifier.count('@') == 1
+            end
+
+            def primary_email_address
+                @email_addresses.to_a[0]
             end
     end
 
@@ -68,6 +77,10 @@ module FindCorrectAddresses
             end
             return person_manager
         end
+
+        def num_persons
+            @persons.size
+        end
         
         def add_person(person)
             @persons.add(person)
@@ -82,6 +95,13 @@ module FindCorrectAddresses
         
         def to_s
             @identifier_map.reduce(""){ |result,(key,val)| result + key + ": " + val.to_s + "\n" }
+        end
+
+        def to_csv(csv)
+            for person in @persons
+                csv << person.to_csv_array
+                yield
+            end
         end
 
         def each &block
