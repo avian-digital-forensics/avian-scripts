@@ -170,6 +170,7 @@ if dialog.get_dialog_result == true
                 identifiers.num_components.to_s + " unique persons." +
                 " \nThe result has been stored and is ready for use by other scripts.", 
                 gui_title)
+        progress_dialog.set_completed
     end
     
     Utils.print_progress('Script finished.')
