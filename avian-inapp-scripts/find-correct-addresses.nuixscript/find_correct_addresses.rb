@@ -22,6 +22,8 @@ require File.join(main_directory,'utils','identifier_graph')
 require File.join(main_directory,'utils','timer')
 # Graph correction heuristics.
 require File.join(script_directory,'identifier_graph_heuristics')
+# Person correction heuristics.
+require File.join(script_directory,'person_heuristics')
 # Organize identifier in persons.
 require File.join(script_directory,'person')
 # Progress messages.
@@ -133,10 +135,10 @@ if dialog.get_dialog_result == true
         timer.stop('build_graph')
 
         progress_dialog.set_main_status_and_log_it('Running heuristics on graph...')
-        timer.start('heuristics')
+        timer.start('graph_heuristics')
         # Run graph heuristics.
         run_identifier_graph_heuristics(identifier_graph, heuristics_settings)
-        timer.stop('heuristics')
+        timer.stop('graph_heuristics')
         
         progress_dialog.set_main_status_and_log_it('Saving graph...')
         timer.start('save_graph')
@@ -174,6 +176,12 @@ if dialog.get_dialog_result == true
 			progress_dialog.set_sub_status("#{cur_index+=1}/#{identifiers.num_components}")
         end
         timer.stop('union_find_to_persons')
+
+        progress_dialog.set_main_status_and_log_it('Running heuristics on persons...')
+        timer.start('person_heuristics')
+        # Run person heuristics.
+        run_person_heuristics(persons, heuristics_settings)
+        timer.stop('person_heuristics')
 
         progress_dialog.set_main_status_and_log_it('Saving person manager...')
         timer.start('write_person_manager')
