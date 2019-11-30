@@ -6,6 +6,7 @@ module FindCorrectAddresses
         def initialize
             @identifiers = Set[]
             @email_addresses = Set[]
+			@flagged = false
         end
         
         def add_identifier(identifier)
@@ -36,7 +37,7 @@ module FindCorrectAddresses
         end
 
         def to_csv_array
-            return @email_addresses.to_a + @identifiers.select{ |identifier| not @email_addresses.include?(identifier) }
+            return @email_addresses.to_a + @identifiers.select{ |identifier| not @email_addresses.include?(identifier) } + (@flagged ? ['flagged'] : [])
         end
         
         private
