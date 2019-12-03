@@ -35,6 +35,7 @@ These can be found in the script directory by following the links.
 
 ### Available in-app scripts
 * [Setup](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/setup.nuixscript) - used to setup WSS's.
+* [Batched OCR](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/batched-ocr.nuixscript) - performs batched OCR by breaking a collection of items into a series of smaller batches and performing OCR on each smaller batch in turn.
 * [Connected Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/connected-addresses.nuixscript) - creates a csv file with information about what addresses a specific address has exchanged messages with.
 * [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-correct-addresses.nuixscript) - identifies all addresses and identifiers that refer to the same person and create a file with that information.
 Used by the WSS 'Fix From Addresses'.
