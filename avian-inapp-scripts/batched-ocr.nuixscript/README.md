@@ -1,5 +1,5 @@
 # Batched OCR
-Performs batch OCR by breaking a collection items into a series of smaller batches and performing OCR on each smaller batch in turn.
+Performs batched OCR by breaking a collection items into a series of smaller batches and performing OCR on each smaller batch in turn.
 Originally copied from github repo https://github.com/Nuix/Batched-OCR by JuicyDragon.
 
 # Usage
