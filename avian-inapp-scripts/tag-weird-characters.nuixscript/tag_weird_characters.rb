@@ -85,15 +85,17 @@ if dialog.dialog_result == true
         timer.start("tag_items")
         bulk_annotater.add_tag(tag_name, tag_items)
         timer.stop("tag_items")
+    
+        timer.stop("total")
+        
+        script_finished_message = "Script finished. Found " + tag_items.size.to_s + " items with weird characters in name."
+        progress_dialog.log_message(script_finished_message)
+        CommonDialogs.show_information(script_finished_message, gui_title)
+    
+        timer.print_timings()
+
+        progress_dialog.set_completed
     end
-    
-    timer.stop("total")
-    
-    CommonDialogs.show_information("Script finished.", gui_title)
-    
-    timer.print_timings()
-    
-    puts("Script finished.")
 else
     puts("Script cancelled.")
 end
