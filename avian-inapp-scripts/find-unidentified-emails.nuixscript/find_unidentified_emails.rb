@@ -111,6 +111,7 @@ if dialog.dialog_result == true
         progress_dialog.on_message_logged do |message|
             Utils.print_progress(message)
         end
+        progress_dialog.set_sub_progress_visible(false)
 
         progress_dialog.set_main_status_and_log_it('Making preliminary search...')
         timer.start('preliminary_search')
@@ -132,6 +133,10 @@ if dialog.dialog_result == true
             if result
                 emails_found += 1
                 progress_dialog.set_sub_status("Emails found: " + emails_found.to_s)
+            end
+            if progress_dialog.abort_was_requested
+                progress_dialog.log_message('Aborting script...')
+                return
             end
             result
         end
