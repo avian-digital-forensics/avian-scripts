@@ -24,7 +24,11 @@ dialog = NXUtils.create_dialog(gui_title)
 # Add main tab.
 main_tab = dialog.add_tab("main_tab", "Main")
 
-# TODO: ADD GUI HERE
+main_tab.append_text_field('non_weird_characters', 'Accepted characters', "\u00C5\u00C6\u00D8\u00E5\u00E6\u00F8")
+main_tab.get_control('non_weird_characters').set_tool_tip_text('These characters will not cause an item to be tagged.')
+
+main_tab.append_text_field('tag_name', 'Tag name', 'NonASCIIName')
+main_tab.get_control('tag_name').set_tool_tip_text('The name of the tag given. Will be prefixed with "Avian|"')
 
 
 # Checks the input before closing the dialog.
@@ -39,8 +43,8 @@ end
 # Display dialog. Duh.
 dialog.display
 
-def weird_character?(char_code)
-    return char_code > 127 && ![198, 216, 197, 230, 248, 229].include?(char_code)
+def weird_character?(char_code, accepted_char_codes)
+    return char_code > 127 && !accepted_char_codes.include?(char_code)
 end
 
 # If dialog result is false, the user has cancelled.
@@ -51,6 +55,9 @@ if dialog.dialog_result == true
     
     # values contains the information the user inputted.
     values = dialog.to_map
+
+    accepted_char_codes = values['non_weird_characters'].codepoints
+    tag_name = values['tag_name']
     
     timer.start("total")
     
@@ -68,17 +75,15 @@ if dialog.dialog_result == true
         # Find items with weird characters.
         tag_items = items.select do |item|
             progress_dialog.increment_main_progress
-            item.name.codepoints.any?{ |codepoint| weird_character?(codepoint) }
+            item.name.codepoints.any?{ |codepoint| weird_character?(codepoint, accepted_char_codes) }
         end
         timer.stop("find_items")
-        
-        tag = "Avian|NonASCIIName"
         
         bulk_annotater = utilities.get_bulk_annotater
         
         progress_dialog.set_main_status_and_log_it('Tagging items with weird characters...')
         timer.start("tag_items")
-        bulk_annotater.add_tag(tag, tag_items)
+        bulk_annotater.add_tag(tag_name, tag_items)
         timer.stop("tag_items")
     end
     
