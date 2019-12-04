@@ -40,6 +40,7 @@ These can be found in the script directory by following the links.
 Used by the WSS 'Fix From Addresses'.
 * [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-messages-to-self.nuixscript) - tags all items sent to the sender of that item.
 * [Tag Exchange Addresses with Duplicates](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-exchange-addresses-with-duplicates.nuixscript) - (NOT TESTED) tags exchange server emails with and without archived duplicates.
+* [Tag Weird Characters](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-weird-characters.nuixscript) - (WIP) tags all items with names that include characters not in standard 7-bit ascii and not specified.
 * [Number of Descendants](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/number-of-descendants.nuixscript) - gives every selected item a custom metadata value of how many descendants the item has.
 
 ## Worker Side Scripts (WSS's)
