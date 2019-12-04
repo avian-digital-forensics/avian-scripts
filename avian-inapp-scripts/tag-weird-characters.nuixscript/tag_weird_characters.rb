@@ -57,7 +57,7 @@ if dialog.dialog_result == true
     values = dialog.to_map
 
     accepted_char_codes = values['non_weird_characters'].codepoints
-    tag_name = values['tag_name']
+    tag_name = 'Avian|' + values['tag_name']
     
     timer.start("total")
     
