@@ -114,12 +114,21 @@ if dialog.dialog_result == true
         progress_dialog.set_sub_progress_visible(false)
 
         progress_dialog.set_main_status_and_log_it('Making preliminary search...')
-        timer.start('preliminary_search')
-        # Finds all items that have text containing 'From:' or 'Fra:' and aren't Outlook files.
-        search_term = 'NOT mime-type:application/vnd.ms-outlook-* AND content:((from AND \to AND subject) OR (fra AND til AND emne))'
-        items = current_case.search(search_term)
-        timer.stop('preliminary_search')
-        progress_dialog.log_message('Preliminary search found ' + items.length.to_s + ' possible emails.')
+        if current_selected_items.size > 0
+            progress_dialog.log_message('Using selection. Skipping preliminary search.')
+            items = current_selected_items
+        else
+            progress_dialog.log_message('No selection. Doing preliminary search.')
+            timer.start('preliminary_search')
+            # Finds all items that have text containing 'From:' or 'Fra:' and aren't Outlook files.
+            non_mail_mime_types = ['application/vnd.ms-outlook-*', 'application/pdf-mail', 'application/x-mime-html', 'image/vnd.ms-emf']
+            #non_mail_mime_types.push('image/png')
+            non_mail_mime_types_search = '(' + non_mail_mime_types.map{ |s| '(NOT mime-type:' + s + ')'}.join(' AND ') + ')'
+            search_term = non_mail_mime_types_search + ' AND content:((from AND \to AND subject) OR (fra AND til AND emne))'
+            items = current_case.search(search_term)
+            timer.stop('preliminary_search')
+            progress_dialog.log_message('Preliminary search found ' + items.length.to_s + ' possible emails.')
+        end
 
         progress_dialog.set_main_status_and_log_it('Identifying emails...')
         progress_dialog.set_main_progress(0,items.size)
