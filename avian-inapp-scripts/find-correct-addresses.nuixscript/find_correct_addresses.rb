@@ -22,6 +22,10 @@ require File.join(main_directory,'utils','identifier_graph')
 require File.join(main_directory,'utils','timer')
 # Graph correction heuristics.
 require File.join(script_directory,'identifier_graph_heuristics')
+# Person correction heuristics.
+require File.join(script_directory,'person_heuristics')
+# Organize identifier in persons.
+require File.join(script_directory,'person')
 # Progress messages.
 require File.join(main_directory,'utils','utils')
 
@@ -58,7 +62,8 @@ heuristics_tab.append_check_box('isolate_highly_connected_vertices', 'Disconnect
 heuristics_tab.get_control('isolate_highly_connected_vertices').set_tool_tip_text('Whether identifiers with too many connections should be ignored.')
 heuristics_tab.append_text_field('num_connections_for_isolation', 'Maximum connections', '5')
 heuristics_tab.get_control('num_connections_for_isolation').set_tool_tip_text('The maximum number of connections an identifier may have before it is ignored if the above is enabled.')
-
+heuristics_tab.append_check_box('flag_persons_with_multiple_emails_with_domain', 'Flag persons with multiple emails with same domain', true)
+heuristics_tab.get_control('flag_persons_with_multiple_emails_with_domain').set_tool_tip_text('Whether persons with several email addresses with the same domain should be flagged.')
 
 # Checks the input before closing the dialog.
 dialog.validate_before_closing do |values|
@@ -97,6 +102,7 @@ if dialog.get_dialog_result == true
     heuristics_settings = {}
     heuristics_settings[:isolate_highly_connected_vertices] = values['isolate_highly_connected_vertices']
     heuristics_settings[:num_connections_for_isolation] = Integer(values['num_connections_for_isolation'])
+    heuristics_settings[:flag_persons_with_multiple_emails_with_domain] = values['flag_persons_with_multiple_emails_with_domain']
 
     # The output directory.
     output_dir = SettingsUtils::case_data_dir(main_directory, current_case)
@@ -129,10 +135,10 @@ if dialog.get_dialog_result == true
         timer.stop('build_graph')
 
         progress_dialog.set_main_status_and_log_it('Running heuristics on graph...')
-        timer.start('heuristics')
+        timer.start('graph_heuristics')
         # Run graph heuristics.
         run_identifier_graph_heuristics(identifier_graph, heuristics_settings)
-        timer.stop('heuristics')
+        timer.stop('graph_heuristics')
         
         progress_dialog.set_main_status_and_log_it('Saving graph...')
         timer.start('save_graph')
@@ -153,12 +159,51 @@ if dialog.get_dialog_result == true
         
         progress_dialog.set_main_status_and_log_it('Saving union find...')
         timer.start('write_union_find')
-        # Write results to file.
-        output_file_path = File.join(output_dir,'find_correct_addresses_output.txt')
+        # Write union find to file.
+        output_file_path = File.join(output_dir,'find_correct_addresses_union_find.csv')
         CSV.open(output_file_path, 'wb') do |csv|
             identifiers.to_csv(csv)
         end
         timer.stop('write_union_find')
+
+        progress_dialog.set_main_status_and_log_it('Creating persons from union find...')
+        timer.start('union_find_to_persons')
+        progress_dialog.set_main_progress(0,identifiers.num_components)
+        # Create persons from union find.
+        cur_index = 0
+        persons = FindCorrectAddresses::PersonManager.from_union_find(identifiers) do
+            progress_dialog.increment_main_progress
+			progress_dialog.set_sub_status("#{cur_index+=1}/#{identifiers.num_components}")
+        end
+        timer.stop('union_find_to_persons')
+
+        progress_dialog.set_main_status_and_log_it('Running heuristics on persons...')
+        timer.start('person_heuristics')
+        # Run person heuristics.
+        progress_dialog.set_main_progress(0,persons.num_persons)
+        cur_index = 0
+        run_person_heuristics(persons, heuristics_settings) do
+            progress_dialog.increment_main_progress
+            progress_dialog.set_sub_status("#{cur_index+=1}/#{persons.num_persons}")
+        end
+        timer.stop('person_heuristics')
+
+        progress_dialog.set_main_status_and_log_it('Saving person manager...')
+        timer.start('write_person_manager')
+        # Write results to file.
+        progress_dialog.set_main_progress(0,persons.num_persons)
+        cur_index = 0
+        output_file_path = File.join(output_dir,'find_correct_addresses_output.csv')
+        CSV.open(output_file_path, 'wb') do |csv|
+            persons.to_csv(csv) do
+                progress_dialog.increment_main_progress
+                progress_dialog.set_sub_status("#{cur_index+=1}/#{persons.num_persons}")
+            end
+        end
+        timer.stop('write_person_manager')
+
+
+        progress_dialog.set_main_status_and_log_it('Script finished.')
     
         timer.stop('total')
         
@@ -168,6 +213,7 @@ if dialog.get_dialog_result == true
                 identifiers.num_components.to_s + " unique persons." +
                 " \nThe result has been stored and is ready for use by other scripts.", 
                 gui_title)
+        progress_dialog.set_completed
     end
     
     Utils.print_progress('Script finished.')
