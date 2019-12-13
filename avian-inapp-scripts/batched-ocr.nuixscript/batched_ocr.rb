@@ -56,7 +56,7 @@ if dialog.getDialogResult == true
     $window.closeAllTabs
 
     ProgressDialog.forBlock do |pd|
-        progress_dialog.on_message_logged do |message|
+        pd.on_message_logged do |message|
             Utils.print_progress(message)
         end
         pd.setTitle("Batched OCR")
