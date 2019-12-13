@@ -1,5 +1,5 @@
 # Avian Scripts
-Version 0.6.1
+Version 0.6.3
 
 A collection of all scripts for Nuix created by Avian.
 
@@ -35,12 +35,14 @@ These can be found in the script directory by following the links.
 
 ### Available in-app scripts
 * [Setup](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/setup.nuixscript) - used to setup WSS's.
+* [Batched OCR](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/batched-ocr.nuixscript) - (WIP) performs batched OCR by breaking a collection of items into a series of smaller batches and performing OCR on each smaller batch in turn.
 * [Connected Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/connected-addresses.nuixscript) - creates a csv file with information about what addresses a specific address has exchanged messages with.
 * [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-correct-addresses.nuixscript) - (WIP) identifies all addresses and identifiers that refer to the same person and create a file with that information.
 Used by the WSS 'Fix From Addresses'.
 * [Find Unidentified Emails](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-unidentified-emails.nuixscript) - (WIP) tries to find items that should be emails but aren't identified as such by Nuix.
 * [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-messages-to-self.nuixscript) - tags all items sent to the sender of that item.
 * [Tag Exchange Addresses with Duplicates](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-exchange-addresses-with-duplicates.nuixscript) - (NOT TESTED) tags exchange server emails with and without archived duplicates.
+* [Tag Weird Characters](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-weird-characters.nuixscript) - (WIP) tags all items with names that include characters not in standard 7-bit ascii and not specified.
 * [Number of Descendants](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/number-of-descendants.nuixscript) - gives every selected item a custom metadata value of how many descendants the item has.
 
 ## Worker Side Scripts (WSS's)
