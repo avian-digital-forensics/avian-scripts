@@ -56,6 +56,9 @@ if dialog.getDialogResult == true
     $window.closeAllTabs
 
     ProgressDialog.forBlock do |pd|
+        pd.on_message_logged do |message|
+            Utils.print_progress(message)
+        end
         pd.setTitle("Batched OCR")
         pd.logMessage("Selected Items: #{$current_selected_items.size}")
         pd.logMessage("Batch Size: #{values["target_batch_size"]}")
@@ -110,10 +113,8 @@ if dialog.getDialogResult == true
             
             # Print timer result.
             timer.stop(timer_name)
-            Utils.print_progress("Finished batch #{batch_index+1}")
             pd.log_message("Finished batch #{batch_index+1}")
             timing_message = "Time taken: " + timer.total_time(timer_name)
-            Utils.print_progress(timing_message)
             pd.log_message(timing_message)
             
             batch_index += 1
