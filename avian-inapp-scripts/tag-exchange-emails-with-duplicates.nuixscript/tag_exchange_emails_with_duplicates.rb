@@ -29,7 +29,7 @@ end
 
 
 ## Setup GUI.
-gui_title = "Tag Exchange Addresses with Duplicates"
+gui_title = "Tag Exchange Emails with Duplicates"
 
 dialog = NXUtils.create_dialog(gui_title)
 
@@ -54,7 +54,7 @@ main_tab.get_control("has_missing_attachments_metadata_name").set_tool_tip_text(
 
 # Checks the input before closing the dialog.
 dialog.validate_before_closing do |values|
-    # Make sure primary address is not empty.
+    # Make sure required fields are not empty.
     unless NXUtils.assert_non_empty_field(values, "store_a_prefix", "exchange server email prefix") and 
             NXUtils.assert_non_empty_field(values, "store_a_tag", "exchange server email tag") and 
             NXUtils.assert_non_empty_field(values, "has_archived_duplicate_metadata_name", "has archived duplicate") and
