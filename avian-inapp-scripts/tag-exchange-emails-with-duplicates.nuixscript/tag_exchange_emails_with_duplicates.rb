@@ -72,15 +72,20 @@ dialog.display
 # If dialog result is false, the user has cancelled.
 if dialog.dialog_result == true
     Utils.print_progress("Running script...")
+        
+    # values contains the information the user inputted.
+    values = dialog.to_map
     
     timer = Timing::Timer.new
     
     timer.start("total")
-    runs = 0
-    while runs == 0
-        runs += 1
-        # values contains the information the user inputted.
-        values = dialog.to_map
+    ProgressDialog.for_block do |progress_dialog|
+        # Setup progress dialog.
+        progress_dialog.set_title(gui_title)
+        progress_dialog.on_message_logged do |message|
+            Utils.print_progress(message)
+        end
+        progress_dialog.set_sub_progress_visible(false)
         
         # If item text starts with this, the item is from store A.
         store_a_prefix = values["store_a_prefix"]
@@ -96,23 +101,39 @@ if dialog.dialog_result == true
         
         bulk_annotater = utilities.get_bulk_annotater
         
-        Utils.print_progress("Finding exchange server emails...")
+        progress_dialog.set_main_status_and_log_it("Finding exchange server emails...")
         timer.start("find_store_a")
         # Tag all exchange server emails.
         store_a_items = current_case.search('kind:email AND content:"' + store_a_prefix + '"')
         bulk_annotater.add_tag(store_a_tag, store_a_items)
         timer.stop("find_store_a")
         
-        Utils.print_progress("Searching for archived emails...")
+        progress_dialog.set_main_status_and_log_it("Searching for archived emails...")
         timer.start("non_store_a_search")
-        # All ID's used by archived emails.
-        archive_id_set = Set.new(current_case.search('kind:email AND NOT tag:' + store_a_prefix)){ |archived_email| find_email_id(archived_email) }
+        non_store_a_search = current_case.search('kind:email AND NOT tag:' + store_a_prefix)
         timer.stop("non_store_a_search")
+
+        timer.start("non_store_a_find_ids")
+        progress_dialog.set_main_status_and_log_it("Finding ID's of archived emails...")
+        progress_dialog.set_main_progress(0,non_store_a_search.size)
+        archived_emails_processed = 0
+        progress_dialog.set_sub_status("Archived emails processed: " + archived_emails_processed.to_s)
+        # All ID's used by archived emails.
+        archive_id_set = Set.new(non_store_a_search) do |archived_email| 
+            progress_dialog.increment_main_progress
+            progress_dialog.set_sub_status("Archived emails processed: " + archived_emails_processed.to_s)
+            if progress_dialog.abort_was_requested
+                progress_dialog.log_message('Aborting script...')
+                return
+            end
+            find_email_id(archived_email)
+        end
+        timer.stop("non_store_a_find_ids")
         
         num_without_duplicate = 0
         num_missing_attachments = 0
         
-        Utils.print_progress("Checking for exchange server emails without an archived duplicate...")
+        progress_dialog.set_main_status_and_log_it("Checking for exchange server emails without an archived duplicate...")
         timer.start("has_duplicate")
         # Give all exchange server emails custom metadata for whether there is an archived duplicate.
         # True if there is an archived duplicate:
@@ -121,7 +142,7 @@ if dialog.dialog_result == true
         items_without_duplicate = store_a_items.select{ |email| not archive_id_set.include?(find_email_id(email)) }
         bulk_annotater.put_custom_metadata(has_archived_duplicate_metadata_name, FALSE, items_without_duplicate, nil)
         
-        Utils.print_progress("    Checking for missing attachments...")
+        progress_dialog.set_main_status_and_log_it("Checking for missing attachments...")
         timer.start("missing_attachments")
         num_without_duplicate = items_without_duplicate.length
             # If the item with missing duplicate has children:
@@ -132,27 +153,27 @@ if dialog.dialog_result == true
             bulk_annotater.put_custom_metadata(has_missing_attachments_metadata_name, TRUE, items_without_duplicate.select{ |email| not email.children.length > 0 }, nil)
         timer.stop("missing_attachments")
         timer.stop("has_duplicate")
-    end
+        timer.stop("total")
 
-    timer.print_timings(runs: runs)
+        timer.print_timings()
     
-    # Tell the user if emails without archived duplicates were found.
-    if num_without_duplicate > 0
-        puts("Exchange server emails without an archived duplicate: " + num_without_duplicate.to_s)
-        puts("They have been given a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.")
-        CommonDialogs.show_information("A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found.")
+        # Tell the user if emails without archived duplicates were found.
+        if num_without_duplicate > 0
+            puts("Exchange server emails without an archived duplicate: " + num_without_duplicate.to_s)
+            puts("They have been given a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.")
+            CommonDialogs.show_information("A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found.")
+        end
+        if num_missing_attachments > 0
+            puts("Missing attachments: " + num_missing_attachments.to_s)
+            puts("The emails they are attached to have been given a custom metadata field '" + has_missing_attachments_metadata_name + "' with value TRUE.")
+            CommonDialogs.show_information("A total of " + num_missing_attachments.to_s + " missing attachments were found.")
+        end
     end
-    if num_missing_attachments > 0
-        puts("Missing attachments: " + num_missing_attachments.to_s)
-        puts("The emails they are attached to have been given a custom metadata field '" + has_missing_attachments_metadata_name + "' with value TRUE.")
-        CommonDialogs.show_information("A total of " + num_missing_attachments.to_s + " missing attachments were found.")
-    end
-    timer.stop("total")
     
     # Tell the user the script has finished.
     CommonDialogs.show_information("Script finished.", gui_title)
     
-    puts("Script finished.")
+    Utils.print_progress("Script finished.")
 else
-    puts("Script cancelled.")
+    Utils.print_progress("Script cancelled.")
 end
