@@ -26,7 +26,7 @@ main_tab = dialog.add_tab("main_tab", "Main")
 
 # Add text field for primary address.
 main_tab.append_text_field("primary_address", "Primary Address", "")
-main_tab.control("primary_address").set_tool_tip_text("The address to examine")
+main_tab.get_control("primary_address").set_tool_tip_text("The address to examine")
 
 # Add file chooser for output path.
 main_tab.append_open_file_chooser("output_path", "Output Path", "Comma Seperated Values", "csv")
@@ -39,7 +39,7 @@ main_tab.append_radio_button_group("Delimiter", "delimiter", delimiter_options)
 
 # Add custom delimiter text field.
 main_tab.append_text_field("custom_delimiter", "Custom Delimiter", "")
-main_tab.control("custom_delimiter").set_tool_tip_text("Used to seperate values in the resulting csv if the above is set to 'Custom'")
+main_tab.get_control("custom_delimiter").set_tool_tip_text("Used to seperate values in the resulting csv if the above is set to 'Custom'")
 
 # Add information about the script.
 main_tab.append_information("script_description", "", "Searches through all messages sent by the primary address and counts how often each address appears as to, cc or bcc.")
@@ -93,34 +93,48 @@ if dialog.dialog_result
     
     connections = ConnectedAddresses::Connections.new
 
+    timer.start('find_from')
+    Utils.print_progress('Finding messages from the primary address...')
     # All communication items with a from matching the given identifier.
     emails_from = currentCase.search("from:\"" + address + "\" has-communication:1")
     # Handle all communication items from.
     for item in emails_from
         connections.add_communication_item_from(item)
     end
+    timer.stop('find_from')
 
+    timer.start('find_to')
+    Utils.print_progress('Finding messages to the primary address...')
     # All communication items with a to matching the given identifier.
     emails_to = currentCase.search("to:\"" + address + "\" has-communication:1")
     # Handle all communication items to.
     for item in emails_to
         connections.add_communication_item_to(item)
     end
+    timer.stop('find_to')
 
+    timer.start('find_cc')
+    Utils.print_progress('Finding messages cc the primary address...')
     # All communication items with a cc matching the given identifier.
     emails_cc = currentCase.search("cc:\"" + address + "\" has-communication:1")
     # Handle all communication items cc.
     for item in emails_cc
         connections.add_communication_item_cc(item)
     end
+    timer.stop('find_cc')
 
+    timer.start('find_bcc')
+    Utils.print_progress('Finding messages bcc the primary address...')
     # All communication items with a bcc matching the given identifier.
     emails_bcc = currentCase.search("bcc:\"" + address + "\" has-communication:1")
     # Handle all communication items bcc.
     for item in emails_bcc
         connections.add_communication_item_bcc(item)
     end
+    timer.stop('find_bcc')
 
+    timer.start('write_results')
+    Utils.print_progress('Writing results to file...')
     file = File.open(file_path, 'w')
     # Add header.
     file.puts('address' + delimiter + 'receive_to' + delimiter + 'receive_cc' + delimiter + 'receive_bcc' + delimiter + 'receive_total' + delimiter + 'send_to' + delimiter + 'send_cc' + delimiter + 'send_bcc' + delimiter + 'send_total' + delimiter + 'total')
@@ -128,14 +142,19 @@ if dialog.dialog_result
     file.puts(connections.to_s(delimiter))
     # Close file.
     file.close
+    timer.stop('write_results')
     
-    puts("Found " + connections.num_recipients.to_s + " connected addresses")
-    puts("Results written to: " + file_path)
+    Utils.print_progress("Found " + connections.num_recipients.to_s + " connected addresses")
+    Utils.print_progress("Results written to: " + file_path)
+
+    timer.stop('total')
+
+    timer.print_timings()
     
     # Tell the user the script has finished.
     CommonDialogs.show_information("Script finished. Found " + connections.num_recipients.to_s + " connected addresses. Results written to " + file_path, "Connected Addresses")
     
-    puts("Scipt finished.")
+    Utils.print_progress("Script finished.")
 else
-    puts("Script cancelled.")
+    Utils.print_progress("Script cancelled.")
 end
