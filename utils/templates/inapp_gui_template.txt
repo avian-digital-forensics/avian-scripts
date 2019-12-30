@@ -38,7 +38,7 @@ end
 dialog.display
 
 # If dialog result is false, the user has cancelled.
-if dialog.dialog_result == true
+if dialog.dialog_result
     Utils.print_progress('Running script...')
     
     # values contains the information the user inputted.
