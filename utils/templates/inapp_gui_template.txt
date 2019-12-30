@@ -8,7 +8,12 @@ unless main_directory
     return
 end
 
+# For GUI.
 require File.join(main_directory,'utils','nx_utils')
+# Timings.
+require File.join(main_directory,'utils','timer')
+# Progress messages.
+require File.join(main_directory,'utils','utils')
 
 gui_title = # TODO: EDIT
 
@@ -34,7 +39,7 @@ dialog.display
 
 # If dialog result is false, the user has cancelled.
 if dialog.dialog_result == true
-    puts('Running script...')
+    Utils.print_progress('Running script...')
     
     # values contains the information the user inputted.
     values = dialog.to_map
@@ -43,7 +48,7 @@ if dialog.dialog_result == true
     
     CommonDialogs.show_information('Script finished. , gui_title)#TODO: ADD USER MESSAGE 
     
-    puts('Script finished.')
+    Utils.print_progress('Script finished.')
 else
-    puts('Script cancelled.')
+    Utils.print_progress('Script cancelled.')
 end
