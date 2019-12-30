@@ -1,21 +1,21 @@
 script_directory = File.dirname(__FILE__)
-require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
+require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
 
 main_directory = get_main_directory(false)
 
 unless main_directory
-    puts("Script cancelled.")
+    puts('Script cancelled because no main directory could be found.')
     return
 end
 
-require File.join(main_directory,"utils","nx_utils")
+require File.join(main_directory,'utils','nx_utils')
 
 gui_title = # TODO: EDIT
 
 dialog = NXUtils.create_dialog(gui_title)
 
 # Add main tab.
-main_tab = dialog.add_tab("main_tab", "Main")
+main_tab = dialog.add_tab('main_tab', 'Main')
 
 # TODO: ADD GUI HERE
 
@@ -34,16 +34,16 @@ dialog.display
 
 # If dialog result is false, the user has cancelled.
 if dialog.dialog_result == true
-    puts("Running script...")
+    puts('Running script...')
     
     # values contains the information the user inputted.
     values = dialog.to_map
     
     # TODO: ADD SCRIPT HERE.
     
-    CommonDialogs.show_information("Script finished. , gui_title)#TODO: ADD USER MESSAGE 
+    CommonDialogs.show_information('Script finished. , gui_title)#TODO: ADD USER MESSAGE 
     
-    puts("Script finished.")
+    puts('Script finished.')
 else
-    puts("Script cancelled.")
+    puts('Script cancelled.')
 end
