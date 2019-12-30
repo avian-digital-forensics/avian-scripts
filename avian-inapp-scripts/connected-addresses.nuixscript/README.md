@@ -1,5 +1,5 @@
 # List connected addresses
-The scripts creates a csv file with information about what addresses a specific address has sent messages to.
+The scripts creates a csv file with information about what addresses a specific address has sent messages to or received messages from.
 
 ## Output
 The scripts writes the result to a csv file with the following headers:
