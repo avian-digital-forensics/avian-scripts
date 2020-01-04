@@ -48,36 +48,36 @@ dialog.validateBeforeClosing do |values|
 end
 
 dialog.display
-if dialog.getDialogResult == true
-    values = dialog.toMap
+if dialog.get_dialog_result == true
+    values = dialog.to_map
     batch_index = 0
     last_progress = Time.now
 
     $window.closeAllTabs
 
-    ProgressDialog.forBlock do |pd|
+    ProgressDialog.for_block do |pd|
         pd.on_message_logged do |message|
             Utils.print_progress(message)
         end
-        pd.setTitle("Batched OCR")
-        pd.logMessage("Selected Items: #{$current_selected_items.size}")
-        pd.logMessage("Batch Size: #{values["target_batch_size"]}")
+        pd.set_title("Batched OCR")
+        pd.log_message("Selected Items: #{$current_selected_items.size}")
+        pd.log_message("Batch Size: #{values["target_batch_size"]}")
 
-        pd.logMessage("Worker Settings:")
+        pd.log_message("Worker Settings:")
         values["worker_settings"].each do |k,v|
-            pd.logMessage("\t#{k} => #{v}")
+            pd.log_message("\t#{k} => #{v}")
         end
 
-        pd.logMessage("OCR Settings:")
+        pd.log_message("OCR Settings:")
         values["ocr_settings"].each do |k,v|
-            pd.logMessage("\t#{k} => #{v}")
+            pd.log_message("\t#{k} => #{v}")
         end
 
         ocr_processor = $utilities.createOcrProcessor
-        ocr_processor.setParallelProcessingSettings(values["worker_settings"])
-        ocr_processor.whenItemEventOccurs do |info|
+        ocr_processor.set_parallel_processing_settings(values["worker_settings"])
+        ocr_processor.when_item_event_occurs do |info|
             if (Time.now - last_progress) > 0.5
-                pd.setSubStatus("Stage: #{info.getStage.split("_").map{|v|v.capitalize}.join(" ")}")
+                pd.set_sub_status("Stage: #{info.stage.split("_").map{|v|v.capitalize}.join(" ")}")
                 last_progress = Time.now
             end
         end
@@ -85,22 +85,22 @@ if dialog.getDialogResult == true
         timer = Timing::Timer.new
         
         total_batches = ($current_selected_items.size.to_f / values["target_batch_size"].to_f).ceil
-        pd.setMainProgress(0,total_batches)
+        pd.set_main_progress(0,total_batches)
         stop_requested = false
         $current_selected_items.each_slice(values["target_batch_size"]) do |slice_items|
-            break if pd.abortWasRequested
+            break if pd.abort_was_requested
             
             # Start batch timer.
             timer_name = "batch#{batch_index+1}"
             if timer.exist?(timer_name)
-                puts("Unexpected behavior: several batches with same index.")
+                Utils.print_progress("Unexpected behavior: several batches with same index.")
                 timer.reset(timer_name)
             end
             timer.start(timer_name)
             
             # Process batch.
-            pd.setSubProgress(0,slice_items.size)
-            pd.setMainStatusAndLogIt("Processing Batch #{batch_index+1}")
+            pd.set_sub_progress(0,slice_items.size)
+            pd.set_main_status_and_log_it("Processing Batch #{batch_index+1}...")
             ocr_job = ocr_processor.processAsync(slice_items,values["ocr_settings"])
             while !ocr_job.hasFinished
                 if pd.abortWasRequested && !stop_requested
@@ -113,20 +113,19 @@ if dialog.getDialogResult == true
             
             # Print timer result.
             timer.stop(timer_name)
-            pd.log_message("Finished batch #{batch_index+1}")
-            timing_message = "Time taken: " + timer.total_time(timer_name)
-            pd.log_message(timing_message)
-            
             batch_index += 1
-            pd.setMainProgress(batch_index)
+            timing_message = "Time taken: " + timer.total_time(timer_name).to_s
+            pd.log_message("Finished batch #{batch_index}. " + timing_message)
+            
+            pd.set_main_progress(batch_index)
         end
 
-        if pd.abortWasRequested
-            pd.setMainStatusAndLogIt("User Aborted")
+        if pd.abort_was_requested
+            pd.set_main_status_and_log_it("User Aborted")
         else
-            pd.setCompleted
+            pd.set_completed
         end
 
-        $window.openTab("workbench",{"search"=>""})
+        $window.open_tab("workbench",{"search"=>""})
     end
 end
