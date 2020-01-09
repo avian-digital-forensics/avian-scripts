@@ -7,7 +7,11 @@ module Timing
         
         def running?(stop_watch_name)
             return @timers.key?(stop_watch_name) && @timers[stop_watch_name].running?
-        end    
+        end
+        
+        def exist?(stop_watch_name)
+            return @timers.key?(stop_watch_name)
+        end
             
         def start(stop_watch_name)
             ensure_stop_watch(stop_watch_name)
