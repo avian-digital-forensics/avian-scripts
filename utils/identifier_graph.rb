@@ -16,26 +16,6 @@ module IdentifierGraph
             return @graph[identifier]
         end
         
-        # If given one argument, will add the given identifier with an empty set of connected identifiers.
-        # If given two arguments, will add the given identifier with the given list of connected identifiers.
-        def add_identifier(*args)
-            if @graph.key?(args[0])
-                raise "Identifier already in graph"
-            end
-            case args.size
-                when 1
-                    @graph[args[0]] = Set[]
-                when 2
-                    @graph[args[0]] = args[1].to_set
-            end
-        end
-        
-        def ensure_identifier(identifier)
-            unless @graph.key?(identifier)
-                add_identifier(identifier)
-            end
-        end
-        
         # Connects the two specified identifiers.
         def connect_identifiers(identifier1, identifier2)
             unless @graph.key?(identifier1)
@@ -101,5 +81,26 @@ module IdentifierGraph
         def each &block
             @graph.each{ |key, value| block.call(key, value) }
         end
+
+        private
+            # If given one argument, will add the given identifier with an empty set of connected identifiers.
+            # If given two arguments, will add the given identifier with the given list of connected identifiers.
+            def add_identifier(*args)
+                if @graph.key?(args[0])
+                    raise "Identifier already in graph"
+                end
+                case args.size
+                    when 1
+                        @graph[args[0]] = Set[]
+                    when 2
+                        @graph[args[0]] = args[1].to_set
+                end
+            end
+            
+            def ensure_identifier(identifier)
+                unless @graph.key?(identifier)
+                    add_identifier(identifier)
+                end
+            end
     end
 end
