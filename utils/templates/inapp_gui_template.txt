@@ -43,8 +43,15 @@ if dialog.dialog_result
     
     # values contains the information the user inputted.
     values = dialog.to_map
+
+    timer = Timing::Timer.new
+
+    timer.start('total')
     
     # TODO: ADD SCRIPT HERE.
+    
+    timer.stop('total')
+    timer.print_timings
     
     CommonDialogs.show_information('Script finished. , gui_title)#TODO: ADD USER MESSAGE 
     
