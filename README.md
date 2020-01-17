@@ -7,7 +7,7 @@ A collection of all scripts for Nuix created by Avian.
 1. Download the newest version of the repository here:
 https://github.com/avian-digital-forensics/avian-scripts/releases/latest
 
-2. Unpack the contents to an empty directory.
+2. Unpack the contents to an empty directory _not_ related to NUIX.
 
 3. In Nuix, open the 'Scripts' menu and select 'Open Scripts Directory'.
 
