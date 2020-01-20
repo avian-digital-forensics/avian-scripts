@@ -16,4 +16,8 @@
   :label: Load Timer
   :path: wss/load-timer/load_timer.rb
   :active: false
+- :identifier: create_custom_entities
+  :label: Create Custom Entities
+  :path: wss/create-custom-entities/create_custom_entities.rb
+  :active: false
   
