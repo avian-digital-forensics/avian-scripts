@@ -1,3 +1,4 @@
+require 'set'
 require File.join(File.dirname(__FILE__), 'custom_entity')
 
 module CustomEntityManager
@@ -12,7 +13,7 @@ module CustomEntityManager
             if @items.include?(guid)
                 @items[guid] << entity
             else
-                @items[guid] = [entity]
+                @items[guid] = Set[entity]
             end
         end
 
@@ -27,7 +28,7 @@ module CustomEntityManager
             if @items.key?(guid)
                 @items[guid]
             else
-                []
+                Set[]
             end
         end
             
