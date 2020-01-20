@@ -86,7 +86,7 @@ if dialog.dialog_result
                             progress_dialog.log_message("Invalid custom metadata value '#{value.to_s}' for metadata '#{key}' in item '#{item.guid}'. Amount must be non-negative.")
                         end
                         unless entity_amount == 0 # If the entity amount is 0, there is no reason to save it.
-                            entities.add_entity(item, CustomEntity::CustomEntity.new(entity[1],entity[2],entity_amount))
+                            entities.add_entity(item.guid, CustomEntity::CustomEntity.new(entity[1],entity[2],entity_amount))
                         end
                     rescue ArgumentError # If the custom metadata value isn't an integer.
                         progress_dialog.log_message("Invalid custom metadata value '#{value.to_s}' for metadata '#{key}' in item '#{item.guid}'. Value must be a non-negative integer.")
@@ -113,7 +113,7 @@ if dialog.dialog_result
             items_with_tag = current_case.search("tag:\"#{tag}\"")
             progress_dialog.set_sub_progress(0,items_with_tag.size)
             items_with_tag.each_with_index do |item, item_index|
-                entities.add_entity(item, CustomEntity::CustomEntity.new(tag_parts[2],tag_parts[3],1))
+                entities.add_entity(item.guid, CustomEntity::CustomEntity.new(tag_parts[2],tag_parts[3],1))
                 progress_dialog.incrememnt_sub_progress
             end
             
