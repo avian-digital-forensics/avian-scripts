@@ -21,7 +21,7 @@ require File.join(main_directory,'utils','custom_entity')
 # Saving data.
 require File.join(main_directory,'utils','settings_utils')
 # Entities manager.
-require File.join(script_directory,'custom_entity_manager')
+require File.join(main_directory,'utils','custom_entity_manager')
 
 gui_title = 'Store Custom Entities'
 
