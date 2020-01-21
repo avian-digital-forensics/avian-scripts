@@ -1,4 +1,4 @@
-# Tag Exchange Emails with Duplicates
+# Tag Archived Exchange Emails for Deduplication
 <b>Background</b><br>
 Some organizations use archiving solutions to archive emails+attachments of some  emails in order to save live Exchange server storage. I.e. only the emails and not the attachments are included when acquiring PSTs from Exchange. When you acquire the archive PSTs from the archiving solution and mix in with the PSTs from the Exchange Server you will get a lot of duplicates. 
 
