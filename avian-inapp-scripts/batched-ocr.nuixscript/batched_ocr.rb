@@ -47,6 +47,12 @@ dialog.validateBeforeClosing do |values|
     next true
 end
 
+def log_message(progress_dialog, message)
+    time_stamp = Utils.time_stamp
+    puts(time_stamp + "  " + message)
+    progress_dialog.log_message(time_stamp + "  " + message)
+end
+
 dialog.display
 if dialog.get_dialog_result == true
     values = dialog.to_map
@@ -56,21 +62,18 @@ if dialog.get_dialog_result == true
     $window.closeAllTabs
 
     ProgressDialog.for_block do |pd|
-        pd.on_message_logged do |message|
-            Utils.print_progress(message)
-        end
         pd.set_title("Batched OCR")
-        pd.log_message("Selected Items: #{$current_selected_items.size}")
-        pd.log_message("Batch Size: #{values["target_batch_size"]}")
+        log_message(pd, "Selected Items: #{$current_selected_items.size}")
+        log_message(pd, "Batch Size: #{values["target_batch_size"]}")
 
-        pd.log_message("Worker Settings:")
+        log_message(pd,"Worker Settings:")
         values["worker_settings"].each do |k,v|
-            pd.log_message("\t#{k} => #{v}")
+            log_message(pd, "\t#{k} => #{v}")
         end
 
-        pd.log_message("OCR Settings:")
+        log_message(pd,"OCR Settings:")
         values["ocr_settings"].each do |k,v|
-            pd.log_message("\t#{k} => #{v}")
+            log_message(pd,"\t#{k} => #{v}")
         end
 
         ocr_processor = $utilities.createOcrProcessor
@@ -93,21 +96,22 @@ if dialog.get_dialog_result == true
             # Start batch timer.
             timer_name = "batch#{batch_index+1}"
             if timer.exist?(timer_name)
-                Utils.print_progress("Unexpected behavior: several batches with same index.")
+                log_message(pd, "Unexpected behavior: several batches with same index.")
                 timer.reset(timer_name)
             end
             timer.start(timer_name)
             
             # Process batch.
             pd.set_sub_progress(0,slice_items.size)
-            pd.set_main_status_and_log_it("Processing Batch #{batch_index+1}...")
+            log_message(pd, "Processing Batch #{batch_index+1}...")
+            pd.set_main_status("Processing Batch #{batch_index+1}...")
             ocr_job = ocr_processor.processAsync(slice_items,values["ocr_settings"])
             while !ocr_job.hasFinished
                 if pd.abortWasRequested && !stop_requested
                     ocr_job.stop
                     stop_requested = true
                 end
-                pd.setSubProgress(ocr_job.getCurrentStageExportedItemsCount,slice_items.size)
+                pd.set_sub_progress(ocr_job.getCurrentStageExportedItemsCount,slice_items.size)
                 sleep(0.25)
             end
             
@@ -115,13 +119,14 @@ if dialog.get_dialog_result == true
             timer.stop(timer_name)
             batch_index += 1
             timing_message = "Time taken: " + timer.total_time(timer_name).to_s
-            pd.log_message("Finished batch #{batch_index}. " + timing_message)
+            log_message(pd,"Finished batch #{batch_index}. " + timing_message)
             
             pd.set_main_progress(batch_index)
         end
 
         if pd.abort_was_requested
-            pd.set_main_status_and_log_it("User Aborted")
+            log_message(pd, "User Aborted")
+            pd.set_main_status("User Aborted")
         else
             pd.set_completed
         end
