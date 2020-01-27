@@ -36,4 +36,28 @@ module Utils
     def self.random_string(num_chars, char_set)
         return sample(char_set, num_chars, true).join
     end
+
+    def self.bulk_add_tag(utilities, progress_dialog, timer, tag, items)
+        progress_dialog.set_sub_progress_visible(false)
+        progress_dialog.set_main_progress(0, items.size)
+        bulk_annotater = utilities.get_bulk_annotater
+        num_items = items.size
+        item_num = 1
+        bulk_annotater.add_tag(tag, items) do |event_info|
+            progress_dialog.increment_main_progress
+            progress_dialog.set_sub_status("#{item_num += 1}/#{num_items}")
+        end
+    end
+
+    def self.bulk_remove_tag(utilities, progress_dialog, timer, tag, items)
+        progress_dialog.set_sub_progress_visible(false)
+        progress_dialog.set_main_progress(0, items.size)
+        bulk_annotater = utilities.get_bulk_annotater
+        num_items = items.size
+        item_num = 1
+        bulk_annotater.remove_tag(tag, items) do |event_info|
+            progress_dialog.increment_main_progress
+            progress_dialog.set_sub_status("#{item_num += 1}/#{num_items}")
+        end
+    end
 end
