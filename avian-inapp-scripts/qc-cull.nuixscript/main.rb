@@ -14,6 +14,8 @@ require File.join(main_directory,'utils','nx_utils')
 require File.join(main_directory,'utils','timer')
 # Progress messages.
 require File.join(main_directory,'utils','utils')
+# Save and load script settings.
+require File.join(main_directory,'utils','settings_utils')
 # Number of descendants.
 require File.join(main_directory,'avian-inapp-scripts','number-of-descendants.nuixscript','number_of_descendants')
 # Search and tag.
@@ -23,21 +25,26 @@ gui_title = 'QC and Culling'
 
 dialog = NXUtils.create_dialog(gui_title)
 
+# Load saved settings.
+script_settings = SettingsUtils::load_script_settings(main_directory,'qc_cull')
+
 # Add main tab.
 main_tab = dialog.add_tab('main_tab', 'Main')
 
 # Add a text field for the custom metadata name for number of descendants.
-main_tab.append_text_field('num_descendants_metadata_key', 'Number of descendants custom metadata name', 'NumberOfDescendants')
+main_tab.append_text_field('num_descendants_metadata_key', 'Number of descendants custom metadata name', script_settings[:main][:num_descendants_metadata_key])
 main_tab.get_control('num_descendants_metadata_key').set_tool_tip_text('All items will receive a custom metadata field with this key.')
 
 
 # Add search and tag file tab.
 search_and_tag_tab = dialog.add_tab('search_and_tag', 'Search and Tag')
 # Add file choosers for search and tag.
-search_and_tag_file_num = 5
-for k in 1..search_and_tag_file_num
-    search_and_tag_tab.append_open_file_chooser("search_and_tag_file_#{k}", "Search and Tag File #{k}", 'JSON', 'json')
-    search_and_tag_tab.get_control("search_and_tag_file_#{k}").set_tool_tip_text('This file will be loaded into the search and tag.')
+search_and_tag_file_num = 0
+while script_settings[:search_and_tag].key?("search_and_tag_file_#{search_and_tag_file_num + 1}".to_sym)
+    search_and_tag_file_num += 1
+    search_and_tag_tab.append_open_file_chooser("search_and_tag_file_#{search_and_tag_file_num}", "Search and Tag File #{search_and_tag_file_num}", 'JSON', 'json')
+    search_and_tag_tab.get_control("search_and_tag_file_#{search_and_tag_file_num}").set_tool_tip_text('This file will be loaded into the search and tag.')
+    search_and_tag_tab.set_text("search_and_tag_file_#{search_and_tag_file_num}", script_settings[:search_and_tag]["search_and_tag_file_#{search_and_tag_file_num}".to_sym])
 end
 
 
@@ -62,14 +69,20 @@ if dialog.dialog_result
     # values contains the information the user inputted.
     values = dialog.to_map
 
+    script_settings[:main][:num_descendants_metadata_key] = values['num_descendants_metadata_key']
+
     num_descendants_metadata_key = values['num_descendants_metadata_key']
 
     search_and_tag_files = []
     for k in 1..search_and_tag_file_num
-        unless values["search_and_tag_file_#{k}"] == ''
-            search_and_tag_files << values["search_and_tag_file_#{k}"]
+        path = values["search_and_tag_file_#{k}"]
+        script_settings[:search_and_tag]["search_and_tag_file_#{k}".to_sym] = path
+        unless path.empty?
+            search_and_tag_files << path
         end
     end
+
+    SettingsUtils::save_script_settings(main_directory, 'qc_cull', script_settings)
 
     timer = Timing::Timer.new
 
