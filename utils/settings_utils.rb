@@ -60,4 +60,29 @@ module SettingsUtils
         end
         return dir_name
     end
+
+    def inapp_script_settings_path(main_directory, script_name)
+        default_settings_file = File.join(main_directory,'data','inapp-script-settings',"default_#{script_name}_settings.yml")
+        settings_file = File.join(main_directory,'data','inapp-script-settings',"#{script_name}_settings.yml")
+
+        # If the settings file does not exist, create it from defaults.
+        unless File.file?(settings_file)
+            FileUtils.cp(default_settings_file, settings_file)
+        end
+        return settings_file
+    end
+
+    def load_script_settings(main_directory, script_name)
+        settings_file = inapp_script_settings_path(main_directory, script_name)
+
+        settings = YAML.load(File.read(settings_file))
+    end
+
+    def save_script_settings(main_directory, script_name, yaml_hash)
+        settings_file = inapp_script_settings_path(main_directory, script_name)
+
+        # Write the settings.
+        File.open(settings_file, "w") { |file| file.write(yaml_hash.to_yaml) }
+    end
+
 end
