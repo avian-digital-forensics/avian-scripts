@@ -1,0 +1,11 @@
+---
+:main:
+  :num_descendants_metadata_key: NumberOfDescendants
+  :exclude_tag_prefix: Avian|Exclude|
+  :exclude_reason: Excluded by QC cull
+:search_and_tag:
+  :search_and_tag_file_1:
+  :search_and_tag_file_2:
+  :search_and_tag_file_3:
+  :search_and_tag_file_4:
+  :search_and_tag_file_5:
