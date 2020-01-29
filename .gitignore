@@ -1,4 +1,4 @@
-data/*
+data/**/*.*
 !data/**/default_*
 
 # This file is generated for each user from a file in utils.
