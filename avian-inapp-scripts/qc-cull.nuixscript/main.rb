@@ -78,6 +78,8 @@ if dialog.dialog_result
     # values contains the information the user inputted.
     values = dialog.to_map
 
+    # This next part takes the information the user inputted and updates the stored settings so the input will be remembered.
+
     num_descendants_metadata_key = values['num_descendants_metadata_key']
     script_settings[:main][:num_descendants_metadata_key] = num_descendants_metadata_key
 
@@ -112,40 +114,56 @@ if dialog.dialog_result
         end
 
         items = current_selected_items
+
+        # The actual QC process starts here.
+
+        # Number of Descendants.
         NumberOfDescendants::number_of_descendants(current_case, progress_dialog, timer, items, num_descendants_metadata_key)
         
+        # Give all selected items a unique tag.
         progress_dialog.set_main_status_and_log_it('Adding selected item tag...')
         timer.start('add_selected_items_tag')
         Utils::bulk_add_tag(utilities, progress_dialog, selected_item_tag, items)
         timer.stop('add_selected_items_tag')
 
+        # Search and Tag.
+        # Skipped if no .json files are specified.
         if search_and_tag_files.empty?
             progress_dialog.log_message('Skipping search and tag since no files are selected.')
         else
             QCCull::search_and_tag(current_case,progress_dialog,timer,search_and_tag_files,'tag:"' + selected_item_tag + '"')
         end
 
+        # Culling.
         if exclude_tag_prefix.empty?
             progress_dialog.log_message('Skipping exclude because exclude tag prefix is blank.')
         else
             timer.start('exclude_items')
 
+            # Create a list of which tags in the case are exclusion tags.
+            # All items with these tags will be excluded.
             progress_dialog.set_main_status_and_log_it('Finding exclusion tags...')
             timer.start('find_exclude_tags')
             exclude_tags = current_case.all_tags.select { |tag| tag.start_with?(exclude_tag_prefix) }
             timer.stop('find_exclude_tags')
 
+            # Finds all selected items with exclusion tags.
             progress_dialog.set_main_status_and_log_it('Finding exclusion items...')
             timer.start('find_exclude_items')
+            # Create a search string matching all items with exclusion tags.
             exclude_search = exclude_tags.map { |tag| "tag:\"#{tag}\""}.join(' OR ')
             if exclude_search.empty?
+                # If there are no exclusion tags, skip exclusion.
                 progress_dialog.log_message('Skipping exclusion since no matching tags were found.')
                 timer.stop('find_exclude_items')
             else
+                # Add a clause to ensure that only selected items will match the search.
                 exclude_search += " AND tag:\"#{selected_item_tag}\""
+                # Perform the search.
                 exclude_items = current_case.search(exclude_search)
                 timer.stop('find_exclude_items')
     
+                # Actually exclude the items.
                 progress_dialog.set_main_status_and_log_it('Excluding items...')
                 Utils::bulk_exclude(utilities, progress_dialog, exclude_items, exclude_reason)
             end
@@ -153,12 +171,14 @@ if dialog.dialog_result
             timer.stop('exclude_items')
         end
 
-        
+        # The tag marking that an item is selected was only meant for internal use, so let's remove it.
+        # First from each individual item...
         progress_dialog.set_main_status_and_log_it('Removing selected item tag...')
         timer.start('remove_selected_items_tag')
         Utils::bulk_remove_tag(utilities, progress_dialog, selected_item_tag, items)
         timer.stop('remove_selected_items_tag')
 
+        # ...and then from the case.
         if current_case.delete_tag(selected_item_tag)
             progress_dialog.log_message('Selected item tag succesfully removed.')
         else
