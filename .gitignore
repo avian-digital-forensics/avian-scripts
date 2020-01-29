@@ -1,3 +1,4 @@
+# Only ignores files with extensions. This is an ugly workaround.
 data/**/*.*
 !data/**/default_*
 
