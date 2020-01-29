@@ -37,6 +37,8 @@ module Utils
         return sample(char_set, num_chars, true).join
     end
 
+    # Adds the specified tag to all given items.
+    # Progress is shown in the main progress bar of the given progress dialog.
     def self.bulk_add_tag(utilities, progress_dialog, tag, items)
         progress_dialog.set_sub_progress_visible(false)
         progress_dialog.set_main_progress(0, items.size)
@@ -49,6 +51,8 @@ module Utils
         end
     end
 
+    # Removes the specified tag from all given items.
+    # Progress is shown in the main progress bar of the given progress dialog.
     def self.bulk_remove_tag(utilities, progress_dialog, tag, items)
         progress_dialog.set_sub_progress_visible(false)
         progress_dialog.set_main_progress(0, items.size)
@@ -61,6 +65,8 @@ module Utils
         end
     end
 
+    # Excludes the specified items with the specified reason.
+    # Progress is shown in the main progress bar of the given progress dialog.
     def self.bulk_exclude(utilities, progress_dialog, items, exclusion_reason)
         progress_dialog.set_sub_progress_visible(false)
         progress_dialog.set_main_progress(0, items.size)
