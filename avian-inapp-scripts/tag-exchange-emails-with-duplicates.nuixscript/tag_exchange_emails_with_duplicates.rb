@@ -23,8 +23,11 @@ require File.join(main_directory,"utils","utils")
         
 # Returns the ID of the specified email.
 def find_email_id(email)
-    raise ArgumentError, "Email doesn't have a Mapi-Smtp-Message-Id property. GUID: " + email.guid unless email.properties.key?("Mapi-Smtp-Message-Id")
-    return email.properties["Mapi-Smtp-Message-Id"]
+	if email.properties.key?('Mapi-Smtp-Message-Id')
+		return email.properties["Mapi-Smtp-Message-Id"]
+	else
+		return nil
+	end
 end
 
 
@@ -125,7 +128,7 @@ if dialog.dialog_result == true
         progress_dialog.set_main_status_and_log_it("Finding ID's of archived emails...")
         progress_dialog.set_main_progress(0,non_store_a_search.size)
         archived_emails_processed = 0
-        progress_dialog.set_sub_status("Archived emails processed: " + archived_emails_processed.to_s)
+        progress_dialog.set_sub_status("Archived emails processed: " + archived_emails_processed.to_s + '/' + non_store_a_search.size.to_s)
         archive_id_set = Set.new(non_store_a_search) do |archived_email| 
             progress_dialog.increment_main_progress
             archived_emails_processed += 1
@@ -136,6 +139,7 @@ if dialog.dialog_result == true
             end
             find_email_id(archived_email)
         end
+		archive_id_set.delete?(nil)
         timer.stop("non_store_a_find_ids")
         
         num_without_duplicate = 0
@@ -147,16 +151,17 @@ if dialog.dialog_result == true
         store_a_items_processed = 0
         timer.start("has_duplicate")
         progress_dialog.set_sub_status('Exchange server emails processed: ' + store_a_items_processed.to_s)
-        items_with_duplicate = Set[]
-        items_without_duplicate = Set[]
+        items_with_duplicate = []
+        items_without_duplicate = []
         store_a_items.each_with_index do |email, index|
             if archive_id_set.include?(find_email_id(email))
                 items_with_duplicate << email
             else
                 items_without_duplicate << email
             end
+			store_a_items_processed += 1
             progress_dialog.increment_main_progress
-            progress_dialog.set_sub_status('Exchange server emails processed: ' + store_a_items_processed.to_s)
+            progress_dialog.set_sub_status('Exchange server emails processed: ' + store_a_items_processed.to_s + '/' + store_a_items.size.to_s + '  Current item GUID: ' + email.guid.to_s)
             if progress_dialog.abort_was_requested
                 progress_dialog.log_message('Aborting script...')
                 return
@@ -165,24 +170,42 @@ if dialog.dialog_result == true
         timer.stop("has_duplicate")
 
         # For items with archived duplicate:
-        progress_dialog.set_main_status_and_log_it('Add metadata and tag to exchange server emails with an archived duplicate...')
-        bulk_annotater.put_custom_metadata(has_archived_duplicate_metadata_name, TRUE, items_with_duplicate, nil)
-        bulk_annotater.add_tag(has_archived_duplicate_tag, items_with_duplicate, nil)
-
+        progress_dialog.set_main_status_and_log_it('Add metadata to exchange server emails with an archived duplicate...')
+		progress_dialog.set_main_progress(0, items_with_duplicate.size)
+		items_processed = 0
+		bulk_annotater.put_custom_metadata(has_archived_duplicate_metadata_name, TRUE, items_with_duplicate) do | item_event_info |
+			items_processed += 1
+			progress_dialog.increment_main_progress
+			progress_dialog.set_sub_status('Exchange server emails with duplicates given metadata: ' + items_processed.to_s + '/' + items_with_duplicate.size.to_s)
+		end
+		
+        progress_dialog.set_main_status_and_log_it('Add tags to exchange server emails with an archived duplicate...')
+		progress_dialog.set_main_progress(0, items_with_duplicate.size)
+		items_processed = 0
+		bulk_annotater.add_tag(has_archived_duplicate_tag, items_with_duplicate) do | item_event_info |
+			items_processed += 1
+			progress_dialog.increment_main_progress
+			progress_dialog.set_sub_status('Exchange server emails with duplicates given metadata: ' + items_processed.to_s + '/' + items_with_duplicate.size.to_s)
+		end
         if exclude_items_with_archived_duplicates
             progress_dialog.set_main_status_and_log_it('Excluding exchange server emails with duplicates...')
             timer.start('exclude_items_with_duplicates')
-            bulk_annotater.exclude(items_with_duplicate, 'Has an archived duplicate')
+			progress_dialog.set_main_progress(0, items_with_duplicate.size)
+			items_processed = 0
+            bulk_annotater.exclude('Has an archived duplicate', items_with_duplicate) do | item_event_info |
+				items_processed += 1
+				progress_dialog.increment_main_progress
+				progress_dialog.set_sub_status('Exchange server emails with duplicates excluded: ' + items_processed.to_s + '/' + items_with_duplicate.size.to_s)
+			end
             timer.stop('exclude_items_with_duplicates')
         else
             progress_dialog.log_message('Skipping exclusion.')
         end
-
         # And for those without:
         progress_dialog.set_main_status_and_log_it('Add metadata to exchange server emails without an archived duplicate...')
         bulk_annotater.put_custom_metadata(has_archived_duplicate_metadata_name, FALSE, items_without_duplicate, nil)
         
-        progress_dialog.set_main_status_and_log_it("Checking for missing attachments...")
+        progress_dialog.set_main_status_and_log_it('Checking for missing attachments...')
         timer.start("missing_attachments")
         num_without_duplicate = items_without_duplicate.length
             # If the item with missing duplicate has children:
