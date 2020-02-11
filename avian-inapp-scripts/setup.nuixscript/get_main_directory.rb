@@ -21,6 +21,9 @@ def get_main_directory(force_user_input)
     # If main directory path is not in file or user input is forced, get main directory path from user.
     if main_directory == "" or force_user_input
         require File.join(setup_script_directory,"utils","nx_utils")
+        require File.join(setup_script_directory,"utils","utils")
+        
+        Utils.print_progress('Getting main script directory from user.')
 
         ## Create GUI.
         dialog = TabbedCustomDialog.new("Avian Main Script Directory")
