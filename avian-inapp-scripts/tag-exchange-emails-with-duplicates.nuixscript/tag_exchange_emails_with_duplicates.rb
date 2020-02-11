@@ -52,6 +52,9 @@ main_tab.get_control("has_archived_duplicate_metadata_name").set_tool_tip_text("
 main_tab.append_text_field("has_missing_attachments_metadata_name", "Has missing attachments", "HasMissingAttachmentsMetadataName")
 main_tab.get_control("has_missing_attachments_metadata_name").set_tool_tip_text("All exchange server emails that do not have a archived duplicate will receive a custom metadata field with this name saying whether they have attachments.")
 
+main_tab.append_check_box("exclude_items_with_archived_duplicates", "Exclude items with archived duplicates", TRUE)
+main_tab.get_control('exclude_items_with_archived_duplicates').set_tool_tip_text('Whether to exclude items with archived duplicates.')
+
 # Checks the input before closing the dialog.
 dialog.validate_before_closing do |values|
     # Make sure required fields are not empty.
@@ -95,9 +98,13 @@ if dialog.dialog_result == true
         
         # All exchange server emails with an archived duplicate will receive this tag.
         has_archived_duplicate_metadata_name = values["has_archived_duplicate_metadata_name"]
+        has_archived_duplicate_tag = 'Avian|' + values['has_archived_duplicate_metadata_name']
         
         # Whether the exchange server email has missing attachments.
         has_missing_attachments_metadata_name = values["has_missing_attachments_metadata_name"]
+
+        # Whether to exclude items with archived duplicates.
+        exclude_items_with_archived_duplicates = values['exclude_items_with_archived_duplicates']
         
         bulk_annotater = utilities.get_bulk_annotater
         
@@ -113,14 +120,15 @@ if dialog.dialog_result == true
         non_store_a_search = current_case.search('kind:email AND NOT tag:' + store_a_prefix)
         timer.stop("non_store_a_search")
 
+        # Find ID's of archived emails.
         timer.start("non_store_a_find_ids")
         progress_dialog.set_main_status_and_log_it("Finding ID's of archived emails...")
         progress_dialog.set_main_progress(0,non_store_a_search.size)
         archived_emails_processed = 0
         progress_dialog.set_sub_status("Archived emails processed: " + archived_emails_processed.to_s)
-        # All ID's used by archived emails.
         archive_id_set = Set.new(non_store_a_search) do |archived_email| 
             progress_dialog.increment_main_progress
+            archived_emails_processed += 1
             progress_dialog.set_sub_status("Archived emails processed: " + archived_emails_processed.to_s)
             if progress_dialog.abort_was_requested
                 progress_dialog.log_message('Aborting script...')
@@ -133,13 +141,45 @@ if dialog.dialog_result == true
         num_without_duplicate = 0
         num_missing_attachments = 0
         
-        progress_dialog.set_main_status_and_log_it("Checking for exchange server emails without an archived duplicate...")
-        timer.start("has_duplicate")
         # Give all exchange server emails custom metadata for whether there is an archived duplicate.
-        # True if there is an archived duplicate:
-        bulk_annotater.put_custom_metadata(has_archived_duplicate_metadata_name, TRUE, store_a_items.select{ |email| archive_id_set.include?(find_email_id(email)) }, nil)
-        # And if there isn't:
-        items_without_duplicate = store_a_items.select{ |email| not archive_id_set.include?(find_email_id(email)) }
+        progress_dialog.set_main_status_and_log_it("Checking for exchange server emails without an archived duplicate...")
+        progress_dialog.set_main_progress(0,store_a_items.size)
+        store_a_items_processed = 0
+        timer.start("has_duplicate")
+        progress_dialog.set_sub_status('Exchange server emails processed: ' + store_a_items_processed.to_s)
+        items_with_duplicate = Set[]
+        items_without_duplicate = Set[]
+        store_a_items.each_with_index do |email, index|
+            if archive_id_set.include?(find_email_id(email))
+                items_with_duplicate << email
+            else
+                items_without_duplicate << email
+            end
+            progress_dialog.increment_main_progress
+            progress_dialog.set_sub_status('Exchange server emails processed: ' + store_a_items_processed.to_s)
+            if progress_dialog.abort_was_requested
+                progress_dialog.log_message('Aborting script...')
+                return
+            end
+        end
+        timer.stop("has_duplicate")
+
+        # For items with archived duplicate:
+        progress_dialog.set_main_status_and_log_it('Add metadata and tag to exchange server emails with an archived duplicate...')
+        bulk_annotater.put_custom_metadata(has_archived_duplicate_metadata_name, TRUE, items_with_duplicate, nil)
+        bulk_annotater.add_tag(has_archived_duplicate_tag, items_with_duplicate, nil)
+
+        if exclude_items_with_archived_duplicates
+            progress_dialog.set_main_status_and_log_it('Excluding exchange server emails with duplicates...')
+            timer.start('exclude_items_with_duplicates')
+            bulk_annotater.exclude(items_with_duplicate, 'Has an archived duplicate')
+            timer.stop('exclude_items_with_duplicates')
+        else
+            progress_dialog.log_message('Skipping exclusion.')
+        end
+
+        # And for those without:
+        progress_dialog.set_main_status_and_log_it('Add metadata to exchange server emails without an archived duplicate...')
         bulk_annotater.put_custom_metadata(has_archived_duplicate_metadata_name, FALSE, items_without_duplicate, nil)
         
         progress_dialog.set_main_status_and_log_it("Checking for missing attachments...")
@@ -152,7 +192,8 @@ if dialog.dialog_result == true
             # If the item with missing duplicate has no children:
             bulk_annotater.put_custom_metadata(has_missing_attachments_metadata_name, TRUE, items_without_duplicate.select{ |email| not email.children.length > 0 }, nil)
         timer.stop("missing_attachments")
-        timer.stop("has_duplicate")
+
+
         timer.stop("total")
 
         timer.print_timings()
