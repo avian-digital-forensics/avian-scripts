@@ -76,7 +76,11 @@ dialog.validate_before_closing do |values|
     end
 
     for k in 0..exclusion_prefix_num
-        
+        if values["exclusion_prefix_#{k}"].strip.empty? != values["exclusion_reason_#{k}"].strip.empty?
+            CommonDialogs.show_warning('If an exclusion prefix or reason is given, the other must be non-empty.')
+            next false
+        end
+    end
     
     # Everything is fine; close the dialog.
     next true
@@ -97,14 +101,22 @@ if dialog.dialog_result
     num_descendants_metadata_key = values['num_descendants_metadata_key']
     script_settings[:main][:num_descendants_metadata_key] = num_descendants_metadata_key
 
-    exclude_tag_prefix = values['exclude_tag_prefix']
-    script_settings[:main][:exclude_tag_prefix] = exclude_tag_prefix
-
-    exclude_reason= values['exclude_reason']
-    script_settings[:main][:exclude_reason] = exclude_reason
+    exclude_tag_prefixes = {}
+    for k in 0..exclusion_prefix_num
+        prefix = values["exclusion_prefix_#{k}"]
+        reason = values["exclusion_reason_#{k}"]
+        script_settings[:exclusion]["exclusion_prefix_#{k}".to_sym] = prefix
+        script_settings[:exclusion]["exclusion_reason_#{k}".to_sym] = reason
+        unless prefix.empty?
+            if reason.empty?
+                STDERR.puts('Sum ting wong! Helleflynder')
+            end
+            exclude_tag_prefixes[prefix] = reason
+        end
+    end
 
     search_and_tag_files = []
-    for k in 1..search_and_tag_file_num
+    for k in 0..search_and_tag_file_num
         path = values["search_and_tag_file_#{k}"]
         script_settings[:search_and_tag]["search_and_tag_file_#{k}".to_sym] = path
         unless path.empty?
@@ -149,39 +161,42 @@ if dialog.dialog_result
         end
 
         # Culling.
-        if exclude_tag_prefix.empty?
-            progress_dialog.log_message('Skipping exclude because exclude tag prefix is blank.')
+        if exclude_tag_prefixes.empty?
+            progress_dialog.log_message('Skipping exclude because no exclude tag prefixes were specified.')
         else
             timer.start('exclude_items')
+            
+            progress_dialog.set_main_status_and_log_it("Excluding items...")
+            exclude_tag_prefixes.each do |prefix, reason|
+                # Create a list of which tags in the case are exclusion tags.
+                # All items with these tags will be excluded.
+                progress_dialog.set_main_status_and_log_it("Finding exclusion tags with prefix '#{prefix}'...")
+                timer.start('find_exclude_tags')
+                exclude_tags = current_case.all_tags.select { |tag| tag.start_with?(prefix) }
+                timer.stop('find_exclude_tags')
 
-            # Create a list of which tags in the case are exclusion tags.
-            # All items with these tags will be excluded.
-            progress_dialog.set_main_status_and_log_it('Finding exclusion tags...')
-            timer.start('find_exclude_tags')
-            exclude_tags = current_case.all_tags.select { |tag| tag.start_with?(exclude_tag_prefix) }
-            timer.stop('find_exclude_tags')
 
-            # Finds all selected items with exclusion tags.
-            progress_dialog.set_main_status_and_log_it('Finding exclusion items...')
-            timer.start('find_exclude_items')
-            # Create a search string matching all items with exclusion tags.
-            exclude_search = exclude_tags.map { |tag| "tag:\"#{tag}\""}.join(' OR ')
-            if exclude_search.empty?
-                # If there are no exclusion tags, skip exclusion.
-                progress_dialog.log_message('Skipping exclusion since no matching tags were found.')
-                timer.stop('find_exclude_items')
-            else
-                # Add a clause to ensure that only selected items will match the search.
-                exclude_search += " AND tag:\"#{selected_item_tag}\""
-                # Perform the search.
-                exclude_items = current_case.search(exclude_search)
-                timer.stop('find_exclude_items')
-    
-                # Actually exclude the items.
-                progress_dialog.set_main_status_and_log_it('Excluding items...')
-                Utils::bulk_exclude(utilities, progress_dialog, exclude_items, exclude_reason)
+                # Finds all selected items with exclusion tags.
+                progress_dialog.set_main_status_and_log_it('Finding exclusion items...')
+                timer.start('find_exclude_items')
+                # Create a search string matching all items with exclusion tags.
+                exclude_search = exclude_tags.map { |tag| "tag:\"#{tag}\""}.join(' OR ')
+                if exclude_search.empty?
+                    # If there are no exclusion tags, skip exclusion.
+                    progress_dialog.log_message("Skipping exclusion for prefix '#{prefix}' since no matching tags were found.")
+                    timer.stop('find_exclude_items')
+                else
+                    # Add a clause to ensure that only selected items will match the search.
+                    exclude_search += " AND tag:\"#{selected_item_tag}\""
+                    # Perform the search.
+                    exclude_items = current_case.search(exclude_search)
+                    timer.stop('find_exclude_items')
+        
+                    # Actually exclude the items.
+                    progress_dialog.set_main_status_and_log_it("Excluding items for prefix '#{prefix}'...")
+                    Utils::bulk_exclude(utilities, progress_dialog, exclude_items, reason)
+                end
             end
-
             timer.stop('exclude_items')
         end
 
