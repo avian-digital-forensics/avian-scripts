@@ -56,6 +56,17 @@ while script_settings[:search_and_tag].key?("search_and_tag_file_#{search_and_ta
 end
 
 
+exclusion_tab = dialog.add_tab('exclusion', 'Culling')
+exclusion_prefix_num = 0
+while script_settings[:exclusion].key?("exclusion_prefix_#{exclusion_prefix_num + 1}".to_sym)
+    exclusion_prefix_num += 1
+    exclusion_prefix = script_settings[:exclusion]["exclusion_prefix_#{search_and_tag_file_num}".to_sym]
+    exclusion_reason = script_settings[:exclusion]["exclusion_reason_#{search_and_tag_file_num}".to_sym]
+    exclusion_tab.append_text_field("exclusion_prefix_#{exclusion_prefix_num}", "Exclusion prefix #{exclusion_prefix_num}", )
+    exclusion_tab.append_text_field("exclusion_reason_#{exclusion_prefix_num}", "Exclusion reason #{exclusion_prefix_num}", )
+end
+
+
 
 # Checks the input before closing the dialog.
 dialog.validate_before_closing do |values|
@@ -63,6 +74,9 @@ dialog.validate_before_closing do |values|
     unless NXUtils.assert_non_empty_field(values, 'num_descendants_metadata_key', 'number of descendants custom metadata name')
         next false
     end
+
+    for k in 0..exclusion_prefix_num
+        
     
     # Everything is fine; close the dialog.
     next true
