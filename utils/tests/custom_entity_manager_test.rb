@@ -8,8 +8,8 @@ class TestCustomEntityManager < Test::Unit::TestCase
         guid1 = 'asdf'
         entity1 = CustomEntity::CustomEntity.new('CustomTest', 'Test1', 3)
         entities.add_entity(guid1, entity1)
-        assert_equal(1,entities.entities_for_item(guid1))
-        assert_equal(0,entities.entities_for_item('asdf5'))
+        assert_equal(1,entities.entities_for_item(guid1).size)
+        assert_equal(0,entities.entities_for_item('asdf5').size)
     end
 
     def test_add_entity
