@@ -36,4 +36,13 @@ module Utils
     def self.random_string(num_chars, char_set)
         return sample(char_set, num_chars, true).join
     end
+
+    def self.sets_disjoint?(*sets)
+        total = Set[]
+        for set in sets.map(&:to_set)
+            unless set.disjoint?(total)
+                return false
+            total = total | set
+        end
+    end
 end
