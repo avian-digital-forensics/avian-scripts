@@ -12,6 +12,11 @@ module Custom
 			@address = address.address
 		end
 
+		def self.create_custom(personal, address)
+			@personal = personal
+			@address = address
+		end
+
 		def getPersonal
 			@personal
 		end
@@ -66,7 +71,7 @@ module Custom
 		def getDateTime
 			@date_time
 		end
-		
+
 		def getFrom
 			@from_addresses
 		end
