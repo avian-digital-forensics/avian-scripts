@@ -1,4 +1,5 @@
 module FixUnidentifiedEmails
+    # Return a hash of possible fields and there values.
     def find_fields(text, possible_fields, timer)
         lines = text.lines
         
