@@ -15,6 +15,8 @@ require File.join(main_directory,'utils','timer')
 # Progress messages.
 require File.join(main_directory,'utils','utils')
 
+require File.join(main_directory,'avian-inapp-scripts','fix_unidentified_emails.nuixscript','fix_unidentified_emails')
+
 gui_title = # TODO: EDIT
 
 dialog = NXUtils.create_dialog(gui_title)
@@ -48,7 +50,11 @@ if dialog.dialog_result
 
     timer.start('total')
     
-    # TODO: ADD SCRIPT HERE.
+    address_splitter = lambda do |string|
+        string.split(',')
+    end
+
+    FixUnidentifiedEmails::fix_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, &address_splitter, address_regexps)
     
     timer.stop('total')
     timer.print_timings
