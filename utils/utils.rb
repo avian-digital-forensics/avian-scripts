@@ -1,3 +1,5 @@
+require 'set'
+
 module Utils
     def self.alpha_num_char_set 
         [('a'..'z'), ('A'..'Z'), ('0'..'9')].map(&:to_a).flatten
@@ -37,11 +39,13 @@ module Utils
         return sample(char_set, num_chars, true).join
     end
 
+    # Returns true if all the given sets are disjoint.
     def self.sets_disjoint?(*sets)
         total = Set[]
         for set in sets.map(&:to_set)
             unless set.disjoint?(total)
                 return false
+            end
             total = total | set
         end
     end
