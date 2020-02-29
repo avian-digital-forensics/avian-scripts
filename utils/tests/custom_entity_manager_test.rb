@@ -10,6 +10,7 @@ class TestCustomEntityManager < Test::Unit::TestCase
         entities.add_entity(guid1, entity1)
         assert_equal(1,entities.entities_for_item(guid1))
         assert_equal(0,entities.entities_for_item('asdf5'))
+    end
 
     def test_add_entity
         entities = CustomEntityManager::CustomEntityManager.new
