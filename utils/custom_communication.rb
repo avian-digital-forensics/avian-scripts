@@ -43,19 +43,30 @@ module Custom
 
 	class CustomCommunication
 		include Communication
-        attr_accessor :date_time, :from_addresses, :to_addresses, :cc_addresses, :bcc_addresses
+        attr_accessor :date_time, :subject, :from_addresses, :to_addresses, :cc_addresses, :bcc_addresses
 
 		def initialize(communication)
 			@date_time = communication.date_time
+			@subject = ''
 			@from_addresses = if communication.from then communication.from else [] end
 			@to_addresses = if communication.to then communication.to else [] end
 			@cc_addresses = if communication.cc then communication.cc else [] end
 			@bcc_addresses = if communication.bcc then communication.bcc else [] end
 		end
 
+		def self.create_custom(date_time, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
+			@date_time = date_time
+			@subject = subject
+			@from_addresses = from_addresses
+			@to_addresses = to_addresses
+			@cc_addresses = cc_addresses
+			@bcc_addresses = bcc_addresses
+		end
+
 		def getDateTime
 			@date_time
 		end
+		
 		def getFrom
 			@from_addresses
 		end
