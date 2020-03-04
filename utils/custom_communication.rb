@@ -95,6 +95,19 @@ module Custom
         end
         def set_bcc(bcc_addresses)
             @bcc_addresses = bcc_addresses
-        end
+		end
+		
+		def to_csv_array
+			return [@date_time, @subject, @from, @to, @cc, @bcc]
+		end
+
+		def self.from_csv_array(array)
+			@date_time = array[0]
+			@subject = array[1]
+			@from = array[2]
+			@to = array[3]
+			@cc = array[4]
+			@bcc = array[5]
+		end
     end
 end
