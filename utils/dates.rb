@@ -27,13 +27,13 @@ module Dates
     end
 
     # Converts an offset in days to a Joda DateTimeZone.
-    def self.offset_to_date_time_zone(offset)
+    def offset_to_date_time_zone(offset)
         offset_hours = (date_time.offset*24).floor
         offset_minutes = (date_time.offset*24 - offset_hours)*60
         DateTimeZone.for_offset_hours_minutes(offset_hours, offset_minutes)
     end
 
-    def self.date_time_to_joda_time(date_time)
+    def date_time_to_joda_time(date_time)
         date = date_time.to_date
         time_zone = offset_to_date_time_zone(date_time.offset)
 
@@ -41,7 +41,7 @@ module Dates
     end
 
     # Converts a Joda DateTime to an array that can be saved in csv.
-    def self.joda_time_to_csv_array(joda_time)
+    def joda_time_to_csv_array(joda_time)
         year = joda_time.year
         month = joda_time.month_of_year
         day = joda_time.day_of_month
@@ -57,7 +57,7 @@ module Dates
 
     # Creates a Joda DateTime from an array.
     def self.joda_time_from_csv_array(csv_array)
-        unless csv_array.size == joda_time_csv_array_length raise ArgumentError 'The array must have exactly seven element.' end
+        unless csv_array.size == joda_time_csv_array_length raise ArgumentError 'The array must have exactly seven elements.' end
         year = csv_array[0].to_i
         month = csv_array[1].to_i
         day = csv_array[2].to_i
