@@ -1,5 +1,6 @@
 java_import 'nuix.Address'
 java_import 'nuix.Communication'
+require_relative 'dates'
 
 module Custom
     class CustomAddress
@@ -59,7 +60,9 @@ module Custom
 			@bcc_addresses = if communication.bcc then communication.bcc else [] end
 		end
 
+		# date_time should always be a Joda DateTime
 		def self.create_custom(date_time, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
+			unless date_time.is_a?(DateTime) raise ArgumentError 'date_time must be a Joda DateTime.' end
 			@date_time = date_time
 			@subject = subject
 			@from_addresses = from_addresses
