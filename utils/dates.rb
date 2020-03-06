@@ -56,7 +56,7 @@ module Dates
     end
 
     # Creates a Joda DateTime from an array.
-    def self.joda_time_from_csv_array(csv_array)
+    def joda_time_from_csv_array(csv_array)
         unless csv_array.size == joda_time_csv_array_length raise ArgumentError 'The array must have exactly seven elements.' end
         year = csv_array[0].to_i
         month = csv_array[1].to_i
@@ -70,7 +70,7 @@ module Dates
         DateTime.new(year, month, day, hour, minute, second, time_zone)
     end
 
-    def self.joda_time_csv_array_length
+    def joda_time_csv_array_length
         7
     end
 end
