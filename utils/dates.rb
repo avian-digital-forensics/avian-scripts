@@ -40,6 +40,10 @@ module Dates
         DateTime.new(date.year, date.month, date.day, date_time.hour, date_time.minute, date_time.second, time_zone)
     end
 
+    def joda_time_csv_array_length
+        7
+    end
+
     # Converts a Joda DateTime to an array that can be saved in csv.
     def joda_time_to_csv_array(joda_time)
         year = joda_time.year
@@ -51,13 +55,17 @@ module Dates
         millisecond_offset = joda_time.get_standard_offset(0)
 
         csv_array = [year, month, day, hour, minute, second, millisecond_offset]
-        unless csv_array.size == joda_time_csv_array_length raise 'Sum ting wong' end
+        unless csv_array.size == joda_time_csv_array_length 
+            raise 'Sum ting wong'
+        end
         return csv_array
     end
 
     # Creates a Joda DateTime from an array.
     def joda_time_from_csv_array(csv_array)
-        unless csv_array.size == joda_time_csv_array_length raise ArgumentError 'The array must have exactly seven elements.' end
+        unless csv_array.size == joda_time_csv_array_length 
+            raise ArgumentError, 'The array must have exactly seven elements.'
+        end
         year = csv_array[0].to_i
         month = csv_array[1].to_i
         day = csv_array[2].to_i
@@ -68,9 +76,5 @@ module Dates
         time_zone = DateTimeZone.for_offset_millis(offset)
 
         DateTime.new(year, month, day, hour, minute, second, time_zone)
-    end
-
-    def joda_time_csv_array_length
-        7
     end
 end
