@@ -26,14 +26,44 @@ module Dates
         return date_string
     end
 
+    # Converts an offset in days to a Joda DateTimeZone.
+    def self.offset_to_date_time_zone(offset)
+        offset_hours = (date_time.offset*24).floor
+        offset_minutes = (date_time.offset*24 - offset_hours)*60
+        DateTimeZone.for_offset_hours_minutes(offset_hours, offset_minutes)
+    end
+
     def self.date_time_to_joda_time(date_time)
         date = date_time.to_date
-        offset_hours = (date_time.offset*24).floor
-        puts('torsk: ' + offset_hours.to_s)
-        offset_minutes = (date_time.offset.to_f*24 - offset_hours)*60
-        puts('sej: ' + offset_minutes.to_s)
-        offset = DateTimeZone.for_offset_hours_minutes(offset_hours, offset_minutes)
+        time_zone = offset_to_date_time_zone(date_time.offset)
 
-        DateTime.new(date.year, date.month, date.day, date_time.hour, date_time.minute, date_time.second, offset)
+        DateTime.new(date.year, date.month, date.day, date_time.hour, date_time.minute, date_time.second, time_zone)
     end
+
+    # Converts a Joda DateTime to an array that can be saved in csv.
+    # Offset should be in days.
+    def self.joda_time_to_csv_array(joda_time, offset)
+        year = joda_time.year
+        month = joda_time.month_of_year
+        day = joda_time.day_of_month
+        hour = joda_time.hour_of_day
+        minute = minute_of_hour
+        second = second_of_minute
+        
+        [year, month, day, hour, minute, second, offset]
+    end
+
+    # Creates a Joda DateTime from an array.
+    def self.joda_time_from_csv_array(csv_array)
+        unless csv_array.size == 7 raise ArgumentError 'The array must have exactly seven element.'
+        year = csv_array[0].to_i
+        month = csv_array[1].to_i
+        day = csv_array[2].to_i
+        hour = csv_array[3].to_i
+        minute = csv_array[4].to_i
+        second = csv_array[5].to_i
+        offset = csv_array[6].to_i
+        time_zone = offset_to_date_time_zone(offset)
+
+        DateTime.new(year, month, day, hour, minute, second, time_zone)
 end
