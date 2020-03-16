@@ -50,16 +50,46 @@ if dialog.dialog_result
 
     timer.start('total')
     
+    communication_field_aliases = {
+        :date => ['date', 'Date', 'dato', 'Dato', 'sendt', 'Sendt']
+        :subject => ['subject', 'Subject', 'emne', 'Emne']
+        :from => ['from', 'From', 'fra', 'Fra', 'afsender', 'Afsender']
+        :to => ['to', 'To', 'til', 'Til', 'modtager', 'Modtager']
+        :cc => ['cc', 'Cc']
+        :bcc => ['bcc', 'Bcc']
+    }
+    start_area_size = 400
     address_splitter = lambda do |string|
-        string.split(',')
+        string.split(',').map(&:strip)
     end
 
-    FixUnidentifiedEmails::fix_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, &address_splitter, address_regexps)
+    address_regexps = [
+        /(.*\b)\s*\[(.*)\]/,    # Addresses like Example Exampleson [example@ex.com]
+        /(.*\b)\s*\<(.*)\>/,    # Addresses like Example Exampleson <example@ex.com>
+        /'?"?()(.*@.*\b)'?"?/,  # Addresses like example@ex.com or 'example@ex.com'
+        /'?"?(.*\b)()'?"?/      # Addresses like Example Exampleson or 'Example Exampleson'
+    ]
+
+    ProgressDialog.for_block do |progress_dialog|
+        # Setup progress dialog.
+        progress_dialog.set_title(gui_title)
+        progress_dialog.on_message_logged do |message|
+            Utils.print_progress(message)
+        end
+        progress_dialog.set_sub_progress_visible(false)
+
+        FixUnidentifiedEmails::fix_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, &address_splitter, address_regexps)
     
-    timer.stop('total')
-    timer.print_timings
-    
-    CommonDialogs.show_information('Script finished.', gui_title)
+        timer.stop('total')
+        timer.print_timings
+
+        finish_string = 'Script finished'
+        
+        progress_dialog.set_main_status_and_log_it(finish_string)
+        
+        CommonDialogs.show_information(finish_string, gui_title)
+        progress_dialog.set_completed
+    end
     
     Utils.print_progress('Script finished.')
 else
