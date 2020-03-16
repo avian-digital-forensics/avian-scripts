@@ -58,16 +58,14 @@ if dialog.dialog_result
         :cc => ['cc', 'Cc']
         :bcc => ['bcc', 'Bcc']
     }
+    
     start_area_size = 400
-    address_splitter = lambda do |string|
-        string.split(',').map(&:strip)
-    end
 
     address_regexps = [
-        /(.*\b)\s*\[(.*)\]/,    # Addresses like Example Exampleson [example@ex.com]
-        /(.*\b)\s*\<(.*)\>/,    # Addresses like Example Exampleson <example@ex.com>
-        /'?"?()(.*@.*\b)'?"?/,  # Addresses like example@ex.com or 'example@ex.com'
-        /'?"?(.*\b)()'?"?/      # Addresses like Example Exampleson or 'Example Exampleson'
+        /(.*\b)\s*\[(.*)\]/,        # Addresses like Example Exampleson [example@ex.com]
+        /(.*\b)\s*\<(.*)\>/,        # Addresses like Example Exampleson <example@ex.com>
+        /\'?\"?()(.*@.*\b)\'?\"?/,  # Addresses like example@ex.com or 'example@ex.com'
+        /\'?\"?(.*\b)()\'?\"?/      # Addresses like Example Exampleson or 'Example Exampleson'
     ]
 
     ProgressDialog.for_block do |progress_dialog|
@@ -78,7 +76,7 @@ if dialog.dialog_result
         end
         progress_dialog.set_sub_progress_visible(false)
 
-        FixUnidentifiedEmails::fix_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, &address_splitter, address_regexps)
+        FixUnidentifiedEmails::fix_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps) { |string| string.split(',').map(&:strip) }
     
         timer.stop('total')
         timer.print_timings

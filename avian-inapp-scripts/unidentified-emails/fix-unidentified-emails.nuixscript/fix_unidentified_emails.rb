@@ -63,17 +63,17 @@ module FixUnidentifiedEmails
     end
 
     # Given a string representing a list of addresses, returns the list of addresses as CustomAddresses.
-    # The address_splitter should split the string into a list of strings representing individual addresses.
     # address_regexps should be a ordered list of regexps that match the different address formats. 
     #   Capture group 1 is the personal address and capture group 2 is the address address.
-    def identify_addresses(field_text, address_splitter, address_regexps)
+    # The address_splitter should split the string into a list of strings representing individual addresses.
+    def identify_addresses(field_text, address_regexps, &address_splitter)
         if field_text == ''
             return []
         end
-        address_strings = address_splitter(field_text)
+        address_strings = address_splitter.call(field_text)
         return address_strings.map do |address_string|
-            if regexp = address_regexps.find( |regexp| address_string.match(regexp))
-                personal, address = address_string.match(regexp)
+            if regexp = address_regexps.find{ |regexp| address_string.match(regexp) }
+                personal, address = address_string.match(regexp).captures
                 Custom::CustomAddress.new(personal, address)
             else
                 raise 'No regexp matches address string'
@@ -89,7 +89,7 @@ module FixUnidentifiedEmails
         return RubyDateTime.parse(english_date_string)
     end
 
-    def fix_unidentified_emails(current_case, items, progress_dialog, timer, field_names, communication_field_aliases, start_area_size, address_splitter, address_regexps)
+    def fix_unidentified_emails(current_case, items, progress_dialog, timer, field_names, communication_field_aliases, start_area_size, address_regexps, &address_splitter)
         # address_splitter should be a method that takes a string and splits it into individual addresses.
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         item_communications = {}
@@ -102,10 +102,10 @@ module FixUnidentifiedEmails
 
             # Extract information about the addresses from the from, to, cc, and bcc field strings.
             timer.start('identify_addresses')
-            from_addresses = identify_addresses(fields[:from], &address_splitter, address_regexps)
-            to_addresses = identify_addresses(fields[:to], &address_splitter, address_regexps)
-            cc_addresses = identify_addresses(fields[:cc], &address_splitter, address_regexps)
-            bcc_addresses = identify_addresses(fields[:bcc], &address_splitter, address_regexps)
+            from_addresses = identify_addresses(fields[:from], address_regexps, address_splitter)
+            to_addresses = identify_addresses(fields[:to], address_regexps, address_splitter)
+            cc_addresses = identify_addresses(fields[:cc], address_regexps, address_splitter)
+            bcc_addresses = identify_addresses(fields[:bcc], address_regexps, address_splitter)
             timer.stop('identify_addresses')
 
             # Find date.
