@@ -65,7 +65,7 @@ if dialog.dialog_result
         /(.*\b)\s*\[(.*)\]/,        # Addresses like Example Exampleson [example@ex.com]
         /(.*\b)\s*\<(.*)\>/,        # Addresses like Example Exampleson <example@ex.com>
         /\'?\"?()(.*@.*\b)\'?\"?/,  # Addresses like example@ex.com or 'example@ex.com'
-        /\'?\"?(.*\b)()\'?\"?/      # Addresses like Example Exampleson or 'Example Exampleson'
+        /\'?\"?()(.*\b)\'?\"?/      # Addresses like Example Exampleson or 'Example Exampleson'
     ]
 
     ProgressDialog.for_block do |progress_dialog|
