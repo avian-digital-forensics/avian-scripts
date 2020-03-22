@@ -104,7 +104,6 @@ module FixUnidentifiedEmails
     # +address_regexps+:: Regexps for possible address formats. First capture group should be the personal part and second is the address part.
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
     def fix_unidentified_emails(data_path, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps, &address_splitter)
-        # address_splitter should be a method that takes a string and splits it into individual addresses.
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         item_communications = {}
         timer.start('find_communication_fields')
