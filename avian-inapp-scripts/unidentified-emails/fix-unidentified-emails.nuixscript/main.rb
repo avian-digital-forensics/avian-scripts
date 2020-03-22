@@ -1,5 +1,5 @@
 script_directory = File.dirname(__FILE__)
-require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
+require File.join(script_directory,'..','..','setup.nuixscript','get_main_directory')
 
 main_directory = get_main_directory(false)
 
@@ -15,9 +15,9 @@ require File.join(main_directory,'utils','timer')
 # Progress messages.
 require File.join(main_directory,'utils','utils')
 
-require File.join(main_directory,'avian-inapp-scripts','fix_unidentified_emails.nuixscript','fix_unidentified_emails')
+require File.join(main_directory,'avian-inapp-scripts','unidentified-emails','fix-unidentified-emails.nuixscript','fix_unidentified_emails')
 
-gui_title = # TODO: EDIT
+gui_title = 'Fix Unidentified Emails'
 
 dialog = NXUtils.create_dialog(gui_title)
 
@@ -51,12 +51,12 @@ if dialog.dialog_result
     timer.start('total')
     
     communication_field_aliases = {
-        :date => ['date', 'Date', 'dato', 'Dato', 'sendt', 'Sendt']
-        :subject => ['subject', 'Subject', 'emne', 'Emne']
-        :from => ['from', 'From', 'fra', 'Fra', 'afsender', 'Afsender']
-        :to => ['to', 'To', 'til', 'Til', 'modtager', 'Modtager']
-        :cc => ['cc', 'Cc']
-        :bcc => ['bcc', 'Bcc']
+        :date => ['date:', 'Date:', 'dato:', 'Dato:', 'sendt:', 'Sendt:'],
+        :subject => ['subject:', 'Subject:', 'emne:', 'Emne:'],
+        :from => ['from:', 'From:', 'fra:', 'Fra:', 'afsender:', 'Afsender:'],
+        :to => ['to:', 'To:', 'til:', 'Til:', 'modtager:', 'Modtager:'],
+        :cc => ['cc:', 'Cc:'],
+        :bcc => ['bcc:', 'Bcc:']
     }
     
     start_area_size = 400
@@ -76,8 +76,12 @@ if dialog.dialog_result
         end
         progress_dialog.set_sub_progress_visible(false)
 
-        FixUnidentifiedEmails::fix_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps) { |string| string.split(',').map(&:strip) }
-    
+        # Find data file path.
+        case_data_dir = SettingsUtils::case_data_dir(main_directory, current_case)
+        data_path = File.join(case_data_dir, 'unidentified_emails_data.yml')
+
+        FixUnidentifiedEmails::fix_unidentified_emails(data_path, current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps) { |string| string.split(';').map(&:strip) }
+        
         timer.stop('total')
         timer.print_timings
 

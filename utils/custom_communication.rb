@@ -70,8 +70,8 @@ module Custom
 
 		# joda_time should always be a Joda DateTime
 		def initialize(joda_time, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
-			unless joda_time.is_a?(DateTime) 
-				raise ArgumentError 'joda_time must be a Joda DateTime.'
+			unless joda_time.is_a?(DateTime) || !joda_time
+				raise ArgumentError, 'joda_time must be a Joda DateTime.'
 			end
 			@joda_time = joda_time
 			@subject = subject

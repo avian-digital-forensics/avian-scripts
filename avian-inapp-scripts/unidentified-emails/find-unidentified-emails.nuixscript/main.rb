@@ -1,5 +1,5 @@
 script_directory = File.dirname(__FILE__)
-require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
+require File.join(script_directory,'..','..','setup.nuixscript','get_main_directory')
 
 main_directory = get_main_directory(false)
 

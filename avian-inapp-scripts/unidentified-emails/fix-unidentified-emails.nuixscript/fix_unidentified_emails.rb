@@ -1,5 +1,5 @@
 script_directory = File.dirname(__FILE__)
-require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
+require File.join(script_directory,'..','..','setup.nuixscript','get_main_directory')
 
 main_directory = get_main_directory(false)
 
@@ -16,11 +16,11 @@ require File.join(main_directory, 'utils', 'custom_communication')
 
 require File.join(main_directory, 'utils', 'dates')
 
-require File.join(main_directory, 'avian_inapp_scripts', 'unidentified-emails.nuixscript', 'find-unidentified-emails.nuixscript', 'find_unidentified_emails')
-
+require File.join(main_directory, 'avian-inapp-scripts', 'unidentified-emails', 'find-unidentified-emails.nuixscript', 'find_unidentified_emails')
 
 
 module FixUnidentifiedEmails
+    extend self
     class CommunicationFieldAliases
         attr_reader :from, :to, :cc, :bcc, :subject, :date
 
@@ -45,16 +45,16 @@ module FixUnidentifiedEmails
 
     # Return a hash of possible fields and there values.
     def find_fields(text, communication_field_aliases)
-        lines = text.lines
+        lines = text.lines.map { |line| line.strip }
         
         fields = {}
 
         for field_key, aliases in communication_field_aliases
-            contained_aliases = aliases.select { |field_alias| lines.include? { |line| line.starts_with?(field_alias) } }
+            contained_aliases = aliases.select { |field_alias| lines.any? { |line| line.start_with?(field_alias) } }
             if contained_aliases.size > 1
                 raise "Text contains multiple aliases for field '#{field_key}'."
             elsif contained_aliases.size == 1
-                fields[field_key] = lines.select { |line| line.starts_with?(contained_aliases[0]) }.map { |line| line[contained_aliases[0].size..-1].strip }
+                fields[field_key] = lines.find { |line| line.start_with?(contained_aliases[0]) }[contained_aliases[0].size..-1].strip
             else
                 fields[field_key] = ''
             end
@@ -86,10 +86,12 @@ module FixUnidentifiedEmails
             return nil
         end
         english_date_string = Dates::danish_date_string_to_english(date_string)
-        return RubyDateTime.parse(english_date_string)
+        ruby_date_time = RubyDateTime.parse(english_date_string)
+        joda_time = Dates::date_time_to_joda_time(ruby_date_time)
+        return joda_time
     end
 
-    def fix_unidentified_emails(current_case, items, progress_dialog, timer, field_names, communication_field_aliases, start_area_size, address_regexps, &address_splitter)
+    def fix_unidentified_emails(data_path, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps, &address_splitter)
         # address_splitter should be a method that takes a string and splits it into individual addresses.
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         item_communications = {}
@@ -102,10 +104,10 @@ module FixUnidentifiedEmails
 
             # Extract information about the addresses from the from, to, cc, and bcc field strings.
             timer.start('identify_addresses')
-            from_addresses = identify_addresses(fields[:from], address_regexps, address_splitter)
-            to_addresses = identify_addresses(fields[:to], address_regexps, address_splitter)
-            cc_addresses = identify_addresses(fields[:cc], address_regexps, address_splitter)
-            bcc_addresses = identify_addresses(fields[:bcc], address_regexps, address_splitter)
+            from_addresses = identify_addresses(fields[:from], address_regexps, &address_splitter)
+            to_addresses = identify_addresses(fields[:to], address_regexps, &address_splitter)
+            cc_addresses = identify_addresses(fields[:cc], address_regexps, &address_splitter)
+            bcc_addresses = identify_addresses(fields[:bcc], address_regexps, &address_splitter)
             timer.stop('identify_addresses')
 
             # Find date.
@@ -118,27 +120,27 @@ module FixUnidentifiedEmails
             
             # Create communication and add to hash
             communication = Custom::CustomCommunication.new(date, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
+            puts("rødspætte: " + communication.to_s)
             item_communications[item.guid] = communication
 
             # Add custom metadata. Should be removed later.
             address_to_string = lambda do |address|
                 "<#{address.personal}, #{address.address}>"
             end
-            item.custom_metadata['FromAddresses'] = from_addresses.map(&address_to_string)
-            item.custom_metadata['ToAddresses'] = to_addresses.map(&address_to_string)
-            item.custom_metadata['CcAddresses'] = cc_addresses.map(&address_to_string)
-            item.custom_metadata['BccAddresses'] = bcc_addresses.map(&address_to_string)
+            item.custom_metadata['FromAddresses'] = from_addresses.map(&address_to_string).to_s
+            item.custom_metadata['ToAddresses'] = to_addresses.map(&address_to_string).to_s
+            item.custom_metadata['CcAddresses'] = cc_addresses.map(&address_to_string).to_s
+            item.custom_metadata['BccAddresses'] = bcc_addresses.map(&address_to_string).to_s
         end
         timer.stop('find_communication_fields')
-
-        # Find data file path.
-        case_data_dir = SettingsUtils::case_data_dir(main_directory, current_case)
-        data_path = File.join(case_data_dir, 'unidentified_emails_data.yml')
 
         # Save communications to file.
         timer.start('save_communications')
         timer.start('create_yaml_hash')
+        puts("pighvar: " + item_communications.to_s)
+        puts("stenbidder: " + item_communications.map{ |guid, communication| [guid, communication.to_yaml_hash] }.to_s)
         yaml_hash = Hash[item_communications.map{ |guid, communication| [guid, communication.to_yaml_hash] }]
+        puts("sild: " + yaml_hash.to_yaml)
         timer.stop('create_yaml_hash')
         File.open(data_path, 'w') { |file| file.write(yaml_hash.to_yaml) }
         timer.stop('save_communications')

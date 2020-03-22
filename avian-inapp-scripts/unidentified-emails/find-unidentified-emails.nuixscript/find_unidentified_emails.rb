@@ -1,4 +1,5 @@
 module FindUnidentifiedEmails
+    extend self
 
     def metadata_text(item, start_area_size, timer)
         raise ArgumentError, 'Item must contain text' unless item.text_object
