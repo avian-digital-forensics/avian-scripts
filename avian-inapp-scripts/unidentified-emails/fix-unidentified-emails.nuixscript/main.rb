@@ -51,12 +51,12 @@ if dialog.dialog_result
     timer.start('total')
     
     communication_field_aliases = {
-        :date => ['date:', 'Date:', 'dato:', 'Dato:', 'sendt:', 'Sendt:'],
-        :subject => ['subject:', 'Subject:', 'emne:', 'Emne:'],
-        :from => ['from:', 'From:', 'fra:', 'Fra:', 'afsender:', 'Afsender:'],
-        :to => ['to:', 'To:', 'til:', 'Til:', 'modtager:', 'Modtager:'],
-        :cc => ['cc:', 'Cc:'],
-        :bcc => ['bcc:', 'Bcc:']
+        :date => ['date', 'Date', 'dato', 'Dato', 'sendt', 'Sendt', 'modtaget', 'Modtaget'],
+        :subject => ['subject', 'Subject', 'emne', 'Emne'],
+        :from => ['from', 'From', 'fra', 'Fra', 'afsender', 'Afsender'],
+        :to => ['to', 'To', 'til', 'Til', 'modtager', 'Modtager'],
+        :cc => ['cc', 'Cc'],
+        :bcc => ['bcc', 'Bcc']
     }
     
     start_area_size = 400
