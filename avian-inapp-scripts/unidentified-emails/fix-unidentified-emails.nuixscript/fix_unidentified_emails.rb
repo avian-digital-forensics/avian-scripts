@@ -91,6 +91,18 @@ module FixUnidentifiedEmails
         return joda_time
     end
 
+    # The body of the FixUnidentifiedEmails script.
+    # Finds the communication fields, adds them as custom metadata and exports them to a file by item guid.
+    # Params:
+    # +data_path+:: The path string to the case's data directory.
+    # +current_case+:: The current case.
+    # +items+:: The items on which to run the script.
+    # +progress_dialog+:: The progress_dialog to update with script progress.
+    # +timer+:: The timer to record internal timings in.
+    # +communication_field_aliases+:: Lists of aliases for each of the communication fields. In text, a ':' will be added to the end of each.
+    # +start_area_size+:: Number of characters at the start of each items text to search for field information.
+    # +address_regexps+:: Regexps for possible address formats. First capture group should be the personal part and second is the address part.
+    # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
     def fix_unidentified_emails(data_path, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps, &address_splitter)
         # address_splitter should be a method that takes a string and splits it into individual addresses.
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
