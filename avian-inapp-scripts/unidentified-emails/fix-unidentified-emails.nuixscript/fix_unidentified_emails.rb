@@ -44,21 +44,32 @@ module FixUnidentifiedEmails
         
 
     # Return a hash of possible fields and there values.
-    def find_fields(text, communication_field_aliases)
+    def find_fields(item, text, communication_field_aliases)
         lines = text.lines.map { |line| line.strip }
         
         fields = {}
 
         for field_key, aliases in communication_field_aliases
-            contained_aliases = aliases.select { |field_alias| lines.any? { |line| line.start_with?(field_alias) } }
+            contained_aliases = aliases.select { |field_alias| lines.any? { |line| line.start_with?(field_alias + ':') } }
             if contained_aliases.size > 1
                 raise "Text contains multiple aliases for field '#{field_key}'."
-            elsif contained_aliases.size == 1
-                fields[field_key] = lines.find { |line| line.start_with?(contained_aliases[0]) }[contained_aliases[0].size..-1].strip
-            else
-                fields[field_key] = ''
+            elsif contained_aliases.size == 1 
+                # If an alias is found in the text, store the value.
+                fields[field_key] = lines.find { |line| line.start_with?(contained_aliases[0] + ':') }[contained_aliases[0].size+1..-1].strip
+            else 
+                # If no alias is found in the text, look for one in properties.
+                alias_properties = aliases.select{ |field_alias| item.properties.key?(field_alias) }
+                if alias_properties.size > 1
+                    raise "Multiple properties found for field '#{field_key}'."
+                elsif alias_properties.size == 1
+                    # If a property key matches a field alias, store the value.
+                    fields[field_key] = item.properties[alias_properties[0]].to_s
+                else
+                    fields[field_key] = ''
+                end
             end
         end
+
         return fields
     end
 
@@ -110,7 +121,7 @@ module FixUnidentifiedEmails
         for item in items
             # Find the text for each of the communication fields.
             timer.start('find_field_text')
-            fields = find_fields(FindUnidentifiedEmails::metadata_text(item, start_area_size, timer), communication_field_aliases)
+            fields = find_fields(item, FindUnidentifiedEmails::metadata_text(item, start_area_size, timer), communication_field_aliases)
             timer.stop('find_field_text')
 
             # Extract information about the addresses from the from, to, cc, and bcc field strings.
@@ -131,7 +142,6 @@ module FixUnidentifiedEmails
             
             # Create communication and add to hash
             communication = Custom::CustomCommunication.new(date, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
-            puts("rødspætte: " + communication.to_s)
             item_communications[item.guid] = communication
 
             # Add custom metadata. Should be removed later.
@@ -148,10 +158,7 @@ module FixUnidentifiedEmails
         # Save communications to file.
         timer.start('save_communications')
         timer.start('create_yaml_hash')
-        puts("pighvar: " + item_communications.to_s)
-        puts("stenbidder: " + item_communications.map{ |guid, communication| [guid, communication.to_yaml_hash] }.to_s)
         yaml_hash = Hash[item_communications.map{ |guid, communication| [guid, communication.to_yaml_hash] }]
-        puts("sild: " + yaml_hash.to_yaml)
         timer.stop('create_yaml_hash')
         File.open(data_path, 'w') { |file| file.write(yaml_hash.to_yaml) }
         timer.stop('save_communications')
