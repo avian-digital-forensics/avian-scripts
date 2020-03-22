@@ -76,11 +76,10 @@ if dialog.dialog_result
         end
         progress_dialog.set_sub_progress_visible(false)
 
-        # Find data file path.
+        # Find the case data directory.
         case_data_dir = SettingsUtils::case_data_dir(main_directory, current_case)
-        data_path = File.join(case_data_dir, 'unidentified_emails_data.yml')
 
-        FixUnidentifiedEmails::fix_unidentified_emails(data_path, current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps) { |string| string.split(';').map(&:strip) }
+        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps) { |string| string.split(';').map(&:strip) }
         
         timer.stop('total')
         timer.print_timings

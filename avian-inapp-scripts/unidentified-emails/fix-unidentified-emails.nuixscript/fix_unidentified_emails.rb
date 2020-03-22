@@ -105,7 +105,7 @@ module FixUnidentifiedEmails
     # The body of the FixUnidentifiedEmails script.
     # Finds the communication fields, adds them as custom metadata and exports them to a file by item guid.
     # Params:
-    # +data_path+:: The path string to the case's data directory.
+    # +case_data_dir+:: The path string to the case's data directory.
     # +current_case+:: The current case.
     # +items+:: The items on which to run the script.
     # +progress_dialog+:: The progress_dialog to update with script progress.
@@ -114,7 +114,7 @@ module FixUnidentifiedEmails
     # +start_area_size+:: Number of characters at the start of each items text to search for field information.
     # +address_regexps+:: Regexps for possible address formats. First capture group should be the personal part and second is the address part.
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
-    def fix_unidentified_emails(data_path, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps, &address_splitter)
+    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps, &address_splitter)
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         item_communications = {}
         timer.start('find_communication_fields')
@@ -154,6 +154,9 @@ module FixUnidentifiedEmails
             item.custom_metadata['BccAddresses'] = bcc_addresses.map(&address_to_string).to_s
         end
         timer.stop('find_communication_fields')
+
+        # Finds the data file path.
+        data_path = File.join(case_data_dir, 'unidentified_emails_data.yml')
 
         # Save communications to file.
         timer.start('save_communications')
