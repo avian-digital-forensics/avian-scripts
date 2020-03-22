@@ -14,6 +14,9 @@ module Custom
 
 		def initialize(personal, address)
 			@personal = personal
+			if address == ''
+				raise ArgumentError, 'Address must not be empty.'
+			end
 			@address = address
 		end
 
@@ -117,7 +120,7 @@ module Custom
 		def to_yaml_hash()
 			yaml_hash = {}
 			yaml_hash[:joda_time] = @joda_time.to_s
-			yaml_hash[:subject] = @subject
+			yaml_hash[:subject] = @subjecta
 			yaml_hash[:from] = @from_addresses.map(&:to_yaml_hash)
 			yaml_hash[:to] = @to_addresses.map(&:to_yaml_hash)
 			yaml_hash[:cc] = @cc_addresses.map(&:to_yaml_hash)
@@ -126,7 +129,11 @@ module Custom
 		end
 
 		def self.from_yaml_hash(yaml_hash)
-			joda_time = DateTime.parse(yaml_hash[:joda_time])
+			if yaml_hash[:joda_time] != ''
+				joda_time = DateTime.parse(yaml_hash[:joda_time])
+			else
+				joda_time = nil
+			end
 			subject = yaml_hash[:subject]
 			from_addresses = address_list_from_yaml_hash_list(yaml_hash[:from])
 			to_addresses = address_list_from_yaml_hash_list(yaml_hash[:to])
