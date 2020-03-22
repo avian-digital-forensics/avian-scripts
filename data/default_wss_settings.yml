@@ -20,4 +20,7 @@
   :label: Create Custom Entities
   :path: wss/create-custom-entities/create_custom_entities.rb
   :active: false
-  
+- :identifier: add_communication_to_unidentified_emails
+  :label: Add Communication to Unidentified Emails
+  :path: wss/add-communication-to-unidentified-emails/add_communication_to_unidentified_emails.rb
+  :active: false
