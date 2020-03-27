@@ -18,7 +18,6 @@ require File.join(main_directory, 'utils', 'dates')
 
 require File.join(main_directory, 'avian-inapp-scripts', 'unidentified-emails', 'find-unidentified-emails.nuixscript', 'find_unidentified_emails')
 
-
 module FixUnidentifiedEmails
     extend self
     class CommunicationFieldAliases
@@ -51,10 +50,8 @@ module FixUnidentifiedEmails
 
         for field_key, aliases in communication_field_aliases
             contained_aliases = aliases.select { |field_alias| lines.any? { |line| line.start_with?(field_alias + ':') } }
-            if contained_aliases.size > 1
-                raise "Text contains multiple aliases for field '#{field_key}'."
-            elsif contained_aliases.size == 1 
-                # If an alias is found in the text, store the value.
+            if contained_aliases.size >= 1
+                # If at least one alias is found in the text, store the value.
                 fields[field_key] = lines.find { |line| line.start_with?(contained_aliases[0] + ':') }[contained_aliases[0].size+1..-1].strip
             else 
                 # If no alias is found in the text, look for one in properties.
@@ -97,7 +94,7 @@ module FixUnidentifiedEmails
             return nil
         end
         english_date_string = Dates::danish_date_string_to_english(date_string)
-        ruby_date_time = RubyDateTime.parse(english_date_string)
+        ruby_date_time = DateTime.parse(english_date_string)
         joda_time = Dates::date_time_to_joda_time(ruby_date_time)
         return joda_time
     end
@@ -148,6 +145,8 @@ module FixUnidentifiedEmails
             address_to_string = lambda do |address|
                 "<#{address.personal}, #{address.address}>"
             end
+			item.custom_metadata['Date'] = date.to_s
+			item.custom_metadata['Subject'] = subject
             item.custom_metadata['FromAddresses'] = from_addresses.map(&address_to_string).to_s
             item.custom_metadata['ToAddresses'] = to_addresses.map(&address_to_string).to_s
             item.custom_metadata['CcAddresses'] = cc_addresses.map(&address_to_string).to_s
