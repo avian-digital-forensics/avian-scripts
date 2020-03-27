@@ -25,7 +25,7 @@ module FindUnidentifiedEmails
         return result
     end
 
-    def find_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, allowed_start_offset, start_area_size, email_tag)
+    def find_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, allowed_start_offset, start_area_size, email_tag, bulk_annotater)
         progress_dialog.set_main_status_and_log_it('Making preliminary search...')
         if current_selected_items.size > 0
             progress_dialog.log_message('Using selection. Skipping preliminary search.')
@@ -64,12 +64,12 @@ module FindUnidentifiedEmails
         end
         timer.stop('identify_emails')
 
-        bulk_annotater = utilities.get_bulk_annotater
-
         progress_dialog.set_main_status_and_log_it('Tagging found emails...')
         timer.start('tag_emails')
         # Tag found emails.
         bulk_annotater.add_tag('Avian|' + email_tag, emails)
         timer.stop('tag_emails')
+		
+		return emails.size
     end
 end

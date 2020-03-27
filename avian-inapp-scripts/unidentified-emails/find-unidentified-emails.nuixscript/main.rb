@@ -14,7 +14,7 @@ require File.join(main_directory,'utils','utils')
 # Timings.
 require File.join(main_directory,'utils','timer')
 
-require File.join(main_directory,'avian-inapp-scripts','find_unidentified_emails.nuixscript','find_unidentified_emails')
+require File.join(main_directory,'avian-inapp-scripts','unidentified-emails','find-unidentified-emails.nuixscript','find_unidentified_emails')
 
 gui_title = 'Find Unidentified Emails'
 
@@ -95,13 +95,15 @@ if dialog.dialog_result == true
         end
         progress_dialog.set_sub_progress_visible(false)
         
-        FindUnidentifiedEmails::find_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, allowed_start_offset, start_area_size, email_tag)
+		bulk_annotater = utilities.get_bulk_annotater
+		
+        num_emails = FindUnidentifiedEmails::find_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, allowed_start_offset, start_area_size, email_tag, bulk_annotater)
 
         timer.stop('total')
         
         timer.print_timings
         
-        progress_dialog.set_main_status_and_log_it('Script finished. Found ' + emails.length.to_s + ' emails.')
+        progress_dialog.set_main_status_and_log_it('Script finished. Found ' + num_emails.to_s + ' emails.')
 
         CommonDialogs.show_information('Script finished.', gui_title)
         progress_dialog.set_completed
