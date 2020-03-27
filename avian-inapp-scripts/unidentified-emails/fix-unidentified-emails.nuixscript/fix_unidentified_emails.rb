@@ -20,6 +20,8 @@ require File.join(main_directory, 'avian-inapp-scripts', 'unidentified-emails', 
 
 module FixUnidentifiedEmails
     extend self
+
+    # Contains all aliases for the various fields in a communication.
     class CommunicationFieldAliases
         attr_reader :from, :to, :cc, :bcc, :subject, :date
 
@@ -89,6 +91,7 @@ module FixUnidentifiedEmails
         end
     end
 
+    # Takes a string representing a date and returns a JodaTime DateTime.
     def parse_date(date_string)
         if date_string == ''
             return nil
