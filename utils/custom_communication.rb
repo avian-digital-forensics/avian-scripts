@@ -73,7 +73,7 @@ module Custom
 
 		# joda_time should always be a Joda DateTime
 		def initialize(joda_time, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
-			unless joda_time.is_a?(DateTime) || !joda_time
+			unless joda_time.is_a?(JodaTime::DateTime) || !joda_time
 				raise ArgumentError, 'joda_time must be a Joda DateTime.'
 			end
 			@joda_time = joda_time
@@ -130,7 +130,7 @@ module Custom
 
 		def self.from_yaml_hash(yaml_hash)
 			if yaml_hash[:joda_time] != ''
-				joda_time = DateTime.parse(yaml_hash[:joda_time])
+				joda_time = Dates::date_time_to_joda_time(DateTime.parse(yaml_hash[:joda_time]))
 			else
 				joda_time = nil
 			end
