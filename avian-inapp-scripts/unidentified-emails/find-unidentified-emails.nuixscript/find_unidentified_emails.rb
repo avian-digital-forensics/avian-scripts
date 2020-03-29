@@ -38,30 +38,14 @@ module FindUnidentifiedEmails
     # Finds all items that seem to be emails that Nuix hasn't recognized as such.
     # Params:
     # +current_case+:: the current_case.
-    # +current_selected_items+:: the currently selected items in the case. Will only check these items.
+    # +items+:: the items to process.
     # +progress_dialog+:: the dialog on which progress will be shown.
     # +timer+:: a Timer object used to measure running time of parts of the method.
     # +allowed_start_offset+:: characters from the start of the text of an item before "From" or "Fra" must appear for the item to be an email.
     # +start_area_size+:: the size in characters of the area that will be searched for communication fields in any item's text.
     # +email_tag+:: the tag given to all found unidentified emails.
     # +bulk_annotater+:: the bulk annotater used to give tags.
-    def find_unidentified_emails(current_case, current_selected_items, progress_dialog, timer, allowed_start_offset, start_area_size, email_tag, bulk_annotater)
-        progress_dialog.set_main_status_and_log_it('Making preliminary search...')
-        if current_selected_items.size > 0
-            progress_dialog.log_message('Using selection. Skipping preliminary search.')
-            items = current_selected_items
-        else
-            progress_dialog.log_message('No selection. Doing preliminary search.')
-            timer.start('preliminary_search')
-            # Finds all items that have text containing 'From:' or 'Fra:' and aren't Outlook files.
-            non_mail_mime_types = ['application/vnd.ms-outlook-*', 'application/pdf-mail', 'application/x-mime-html', 'image/vnd.ms-emf']
-            #non_mail_mime_types.push('image/png')
-            non_mail_mime_types_search = '(' + non_mail_mime_types.map{ |s| '(NOT mime-type:' + s + ')'}.join(' AND ') + ')'
-            search_term = non_mail_mime_types_search + ' AND content:((from AND \to AND subject) OR (fra AND til AND emne))'
-            items = current_case.search(search_term)
-            timer.stop('preliminary_search')
-            progress_dialog.log_message('Preliminary search found ' + items.length.to_s + ' possible emails.')
-        end
+    def find_unidentified_emails(current_case, items, progress_dialog, timer, allowed_start_offset, start_area_size, email_tag, bulk_annotater)
 
         progress_dialog.set_main_status_and_log_it('Identifying emails...')
         progress_dialog.set_main_progress(0,items.size)
