@@ -31,6 +31,8 @@ module AddCommunicationToUnidentifiedEmails
             if data.key?(worker_item.item_guid)
                 # Create a CustomCommunication from the guid's data.
                 communication = Custom::CustomCommunication::from_yaml_hash(data[worker_item.item_guid])
+				
+				# Set the item's communication to the created CustomCommunication.
                 worker_item.set_item_communication(communication)
             end
         else
