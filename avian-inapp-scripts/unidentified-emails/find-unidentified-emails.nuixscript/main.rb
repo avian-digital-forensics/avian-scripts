@@ -97,21 +97,15 @@ if dialog.dialog_result == true
         
         bulk_annotater = utilities.get_bulk_annotater
         
+        # Find which items to run on.
         progress_dialog.set_main_status_and_log_it('Making preliminary search...')
-        if current_selected_items.size > 0
+        if current_selected_items.size > 0 
+            # If items are selected, run on those.
             progress_dialog.log_message('Using selection. Skipping preliminary search.')
             items = current_selected_items
         else
-            progress_dialog.log_message('No selection. Doing preliminary search.')
-            timer.start('preliminary_search')
-            # Finds all items that have text containing 'From:' or 'Fra:' and aren't Outlook files.
-            non_mail_mime_types = ['application/vnd.ms-outlook-*', 'application/pdf-mail', 'application/x-mime-html', 'image/vnd.ms-emf']
-            # non_mail_mime_types.push('image/png')
-            non_mail_mime_types_search = '(' + non_mail_mime_types.map{ |s| '(NOT mime-type:' + s + ')'}.join(' AND ') + ')'
-            search_term = non_mail_mime_types_search + ' AND content:((from AND \to AND subject) OR (fra AND til AND emne))'
-            items = current_case.search(search_term)
-            timer.stop('preliminary_search')
-            progress_dialog.log_message('Preliminary search found ' + items.length.to_s + ' possible emails.')
+            # If not, do a specific search.
+            items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer)
         end
 		
         num_emails = FindUnidentifiedEmails::find_unidentified_emails(current_case, items, progress_dialog, timer, allowed_start_offset, start_area_size, email_tag, bulk_annotater)
