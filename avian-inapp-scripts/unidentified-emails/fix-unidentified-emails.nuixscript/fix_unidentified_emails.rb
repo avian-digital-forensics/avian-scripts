@@ -42,7 +42,10 @@ module FixUnidentifiedEmails
             { :from => @from, :to => @to, :cc => @cc, :bcc => @bcc, :subject => @subject, :date => @date }
         end
     end
-        
+
+    def find_rfc_mails(nuix_case)
+        return nuix_case.search('mime-type:message/rfc822')
+    end
 
     # Return a hash of possible fields and there values.
     def find_fields(item, text, communication_field_aliases)
