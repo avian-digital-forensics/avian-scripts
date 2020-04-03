@@ -123,7 +123,7 @@ if dialog.dialog_result
         progress_dialog.set_main_status_and_log_it('Identifying which items to process...')
 
         # Create set of items to be processed.
-        items = current_case.search("tag:#{email_tag}").to_set
+        items = current_case.search("tag:\"Avian|#{email_tag}\"").to_set
         if process_unselected_rfc_mails
             items.merge(FixUnidentifiedEmails::find_rfc_mails(current_case))
         end
