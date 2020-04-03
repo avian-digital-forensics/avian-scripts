@@ -56,7 +56,7 @@ module FixUnidentifiedEmails
         for field_key, aliases in communication_field_aliases
             contained_aliases = aliases.select { |field_alias| lines.any? { |line| line.start_with?(field_alias + ':') } }
             if contained_aliases.size >= 1
-                # If at least one alias is found in the text, store the value.
+                # If at least one alias is found in the text, store the first value.
                 fields[field_key] = lines.find { |line| line.start_with?(contained_aliases[0] + ':') }[contained_aliases[0].size+1..-1].strip
             else 
                 # If no alias is found in the text, look for one in properties.
@@ -114,10 +114,10 @@ module FixUnidentifiedEmails
     # +progress_dialog+:: The progress_dialog to update with script progress.
     # +timer+:: The timer to record internal timings in.
     # +communication_field_aliases+:: Lists of aliases for each of the communication fields. In text, a ':' will be added to the end of each.
-    # +start_area_size+:: Number of characters at the start of each items text to search for field information.
+    # +start_area_line_num+:: The number of lines that will be searched for communication fields.
     # +address_regexps+:: Regexps for possible address formats. First capture group should be the personal part and second is the address part. The address part should never be empty.
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
-    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps, &address_splitter)
+    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, address_regexps, &address_splitter)
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         progress_dialog.set_main_progress(0,items.size)
         items_processed = 0
@@ -127,8 +127,11 @@ module FixUnidentifiedEmails
             progress_dialog.set_sub_status("Items processed: " + items_processed.to_s)
 
             # Find the text for each of the communication fields.
+            timer.start('find_metadata_text')
+            item_metadata_text = FindUnidentifiedEmails::metadata_text(item, start_area_line_num, timer)
+            timer.stop('find_metadata_text')
             timer.start('find_field_text')
-            fields = find_fields(item, FindUnidentifiedEmails::metadata_text(item, start_area_size, timer), communication_field_aliases, timer)
+            fields = find_fields(item, item_metadata_text, communication_field_aliases, timer)
             timer.stop('find_field_text')
 
             # Extract information about the addresses from the from, to, cc, and bcc field strings.
@@ -148,19 +151,10 @@ module FixUnidentifiedEmails
             subject = fields[:subject]
             
             # Create communication and add to hash
+            timer.start('create_custom_communication')
             communication = Custom::CustomCommunication.new(date, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
+            timer.stop('create_custom_communication')
             item_communications[item.guid] = communication
-
-            # Add custom metadata. Should be removed later.
-            address_to_string = lambda do |address|
-                "<#{address.personal}, #{address.address}>"
-            end
-			item.custom_metadata['Date'] = date.to_s
-			item.custom_metadata['Subject'] = subject
-            item.custom_metadata['FromAddresses'] = from_addresses.map(&address_to_string).to_s
-            item.custom_metadata['ToAddresses'] = to_addresses.map(&address_to_string).to_s
-            item.custom_metadata['CcAddresses'] = cc_addresses.map(&address_to_string).to_s
-            item.custom_metadata['BccAddresses'] = bcc_addresses.map(&address_to_string).to_s
 
             items_processed += 1
             progress_dialog.increment_main_progress
