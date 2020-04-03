@@ -123,7 +123,7 @@ if dialog.dialog_result
         progress_dialog.set_main_status_and_log_it('Identifying which items to process...')
 
         # Create set of items to be processed.
-        items = current_selected_items.to_set
+        items = current_case.search("tag:#{email_tag}")
         if process_unselected_rfc_mails
             items.merge(FixUnidentifiedEmails::find_rfc_mails(current_case))
         end
@@ -148,7 +148,6 @@ if dialog.dialog_result
         ]
 
         progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
-        progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps) { |string| string.split(';').map(&:strip) }
 
         timer.stop('total')
