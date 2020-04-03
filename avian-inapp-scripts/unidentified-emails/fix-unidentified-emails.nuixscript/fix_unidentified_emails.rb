@@ -48,7 +48,7 @@ module FixUnidentifiedEmails
     end
 
     # Return a hash of possible fields and there values.
-    def find_fields(item, text, communication_field_aliases)
+    def find_fields(item, text, communication_field_aliases, timer)
         lines = text.lines.map { |line| line.strip }
         
         fields = {}
@@ -119,12 +119,16 @@ module FixUnidentifiedEmails
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
     def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps, &address_splitter)
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
+        progress_dialog.set_main_progress(0,items.size)
+        items_processed = 0
         item_communications = {}
         timer.start('find_communication_fields')
         for item in items
+            progress_dialog.set_sub_status("Items processed: " + items_processed.to_s)
+
             # Find the text for each of the communication fields.
             timer.start('find_field_text')
-            fields = find_fields(item, FindUnidentifiedEmails::metadata_text(item, start_area_size, timer), communication_field_aliases)
+            fields = find_fields(item, FindUnidentifiedEmails::metadata_text(item, start_area_size, timer), communication_field_aliases, timer)
             timer.stop('find_field_text')
 
             # Extract information about the addresses from the from, to, cc, and bcc field strings.
@@ -157,6 +161,14 @@ module FixUnidentifiedEmails
             item.custom_metadata['ToAddresses'] = to_addresses.map(&address_to_string).to_s
             item.custom_metadata['CcAddresses'] = cc_addresses.map(&address_to_string).to_s
             item.custom_metadata['BccAddresses'] = bcc_addresses.map(&address_to_string).to_s
+
+            items_processed += 1
+            progress_dialog.increment_main_progress
+
+            if progress_dialog.abort_was_requested
+                progress_dialog.log_message('Aborting script...')
+                return
+            end
         end
         timer.stop('find_communication_fields')
 

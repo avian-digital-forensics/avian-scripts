@@ -27,8 +27,8 @@ main_tab = dialog.add_tab('main_tab', 'Main')
 main_tab.append_text_field('allowed_start_offset', 'Allowed start offset', '10')
 main_tab.get_control('allowed_start_offset').set_tool_tip_text('Number of non-whitespace characters allowed before "from".')
 
-main_tab.append_text_field('start_area_size', 'Start area size', '400')
-main_tab.get_control('start_area_size').set_tool_tip_text('Size of the area from the start of the items content in which the email information must appear.')
+main_tab.append_text_field('start_area_line_num', 'Start area size', '15')
+main_tab.get_control('start_area_line_num').set_tool_tip_text('The number of lines from the start of the items content in which the email information must appear.')
 
 main_tab.append_text_field('email_tag', 'Email tag', 'UnidentifiedEmail')
 main_tab.get_control('email_tag').set_tool_tip_text('The tag given to all found emails.')
@@ -50,13 +50,13 @@ dialog.validate_before_closing do |values|
     end
 
     # Make sure start area size is not empty.
-    if values['start_area_size'].strip.empty?
+    if values['start_area_line_num'].strip.empty?
         CommonDialogs.show_warning('Please provide a start area size.', gui_title)
         next false
     else 
-        start_area_size = Integer(values['start_area_size'].strip) rescue false
-        if not start_area_size or start_area_size < 0
-            CommonDialogs.show_warning('Start area size must be a positive integer.', gui_title)
+        start_area_line_num = Integer(values['start_area_line_num'].strip) rescue false
+        if not start_area_line_num or start_area_line_num < 0
+            CommonDialogs.show_warning('Start area line number must be a positive integer.', gui_title)
             next false
         end
     end
@@ -84,7 +84,7 @@ if dialog.dialog_result == true
     values = dialog.to_map
 
     allowed_start_offset = Integer(values['allowed_start_offset'])
-    start_area_size = Integer(values['start_area_size'])
+    start_area_line_num = Integer(values['start_area_line_num'])
     email_tag = values['email_tag']
 
     ProgressDialog.for_block do |progress_dialog|
@@ -108,7 +108,7 @@ if dialog.dialog_result == true
             items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer)
         end
 		
-        num_emails = FindUnidentifiedEmails::find_unidentified_emails(current_case, items, progress_dialog, timer, allowed_start_offset, start_area_size, email_tag, bulk_annotater)
+        num_emails = FindUnidentifiedEmails::find_unidentified_emails(current_case, items, progress_dialog, timer, allowed_start_offset, start_area_line_num, email_tag, bulk_annotater)
 
         timer.stop('total')
         
