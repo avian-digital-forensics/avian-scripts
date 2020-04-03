@@ -148,7 +148,7 @@ if dialog.dialog_result
         ]
 
         progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
-        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, address_regexps) { |string| string.split(';').map(&:strip) }
+        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, address_regexps) { |string| string.split(/[,;]\s/).map(&:strip) }
 
         timer.stop('total')
         

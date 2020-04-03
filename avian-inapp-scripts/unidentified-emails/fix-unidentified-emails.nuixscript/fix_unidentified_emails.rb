@@ -83,7 +83,7 @@ module FixUnidentifiedEmails
         if field_text == ''
             return []
         end
-        address_strings = address_splitter.call(field_text)
+        address_strings = address_splitter.call(field_text).select { |s| s.strip != '' }
         return address_strings.map do |address_string|
             if regexp = address_regexps.find{ |regexp| address_string.match(regexp) }
                 personal, address = address_string.match(regexp).captures
