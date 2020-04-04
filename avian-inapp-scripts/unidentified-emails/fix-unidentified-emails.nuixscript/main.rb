@@ -92,7 +92,7 @@ if dialog.dialog_result
 		# Remove RFC822 tags.
 		progress_dialog.set_main_status_and_log_it('Removing RFC822 tags...')
 		timer.start('remove_rfc822_tag')
-		bulk_annotater.remove_tag(rfc822_tag, current_case.search("tag:#{remove_rfc822_tag}"))
+		bulk_annotater.remove_tag(rfc822_tag, current_case.search("tag:#{rfc822_tag}"))
         timer.stop('remove_rfc822_tag')
         
         timer.stop('total')

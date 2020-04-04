@@ -141,10 +141,10 @@ if dialog.dialog_result
         }
     
         address_regexps = [
-            /\'?\"?(.*?)\'?\"?\s*\[(.*)\]/,	# Addresses like Example Exampleson [example@ex.com]
-            /\'?\"?(.*?)\'?\"?\s*\<(.*)\>/,	# Addresses like Example Exampleson <example@ex.com>
-            /\'?\"?()(.*@.*?)\'?\"?/,  		# Addresses like example@ex.com or 'example@ex.com'
-            /\'?\"?()(.*?)\'?\"?/      		# Addresses like Example Exampleson or 'Example Exampleson'
+            /\'?\"?(.*?)\'?\"?\s*\[(.*)\]$/,	# Addresses like Example Exampleson [example@ex.com]
+            /\'?\"?(.*?)\'?\"?\s*\<(.*)\>$/,	# Addresses like Example Exampleson <example@ex.com>
+            /\'?\"?()(.*@.*?)\'?\"?$/,  		# Addresses like example@ex.com or 'example@ex.com'
+            /\'?\"?()(.*?)\'?\"?$/      		# Addresses like Example Exampleson or 'Example Exampleson'
         ]
 		
 		# Add tags so RFC822 items don't have their text searched.
