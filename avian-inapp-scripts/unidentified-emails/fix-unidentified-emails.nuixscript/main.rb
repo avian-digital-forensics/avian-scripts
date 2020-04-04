@@ -60,13 +60,13 @@ if dialog.dialog_result
     }
     
     start_area_size = 400
-
-    address_regexps = [
-        /(.*\b)\s*\[(.*)\]/,        # Addresses like Example Exampleson [example@ex.com]
-        /(.*\b)\s*\<(.*)\>/,        # Addresses like Example Exampleson <example@ex.com>
-        /\'?\"?()(.*@.*\b)\'?\"?/,  # Addresses like example@ex.com or 'example@ex.com'
-        /\'?\"?()(.*\b)\'?\"?/      # Addresses like Example Exampleson or 'Example Exampleson'
-    ]
+    
+	address_regexps = [
+		/\'?\"?(.*?)\'?\"?\s*\[(.*)\]/,	# Addresses like Example Exampleson [example@ex.com]
+		/\'?\"?(.*?)\'?\"?\s*\<(.*)\>/,	# Addresses like Example Exampleson <example@ex.com>
+		/\'?\"?()(.*@.*?)\'?\"?/,  		# Addresses like example@ex.com or 'example@ex.com'
+		/\'?\"?()(.*?)\'?\"?/      		# Addresses like Example Exampleson or 'Example Exampleson'
+	]
 
     ProgressDialog.for_block do |progress_dialog|
         # Setup progress dialog.
@@ -79,7 +79,7 @@ if dialog.dialog_result
         # Find the case data directory.
         case_data_dir = SettingsUtils::case_data_dir(main_directory, current_case)
 
-        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps) { |string| string.split(';').map(&:strip) }
+        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps) { |string| string.split(/[,;]\s/).map(&:strip) }
         
         timer.stop('total')
         timer.print_timings

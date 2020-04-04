@@ -141,10 +141,10 @@ if dialog.dialog_result
         }
     
         address_regexps = [
-            /(.*\b)\s*\[(.*)\]/,        # Addresses like Example Exampleson [example@ex.com]
-            /(.*\b)\s*\<(.*)\>/,        # Addresses like Example Exampleson <example@ex.com>
-            /\'?\"?()(.*@.*\b)\'?\"?/,  # Addresses like example@ex.com or 'example@ex.com'
-            /\'?\"?()(.*\b)\'?\"?/      # Addresses like Example Exampleson or 'Example Exampleson'
+            /\'?\"?(.*?)\'?\"?\s*\[(.*)\]/,	# Addresses like Example Exampleson [example@ex.com]
+            /\'?\"?(.*?)\'?\"?\s*\<(.*)\>/,	# Addresses like Example Exampleson <example@ex.com>
+            /\'?\"?()(.*@.*?)\'?\"?/,  		# Addresses like example@ex.com or 'example@ex.com'
+            /\'?\"?()(.*?)\'?\"?/      		# Addresses like Example Exampleson or 'Example Exampleson'
         ]
 
         progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')

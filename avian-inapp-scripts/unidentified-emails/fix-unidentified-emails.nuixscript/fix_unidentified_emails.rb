@@ -54,10 +54,10 @@ module FixUnidentifiedEmails
         fields = {}
 
         for field_key, aliases in communication_field_aliases
-            contained_aliases = aliases.select { |field_alias| lines.any? { |line| line.start_with?(field_alias + ':') } }
-            if contained_aliases.size >= 1
+            contained_alias = aliases.find { |field_alias| lines.any? { |line| line.start_with?(field_alias + ':') } }
+            if contained_alias
                 # If at least one alias is found in the text, store the first value.
-                fields[field_key] = lines.find { |line| line.start_with?(contained_aliases[0] + ':') }[contained_aliases[0].size+1..-1].strip
+                fields[field_key] = lines.find { |line| line.start_with?(contained_alias + ':') }[contained_alias.size+1..-1].strip
             else 
                 # If no alias is found in the text, look for one in properties.
                 alias_properties = aliases.select{ |field_alias| item.properties.key?(field_alias) }
@@ -170,6 +170,7 @@ module FixUnidentifiedEmails
         data_path = File.join(case_data_dir, 'unidentified_emails_data.yml')
 
         # Save communications to file.
+        progress_dialog.set_main_status_and_log_it('Writing result to file...')
         timer.start('save_communications')
         timer.start('create_yaml_hash')
         yaml_hash = Hash[item_communications.map{ |guid, communication| [guid, communication.to_yaml_hash] }]
