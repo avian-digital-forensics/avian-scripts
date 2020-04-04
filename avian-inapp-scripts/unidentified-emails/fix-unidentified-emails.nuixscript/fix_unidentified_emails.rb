@@ -52,7 +52,7 @@ module FixUnidentifiedEmails
     # +item+:: The item whose fields to find.
     # +text+:: The text to use. In case only a subset of the text is to be used. If nil, the only properties will be searched.
     # +communication_field_aliases+:: Lists of aliases for each of the communication fields. In text, a ':' will be added to the end of each.
-    def find_fields(item, text, communication_field_aliases, properties, timer)
+    def find_fields(item, text, communication_field_aliases, timer)
         fields = {}
 
 		if text
@@ -139,9 +139,8 @@ module FixUnidentifiedEmails
 
             # Find the text for each of the communication fields.
             timer.start('find_metadata_text')
-            item_metadata_text = item.tags.include?(no_text_search_tag) 
-				? FindUnidentifiedEmails::metadata_text(item, start_area_line_num, timer)
-				: nil
+            item_metadata_text = item.tags.include?(no_text_search_tag) ? 
+				FindUnidentifiedEmails::metadata_text(item, start_area_line_num, timer) : nil
             timer.stop('find_metadata_text')
             timer.start('find_field_text')
             fields = find_fields(item, item_metadata_text, communication_field_aliases, timer)
