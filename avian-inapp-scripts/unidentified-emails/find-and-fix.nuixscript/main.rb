@@ -146,9 +146,23 @@ if dialog.dialog_result
             /\'?\"?()(.*@.*?)\'?\"?/,  		# Addresses like example@ex.com or 'example@ex.com'
             /\'?\"?()(.*?)\'?\"?/      		# Addresses like Example Exampleson or 'Example Exampleson'
         ]
+		
+		# Add tags so RFC822 items don't have their text searched.
+		progress_dialog.set_main_status_and_log_it('Adding tag to RFC822 items...')
+		timer.start('add_rfc822_tag')
+		rfc822_tag = 'Avian|UnidentifiedEmails|RFC822'
+		bulk_annotater = utilities.get_bulk_annotater
+		bulk_annotater.add_tag(rfc822_tag, FixUnidentifiedEmails::find_rfc_mails(current_case))
+		timer.stop('add_rfc822_tag')
 
         progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
-        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, address_regexps) { |string| string.split(/[,;]\s/).map(&:strip) }
+        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, rfc822_tag, address_regexps) { |string| string.split(/[,;]\s/).map(&:strip) }
+
+		# Remove RFC822 tags.
+		progress_dialog.set_main_status_and_log_it('Removing RFC822 tags...')
+		timer.start('remove_rfc822_tag')
+		bulk_annotater.remove_tag(rfc822_tag, current_case.search("tag:#{remove_rfc822_tag}"))
+        timer.stop('remove_rfc822_tag')
 
         timer.stop('total')
         

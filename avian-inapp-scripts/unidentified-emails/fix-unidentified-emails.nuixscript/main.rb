@@ -62,10 +62,10 @@ if dialog.dialog_result
     start_area_size = 400
     
 	address_regexps = [
-		/\'?\"?(.*?)\'?\"?\s*\[(.*)\]/,	# Addresses like Example Exampleson [example@ex.com]
-		/\'?\"?(.*?)\'?\"?\s*\<(.*)\>/,	# Addresses like Example Exampleson <example@ex.com>
-		/\'?\"?()(.*@.*?)\'?\"?/,  		# Addresses like example@ex.com or 'example@ex.com'
-		/\'?\"?()(.*?)\'?\"?/      		# Addresses like Example Exampleson or 'Example Exampleson'
+		/\'?\"?(.*?)\'?\"?\s*\[(.*)\]$/,	# Addresses like Example Exampleson [example@ex.com]
+		/\'?\"?(.*?)\'?\"?\s*\<(.*)\>$/,	# Addresses like Example Exampleson <example@ex.com>
+		/\'?\"?()(.*@.*?)\'?\"?$/,  		# Addresses like example@ex.com or 'example@ex.com'
+		/\'?\"?()(.*?)\'?\"?$/      		# Addresses like Example Exampleson or 'Example Exampleson'
 	]
 
     ProgressDialog.for_block do |progress_dialog|
@@ -78,8 +78,22 @@ if dialog.dialog_result
 
         # Find the case data directory.
         case_data_dir = SettingsUtils::case_data_dir(main_directory, current_case)
+		
+		# Add tags so RFC822 items don't have their text searched.
+		progress_dialog.set_main_status_and_log_it('Adding tag to RFC822 items...')
+		timer.start('add_rfc822_tag')
+		rfc822_tag = 'Avian|UnidentifiedEmails|RFC822'
+		bulk_annotater = utilities.get_bulk_annotater
+		bulk_annotater.add_tag(rfc822_tag, FixUnidentifiedEmails::find_rfc_mails(current_case))
+		timer.stop('add_rfc822_tag')
 
-        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, address_regexps) { |string| string.split(/[,;]\s/).map(&:strip) }
+        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, rfc822_tag, address_regexps) { |string| string.split(/[,;]\s/).map(&:strip) }
+        
+		# Remove RFC822 tags.
+		progress_dialog.set_main_status_and_log_it('Removing RFC822 tags...')
+		timer.start('remove_rfc822_tag')
+		bulk_annotater.remove_tag(rfc822_tag, current_case.search("tag:#{remove_rfc822_tag}"))
+        timer.stop('remove_rfc822_tag')
         
         timer.stop('total')
         timer.print_timings
