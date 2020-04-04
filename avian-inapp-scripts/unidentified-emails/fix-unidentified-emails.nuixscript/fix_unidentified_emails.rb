@@ -47,19 +47,29 @@ module FixUnidentifiedEmails
         return nuix_case.search('mime-type:message/rfc822')
     end
 
-    # Return a hash of possible fields and there values.
-    def find_fields(item, text, communication_field_aliases, timer)
-        lines = text.lines.map { |line| line.strip }
-        
+    # Return a hash of possible fields and their values.
+    # Params:
+    # +item+:: The item whose fields to find.
+    # +text+:: The text to use. In case only a subset of the text is to be used. If nil, the only properties will be searched.
+    # +communication_field_aliases+:: Lists of aliases for each of the communication fields. In text, a ':' will be added to the end of each.
+    def find_fields(item, text, communication_field_aliases, properties, timer)
         fields = {}
 
-        for field_key, aliases in communication_field_aliases
-            contained_alias = aliases.find { |field_alias| lines.any? { |line| line.start_with?(field_alias + ':') } }
-            if contained_alias
-                # If at least one alias is found in the text, store the first value.
-                fields[field_key] = lines.find { |line| line.start_with?(contained_alias + ':') }[contained_alias.size+1..-1].strip
-            else 
-                # If no alias is found in the text, look for one in properties.
+		if text
+			lines = text.lines.map { |line| line.strip }
+			for field_key, aliases in communication_field_aliases
+				contained_alias = aliases.find { |field_alias| lines.any? { |line| line.start_with?(field_alias + ':') } }
+				if contained_alias
+					# If at least one alias is found in the text, store the first value.
+					fields[field_key] = lines.find { |line| line.start_with?(contained_alias + ':') }[contained_alias.size+1..-1].strip
+				end
+            end
+        end
+
+        unless fields.key?(:date) && fields.key?(:from)
+            # If no from and date is found in the text, or no text is given, start again and look in the properties.
+            fields = {}
+            for field_key, aliases in communication_field_aliases
                 alias_properties = aliases.select{ |field_alias| item.properties.key?(field_alias) }
                 if alias_properties.size > 1
                     raise "Multiple properties found for field '#{field_key}'."
@@ -115,9 +125,10 @@ module FixUnidentifiedEmails
     # +timer+:: The timer to record internal timings in.
     # +communication_field_aliases+:: Lists of aliases for each of the communication fields. In text, a ':' will be added to the end of each.
     # +start_area_line_num+:: The number of lines that will be searched for communication fields.
+	# +no_text_search_tag+:: Any item will this text will only have its properties searched for fields.
     # +address_regexps+:: Regexps for possible address formats. First capture group should be the personal part and second is the address part. The address part should never be empty.
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
-    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, address_regexps, &address_splitter)
+    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, &address_splitter)
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         progress_dialog.set_main_progress(0,items.size)
         items_processed = 0
@@ -128,7 +139,9 @@ module FixUnidentifiedEmails
 
             # Find the text for each of the communication fields.
             timer.start('find_metadata_text')
-            item_metadata_text = FindUnidentifiedEmails::metadata_text(item, start_area_line_num, timer)
+            item_metadata_text = item.tags.include?(no_text_search_tag) 
+				? FindUnidentifiedEmails::metadata_text(item, start_area_line_num, timer)
+				: nil
             timer.stop('find_metadata_text')
             timer.start('find_field_text')
             fields = find_fields(item, item_metadata_text, communication_field_aliases, timer)
