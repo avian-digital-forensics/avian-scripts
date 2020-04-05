@@ -1,3 +1,5 @@
+require 'set'
+
 module Utils
     def self.alpha_num_char_set 
         [('a'..'z'), ('A'..'Z'), ('0'..'9')].map(&:to_a).flatten
@@ -35,5 +37,16 @@ module Utils
     # Returns a random string of length num_chars from the given char_set.
     def self.random_string(num_chars, char_set)
         return sample(char_set, num_chars, true).join
+    end
+
+    # Returns true if all the given sets are disjoint.
+    def self.sets_disjoint?(*sets)
+        total = Set[]
+        for set in sets.map(&:to_set)
+            unless set.disjoint?(total)
+                return false
+            end
+            total = total | set
+        end
     end
 end
