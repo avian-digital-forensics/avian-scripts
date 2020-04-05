@@ -68,7 +68,7 @@ module FixUnidentifiedEmails
             end
         end
 
-        if fields[:date] == '' || fields[:from] == ''
+        if !text || fields[:date] == '' || fields[:from] == ''
             # If no from and date is found in the text, or no text is given, start again and look in the properties.
             fields = {}
             for field_key, aliases in communication_field_aliases
@@ -141,8 +141,8 @@ module FixUnidentifiedEmails
 
             # Find the text for each of the communication fields.
             timer.start('find_metadata_text')
-            item_metadata_text = item.tags.include?(no_text_search_tag) ? 
-				FindUnidentifiedEmails::metadata_text(item, start_area_line_num, timer) : nil
+            item_metadata_text = item.tags.include?(no_text_search_tag) ? nil :
+				FindUnidentifiedEmails::metadata_text(item, start_area_line_num, timer)
             timer.stop('find_metadata_text')
             timer.start('find_field_text')
             fields = find_fields(item, item_metadata_text, communication_field_aliases, timer)
