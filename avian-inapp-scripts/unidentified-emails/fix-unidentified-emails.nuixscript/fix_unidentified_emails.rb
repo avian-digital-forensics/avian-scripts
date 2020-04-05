@@ -61,12 +61,14 @@ module FixUnidentifiedEmails
 				contained_alias = aliases.find { |field_alias| lines.any? { |line| line.start_with?(field_alias + ':') } }
 				if contained_alias
 					# If at least one alias is found in the text, store the first value.
-					fields[field_key] = lines.find { |line| line.start_with?(contained_alias + ':') }[contained_alias.size+1..-1].strip
+                    fields[field_key] = lines.find { |line| line.start_with?(contained_alias + ':') }[contained_alias.size+1..-1].strip
+                else
+                    fields[field_key] = ''
 				end
             end
         end
 
-        unless fields.key?(:date) && fields.key?(:from)
+        if fields[:date] == '' || fields[:from] == ''
             # If no from and date is found in the text, or no text is given, start again and look in the properties.
             fields = {}
             for field_key, aliases in communication_field_aliases
