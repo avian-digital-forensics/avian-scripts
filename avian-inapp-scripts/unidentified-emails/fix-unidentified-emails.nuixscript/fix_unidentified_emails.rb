@@ -129,8 +129,9 @@ module FixUnidentifiedEmails
     # +start_area_line_num+:: The number of lines that will be searched for communication fields.
 	# +no_text_search_tag+:: Any item will this text will only have its properties searched for fields.
     # +address_regexps+:: Regexps for possible address formats. First capture group should be the personal part and second is the address part. The address part should never be empty.
+    # +email_mime_type+:: The MIME-type to give to those items that are not already of kind email.
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
-    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, &address_splitter)
+    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, email_mime_type, &address_splitter)
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         progress_dialog.set_main_progress(0,items.size)
         items_processed = 0
@@ -156,6 +157,11 @@ module FixUnidentifiedEmails
             bcc_addresses = identify_addresses(fields[:bcc], address_regexps, &address_splitter)
             timer.stop('identify_addresses')
 
+            # If the item is not already an email, set its MIME-type to the given email MIME-type.
+            timer.start('find_mime_type')
+            mime_type = item.is_kind('email') ? item.type : email_mime_type
+            timer.stop('find_mime_type')
+
             # Find date.
             timer.start('find_date')
             date = parse_date(fields[:date])
@@ -164,11 +170,15 @@ module FixUnidentifiedEmails
             # Find subject.
             subject = fields[:subject]
             
-            # Create communication and add to hash
+            # Create communication.
             timer.start('create_custom_communication')
             communication = Custom::CustomCommunication.new(date, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
             timer.stop('create_custom_communication')
-            item_communications[item.guid] = communication
+
+            # Convert communication to yaml hash and add to hash.
+            timer.start('convert_communication_to_yaml_hash')
+            item_communications[item.guid] = [communication.to_yaml_hash, mime_type]
+            timer.stop('convert_communication_to_yaml_hash')
 
             items_processed += 1
             progress_dialog.increment_main_progress
@@ -186,10 +196,7 @@ module FixUnidentifiedEmails
         # Save communications to file.
         progress_dialog.set_main_status_and_log_it('Writing result to file...')
         timer.start('save_communications')
-        timer.start('create_yaml_hash')
-        yaml_hash = Hash[item_communications.map{ |guid, communication| [guid, communication.to_yaml_hash] }]
-        timer.stop('create_yaml_hash')
-        File.open(data_path, 'w') { |file| file.write(yaml_hash.to_yaml) }
+        File.open(data_path, 'w') { |file| file.write(item_communications.to_yaml) }
         timer.stop('save_communications')
     end
 end
