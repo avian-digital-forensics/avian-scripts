@@ -30,10 +30,16 @@ module AddCommunicationToUnidentifiedEmails
             data = wss_global.vars[:add_communication_to_unidentified_emails_data]
             if data.key?(worker_item.item_guid)
                 # Create a CustomCommunication from the guid's data.
-                communication = Custom::CustomCommunication::from_yaml_hash(data[worker_item.item_guid])
+                communication = Custom::CustomCommunication::from_yaml_hash(data[worker_item.item_guid][0])
 				
 				# Set the item's communication to the created CustomCommunication.
                 worker_item.set_item_communication(communication)
+
+                # Get the desired MIME-type.
+                mime_type = data[worker_item.item_guid][1]
+
+                # Set the item's MIME-type.
+                worker_item.set_item_type(mime_type)
             end
         else
             STDERR.puts("AddCommunicationToUnidentifiedEmails: No data file. Skipping.")
