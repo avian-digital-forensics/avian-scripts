@@ -1,3 +1,5 @@
+require 'set'
+
 module Utils
     def self.alpha_num_char_set 
         [('a'..'z'), ('A'..'Z'), ('0'..'9')].map(&:to_a).flatten
@@ -76,6 +78,17 @@ module Utils
         bulk_annotater.exclude(exclusion_reason, items) do |event_info|
             progress_dialog.increment_main_progress
             progress_dialog.set_sub_status("#{item_num += 1}/#{num_items}")
+        end
+    end
+    
+    # Returns true if all the given sets are disjoint.
+    def self.sets_disjoint?(*sets)
+        total = Set[]
+        for set in sets.map(&:to_set)
+            unless set.disjoint?(total)
+                return false
+            end
+            total = total | set
         end
     end
 end

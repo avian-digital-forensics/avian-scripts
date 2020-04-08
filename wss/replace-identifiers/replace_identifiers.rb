@@ -7,7 +7,7 @@ module ReplaceIdentifiers
     
     # Returns the given address with address and personal part replaced if appropriate.
     def update_address(replace_identifiers_hash, address)
-        result = Custom::CustomAddress.new(address)
+        result = Custom::CustomAddress.from_address(address)
         if result.address and replace_identifiers_hash.key?(result.address)
             result.address = replace_identifiers_hash[result.address]
         end
@@ -24,7 +24,7 @@ module ReplaceIdentifiers
    
     # Returns a communcation with all identifiers updated.
     def update_communication(replace_identifiers_hash, communication)
-        com = Custom::CustomCommunication.new(communication)
+        com = Custom::CustomCommunication.from_communication(communication)
         com.from_addresses = update_address_list(replace_identifiers_hash, com.from_addresses)
         com.to_addresses = update_address_list(replace_identifiers_hash, com.to_addresses)
         com.cc_addresses = update_address_list(replace_identifiers_hash, com.cc_addresses)
