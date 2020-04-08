@@ -86,7 +86,7 @@ if dialog.dialog_result
     end
 
     # What delimiter is used between values on the same line.
-    delimiter = NXUtils.radio_group_value(values, delimiter_options)
+    delimiter = NXUtils.radio_group_value(values, delimiter_options.values)
     if delimiter == "custom"
         delimiter = values["custom_delimiter"]
     end

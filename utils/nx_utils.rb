@@ -30,10 +30,13 @@ module NXUtils
         return TabbedCustomDialog.new(title)
     end
     
-    # Returns the selected value in the out of the given radio_options.
+
+    # Returns the selected value out of the given radio_options.
+    # Params:
+    # +dialog_values+:: The value hash returned by the dialog.
+    # +radio_options+:: A list of the possible radio buttons.
     def radio_group_value(dialog_values, radio_options)
-        radio_keys = radio_options.values # Yes, this does make sense.
-        return radio_keys.select{ |key| dialog_values[key] }.first
+        return radio_options.select{ |key| dialog_values[key] }.first
     end
     
     def assert_non_empty_field(values, field_key, field_name)
