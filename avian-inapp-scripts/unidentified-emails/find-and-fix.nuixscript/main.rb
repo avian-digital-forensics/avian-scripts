@@ -129,8 +129,6 @@ if dialog.dialog_result
     start_area_line_num = Integer(values['start_area_line_num'])
     email_tag = values['email_tag']
     email_mime_type = NXUtils::radio_group_value(values, email_mime_type_options.values)
-    puts('aborre: ' + email_mime_type)
-    puts('havtaske: ' + email_mime_type.to_s)
     
     ProgressDialog.for_block do |progress_dialog|
         # Setup progress dialog.
