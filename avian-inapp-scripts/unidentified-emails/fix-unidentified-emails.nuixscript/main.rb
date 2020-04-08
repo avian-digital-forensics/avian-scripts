@@ -24,7 +24,33 @@ dialog = NXUtils.create_dialog(gui_title)
 # Add main tab.
 main_tab = dialog.add_tab('main_tab', 'Main')
 
-# TODO: ADD GUI HERE
+# List of possible email MIME-type options.
+email_mime_types = ['application/pcm-email', 
+                    'application/pdf-mail', 
+                    'application/vnd.hp-trim-email', 
+                    'application/vnd.lotus-domino-xml-mail-document', 
+                    'application/vnd.lotus-notes-document', 
+                    'application/vnd.ms-entourage-message', 
+                    'application/vnd.ms-outlook-item', 
+                    'application/vnd.ms-outlook-mac-email', 
+                    'application/vnd.ms-outlook-note', 
+                    'application/vnd.rim-blackberry-email', 
+                    'application/vnd.rim-blackberry-sms', 
+                    'application/vnd.rimarts-becky-email', 
+                    'application/x-microsoft-restricted-permission-message', 
+                    'message/rfc822', 
+                    'message/rfc822-headers', 
+                    'message/x-scraped']
+
+# The options for the MIME-type.
+email_mime_type_options = {}
+for email_mime_type in email_mime_types
+    email_mime_type_options[email_mime_type] = email_mime_type
+end
+
+# Add radio buttons for MIME-type choice.
+main_tab.append_radio_button_group('Email MIME-type', 'email_mime_type', email_mime_type_options)
+main_tab.get_control('email_mime_type').set_tool_tip_text('The MIME-type given to all items found to be emails that are not already seen as such by NUIX.')
 
 
 # Checks the input before closing the dialog.
@@ -49,6 +75,8 @@ if dialog.dialog_result
     timer = Timing::Timer.new
 
     timer.start('total')
+
+    email_mime_type = values['email_mime_type']
     
     communication_field_aliases = {
         :date => ['date', 'Date', 'dato', 'Dato', 'sendt', 'Sendt', 'modtaget', 'Modtaget'],
@@ -87,7 +115,7 @@ if dialog.dialog_result
 		bulk_annotater.add_tag(rfc822_tag, FixUnidentifiedEmails::find_rfc_mails(current_case))
 		timer.stop('add_rfc822_tag')
 
-        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, rfc822_tag, address_regexps) { |string| string.split(/[,;]\s/).map(&:strip) }
+        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, current_selected_items, progress_dialog, timer, communication_field_aliases, start_area_size, rfc822_tag, address_regexps, email_mime_types) { |string| string.split(/[,;]\s/).map(&:strip) }
         
 		# Remove RFC822 tags.
 		progress_dialog.set_main_status_and_log_it('Removing RFC822 tags...')

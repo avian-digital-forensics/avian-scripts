@@ -29,11 +29,27 @@ module NXUtils
     def create_dialog(title)
         return TabbedCustomDialog.new(title)
     end
-    
-    # Returns the selected value in the out of the given radio_options.
+
+    # Returns the selected value out of the given radio_options.
+    # Params:
+    # +dialog_values+:: The value hash returned by the dialog.
+    # +radio_options+:: A list of the possible radio buttons.
     def radio_group_value(dialog_values, radio_options)
-        radio_keys = radio_options.values # Yes, this does make sense.
-        return radio_keys.select{ |key| dialog_values[key] }.first
+        return radio_options.select{ |key| dialog_values[key] }.first
+    end
+
+    # Appends a number of radio buttons in the same group to the specified tab.
+    # Params:
+    # +tab+:: The tab to append the radio buttons to.
+    # +group_label+:: The label for the group shown to the user.
+    # +radio_button_group_name+:: The identifier for the radio button group.
+    # +radio_button_choices+:: A hash with radio button labels as keys and identifiers as values.
+    # +default_choice+:: Any radio button with this identifier will be checked by default. If not given, no radio button will be checked.
+    def append_vertical_radio_button_group(tab, group_label, group_label_identifier, radio_button_group_name, radio_button_choices, default_choice='')
+        tab.append_label(group_label_identifier, group_label)
+        for label,identifier in radio_button_choices
+            tab.append_radio_button(identifier, label, radio_button_group_name, identifier==default_choice)
+        end
     end
     
     def assert_non_empty_field(values, field_key, field_name)

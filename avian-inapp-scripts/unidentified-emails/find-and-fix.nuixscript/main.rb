@@ -41,6 +41,39 @@ main_tab.get_control('start_area_line_num').set_tool_tip_text('The number of lin
 main_tab.append_text_field('email_tag', 'Email tag', 'UnidentifiedEmail')
 main_tab.get_control('email_tag').set_tool_tip_text('The tag given to all found emails.')
 
+# Add email MIME-type tab.
+email_mime_type_tab = dialog.add_tab('email_mime_type_tab', 'Email MIME-type')
+
+# List of possible email MIME-type options.
+email_mime_types = ['application/pcm-email', 
+                    'application/pdf-mail', 
+                    'application/vnd.hp-trim-email', 
+                    'application/vnd.lotus-domino-xml-mail-document', 
+                    'application/vnd.lotus-notes-document', 
+                    'application/vnd.ms-entourage-message', 
+                    'application/vnd.ms-outlook-item', 
+                    'application/vnd.ms-outlook-mac-email', 
+                    'application/vnd.ms-outlook-note', 
+                    'application/vnd.rim-blackberry-email', 
+                    'application/vnd.rim-blackberry-sms', 
+                    'application/vnd.rimarts-becky-email', 
+                    'application/x-microsoft-restricted-permission-message', 
+                    'message/rfc822', 
+                    'message/rfc822-headers', 
+                    'message/x-scraped']
+
+# The options for the MIME-type.
+email_mime_type_options = {}
+for email_mime_type in email_mime_types
+    email_mime_type_options[email_mime_type] = email_mime_type
+end
+
+# Add radio buttons for MIME-type choice.
+default_email_mime_type = 'message/rfc822'
+email_mime_type_description = 'All found emails that a not already of kind email will be given the following MIME-type. Every one of the options indicates a specific type of email that probably won\'t fit for all items, so just choose the best available option.'
+NXUtils::append_vertical_radio_button_group(email_mime_type_tab, email_mime_type_description, 'email_mime_type_radio_button_label', 'email_mime_type', email_mime_type_options, default_email_mime_type)
+#main_tab.get_control('email_mime_type').set_tool_tip_text('The MIME-type given to all items found to be emails that are not already seen as such by NUIX.')
+
 
 # Checks the input before closing the dialog.
 dialog.validate_before_closing do |values|
@@ -95,6 +128,7 @@ if dialog.dialog_result
     allowed_start_offset = Integer(values['allowed_start_offset'])
     start_area_line_num = Integer(values['start_area_line_num'])
     email_tag = values['email_tag']
+    email_mime_type = NXUtils::radio_group_value(values, email_mime_type_options.values)
     
     ProgressDialog.for_block do |progress_dialog|
         # Setup progress dialog.
@@ -156,7 +190,7 @@ if dialog.dialog_result
 		timer.stop('add_rfc822_tag')
 
         progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
-        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, rfc822_tag, address_regexps) { |string| string.split(/[,;]\s/).map(&:strip) }
+        FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, rfc822_tag, address_regexps, email_mime_type) { |string| string.split(/[,;]\s/).map(&:strip) }
 
 		# Remove RFC822 tags.
 		progress_dialog.set_main_status_and_log_it('Removing RFC822 tags...')
