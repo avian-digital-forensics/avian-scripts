@@ -41,6 +41,9 @@ main_tab.get_control('start_area_line_num').set_tool_tip_text('The number of lin
 main_tab.append_text_field('email_tag', 'Email tag', 'UnidentifiedEmail')
 main_tab.get_control('email_tag').set_tool_tip_text('The tag given to all found emails.')
 
+# Add email MIME-type tab.
+email_mime_type_tab = dialog.add_tab('email_mime_type_tab', 'Email MIME-type')
+
 # List of possible email MIME-type options.
 email_mime_types = ['application/pcm-email', 
                     'application/pdf-mail', 
@@ -66,8 +69,10 @@ for email_mime_type in email_mime_types
 end
 
 # Add radio buttons for MIME-type choice.
-main_tab.append_radio_button_group('Email MIME-type', 'email_mime_type', email_mime_type_options)
-main_tab.get_control('email_mime_type').set_tool_tip_text('The MIME-type given to all items found to be emails that are not already seen as such by NUIX.')
+default_email_mime_type = 'message/rfc822'
+email_mime_type_description = 'All found emails that a not already of kind email will be given the following MIME-type. Every one of the options indicates a specific type of email that probably won\'t fit for all items, so just choose the best available option.'
+NXUtils::append_vertical_radio_button_group(email_mime_type_tab, email_mime_type_description, 'email_mime_type_radio_button_label', 'email_mime_type', email_mime_type_options, default_email_mime_type)
+#main_tab.get_control('email_mime_type').set_tool_tip_text('The MIME-type given to all items found to be emails that are not already seen as such by NUIX.')
 
 
 # Checks the input before closing the dialog.
@@ -123,7 +128,9 @@ if dialog.dialog_result
     allowed_start_offset = Integer(values['allowed_start_offset'])
     start_area_line_num = Integer(values['start_area_line_num'])
     email_tag = values['email_tag']
-    email_mime_type = values['email_mime_type']
+    email_mime_type = NXUtils::radio_group_value(values, email_mime_type_options.values)
+    puts('aborre: ' + email_mime_type)
+    puts('havtaske: ' + email_mime_type.to_s)
     
     ProgressDialog.for_block do |progress_dialog|
         # Setup progress dialog.

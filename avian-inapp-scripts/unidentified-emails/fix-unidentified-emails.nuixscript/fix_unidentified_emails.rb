@@ -159,7 +159,7 @@ module FixUnidentifiedEmails
 
             # If the item is not already an email, set its MIME-type to the given email MIME-type.
             timer.start('find_mime_type')
-            mime_type = item.is_kind('email') ? item.type : email_mime_type
+            mime_type = item.is_kind('email') ? item.type.name : email_mime_type
             timer.stop('find_mime_type')
 
             # Find date.
