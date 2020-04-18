@@ -6,7 +6,7 @@ module QCCull
     # +report_file_path+:: The path to the report.
     def update_report(result_hash, report_file_path)
         report_text = File.read(report_file_path)
-        updated_report_text = report_text.gsub(/FIELD_.*?\b/, information_hash)
+        updated_report_text = report_text.gsub(/FIELD_.*?\b/, result_hash)
         File.open(report_file_path, 'w') do |file|
             file.write(updated_report_text)
         end

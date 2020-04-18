@@ -1,26 +1,81 @@
 module NumberOfDescendants
     extend self
     
+    class NumDescendantsHash
+        def initialize()
+            @hash = {}
+        end
+
+        def add_item(item, num_descendants)
+            unless @hash.key?(num_descendants)
+                @hash[num_descendants] = Set[]
+            end
+            @hash[num_descendants].add(item)
+        end
+
+        # Adds the number of descendants of each item as custom metadata.
+        def annotate(bulk_annotater, metadata_key, timer=nil, progress_dialog=nil)
+            if timer
+                timer.start('num_descendants_add_metadata')
+            end
+
+            num_items = @hash.values.sum(&:size)
+            
+            # Setup progress dialog
+            if progress_dialog
+                progress_dialog.set_main_status_and_log_it('Adding number of descendants custom metadata...')
+                progress_dialog.set_main_progress(0, num_items)
+            end
+            main_progress = 0
+            for num_descendants,item_set in @hash
+                if item_set.size < 5
+                    # If the item set is too small, add metadata individually. This should maybe be removed.
+                    for item in item_set
+                        item.custom_metadata.put_integer(metadata_key, num_descendants.to_s)
+                    end
+                else
+                    # Bulk annotate.
+                    bulk_annotater.put_custom_metadata(metadata_key, num_descendants, item_set, nil)
+                end
+
+                # Update progress dialog.
+                if progress_dialog
+                    progress_dialog.set_main_progress(main_progress += item_set.size)
+                    progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
+                end
+            end
+
+            if timer
+                timer.stop('num_descendants_add_metadata')
+            end
+        end
+    end
+
     # Returns the number of descendants of the item.
+    # +item+:: The item to find the number of descendants of.
     def num_descendants(item)
         return item.descendants.length
     end
 
-    def number_of_descendants(current_case, progress_dialog, timer, items, metadata_key)
+    def number_of_descendants(current_case, progress_dialog, timer, items, metadata_key, bulk_annotater)
 
         progress_dialog.set_sub_progress_visible(false)
         
         # Add metadata to items.
         progress_dialog.set_main_status_and_log_it('Finding number of descendants of items...')
-        timer.start('find_num_descendants')
+        timer.start('num_descendants_find_num_descendants')
         progress_dialog.set_main_progress(0, items.size)
+        num_descendants_hash = NumDescendantsHash.new
         items.each_with_index do |item, item_index|
-            # Add a custom metadata field to each item with the number of descendants.
-            item.custom_metadata[metadata_key] = num_descendants(item)
+            # Find the number of descendants for item and add to hash.
+            num_descendants_hash.add_item(item, num_descendants(item))
 
+            # Update progress dialog.
             progress_dialog.increment_main_progress
-            progress_dialog.set_sub_status("#{item_index+1}/#{items.size}")
+            progress_dialog.set_sub_status("#{(item_index+1).to_s}/#{items.size.to_s}")
         end
-        timer.stop('find_num_descendants')
+        timer.stop('num_descendants_find_num_descendants')
+
+        num_descendants_hash.annotate(bulk_annotater, metadata_key, timer, progress_dialog)
     end
 end

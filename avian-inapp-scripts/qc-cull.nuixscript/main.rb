@@ -20,6 +20,8 @@ require File.join(main_directory,'utils','settings_utils')
 require File.join(main_directory,'avian-inapp-scripts','number-of-descendants.nuixscript','number_of_descendants')
 # Search and tag.
 require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','search_and_tag')
+# Report.
+require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','report')
 
 gui_title = 'QC and Culling'
 
@@ -34,14 +36,6 @@ main_tab = dialog.add_tab('main_tab', 'Main')
 # Add a text field for the custom metadata name for number of descendants.
 main_tab.append_text_field('num_descendants_metadata_key', 'Number of descendants custom metadata name', script_settings[:main][:num_descendants_metadata_key])
 main_tab.get_control('num_descendants_metadata_key').set_tool_tip_text('All items will receive a custom metadata field with this key.')
-
-# Add text field for exclude tag prefix.
-main_tab.append_text_field('exclude_tag_prefix', 'Exclusion tag prefix', script_settings[:main][:exclude_tag_prefix])
-main_tab.get_control('exclude_tag_prefix').set_tool_tip_text('All items with a tag starting with this will be excluded. If left blank, no items will be excluded.')
-
-# Add text field for exclude reason.
-main_tab.append_text_field('exclude_reason', 'Exclusion reason', script_settings[:main][:exclude_reason])
-main_tab.get_control('exclude_reason').set_tool_tip_text('All exclusions will be given this reason.')
 
 
 # Add search and tag file tab.
@@ -60,10 +54,10 @@ exclusion_tab = dialog.add_tab('exclusion', 'Culling')
 exclusion_prefix_num = 0
 while script_settings[:exclusion].key?("exclusion_prefix_#{exclusion_prefix_num + 1}".to_sym)
     exclusion_prefix_num += 1
-    exclusion_prefix = script_settings[:exclusion]["exclusion_prefix_#{search_and_tag_file_num}".to_sym]
-    exclusion_reason = script_settings[:exclusion]["exclusion_reason_#{search_and_tag_file_num}".to_sym]
-    exclusion_tab.append_text_field("exclusion_prefix_#{exclusion_prefix_num}", "Exclusion prefix #{exclusion_prefix_num}", )
-    exclusion_tab.append_text_field("exclusion_reason_#{exclusion_prefix_num}", "Exclusion reason #{exclusion_prefix_num}", )
+    exclusion_prefix = script_settings[:exclusion]["exclusion_prefix_#{exclusion_prefix_num}".to_sym]
+    exclusion_reason = script_settings[:exclusion]["exclusion_reason_#{exclusion_prefix_num}".to_sym]
+    exclusion_tab.append_text_field("exclusion_prefix_#{exclusion_prefix_num}", "Exclusion prefix #{exclusion_prefix_num}", exclusion_prefix)
+    exclusion_tab.append_text_field("exclusion_reason_#{exclusion_prefix_num}", "Exclusion reason #{exclusion_prefix_num}", exclusion_reason)
 end
 
 
@@ -75,7 +69,7 @@ dialog.validate_before_closing do |values|
         next false
     end
 
-    for k in 0..exclusion_prefix_num
+    for k in 1..exclusion_prefix_num
         if values["exclusion_prefix_#{k}"].strip.empty? != values["exclusion_reason_#{k}"].strip.empty?
             CommonDialogs.show_warning('If an exclusion prefix or reason is given, the other must be non-empty.')
             next false
@@ -102,21 +96,21 @@ if dialog.dialog_result
     script_settings[:main][:num_descendants_metadata_key] = num_descendants_metadata_key
 
     exclude_tag_prefixes = {}
-    for k in 0..exclusion_prefix_num
+    for k in 1..exclusion_prefix_num
         prefix = values["exclusion_prefix_#{k}"]
         reason = values["exclusion_reason_#{k}"]
         script_settings[:exclusion]["exclusion_prefix_#{k}".to_sym] = prefix
         script_settings[:exclusion]["exclusion_reason_#{k}".to_sym] = reason
         unless prefix.empty?
             if reason.empty?
-                STDERR.puts('Sum ting wong! Helleflynder')
+                STDERR.puts('Sum ting wong! sdfgonvr')
             end
             exclude_tag_prefixes[prefix] = reason
         end
     end
 
     search_and_tag_files = []
-    for k in 0..search_and_tag_file_num
+    for k in 1..search_and_tag_file_num
         path = values["search_and_tag_file_#{k}"]
         script_settings[:search_and_tag]["search_and_tag_file_#{k}".to_sym] = path
         unless path.empty?
@@ -131,6 +125,8 @@ if dialog.dialog_result
     timer.start('total')
 
     selected_item_tag = 'Avian|SELECTEDITEMS_INTERNAL'
+
+    bulk_annotater = utilities.get_bulk_annotater
     
     ProgressDialog.for_block do |progress_dialog|
         # Setup progress dialog.
@@ -144,7 +140,7 @@ if dialog.dialog_result
         # The actual QC process starts here.
 
         # Number of Descendants.
-        NumberOfDescendants::number_of_descendants(current_case, progress_dialog, timer, items, num_descendants_metadata_key)
+        NumberOfDescendants::number_of_descendants(current_case, progress_dialog, timer, items, num_descendants_metadata_key, bulk_annotater)
         
         # Give all selected items a unique tag.
         progress_dialog.set_main_status_and_log_it('Adding selected item tag...')
@@ -199,6 +195,16 @@ if dialog.dialog_result
             end
             timer.stop('exclude_items')
         end
+
+
+        # Report.
+        result_hash = {}
+        # Encrypted files.
+        QCCull::report_encrypted_items(current_case, result_hash)
+        # Find report file.
+        report_file_path = 'C:\Users\aga\Documents\scripts\avian-scripts\report.rtf'
+        # Update report with results.
+        QCCull::update_report(result_hash, report_file_path)
 
         # The tag marking that an item is selected was only meant for internal use, so let's remove it.
         # First from each individual item...
