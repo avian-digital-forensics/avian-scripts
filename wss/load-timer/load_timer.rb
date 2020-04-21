@@ -27,6 +27,8 @@ module LoadTimer
             worker_item.add_custom_metadata('LoadTimeSincePrev', 'First item loaded so no time available', 'text', 'user')
             worker_item.add_custom_metadata('PrevLoadItemGUID', 'First item loaded so previous item available', 'text', 'user')
         end
+        # All items should receive their worker's GUID.
+        worker_item.add_custom_metadata('LoadWorkerGUID', worker_item.worker_guid, 'text', 'user')
         # Make ready for next item.
         wss_global.vars[:load_timer_last_item_guid] = worker_item.item_guid
         wss_global.vars[:load_timer_last_item_time] = current_time_nano
