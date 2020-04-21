@@ -42,6 +42,7 @@ module NXUtils
     # Params:
     # +tab+:: The tab to append the radio buttons to.
     # +group_label+:: The label for the group shown to the user.
+    # +group_label_identifier+:: The identifier for the group label control.
     # +radio_button_group_name+:: The identifier for the radio button group.
     # +radio_button_choices+:: A hash with radio button labels as keys and identifiers as values.
     # +default_choice+:: Any radio button with this identifier will be checked by default. If not given, no radio button will be checked.
