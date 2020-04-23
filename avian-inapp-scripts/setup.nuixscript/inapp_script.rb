@@ -1,5 +1,8 @@
+# This file is placed in the setup.nuixscript directory because it must be in the avian-inapp-scripts yet should show up in the script list.
+
 require 'yaml'
 module Script
+    extend self
 
     def create_inapp_script(setup_directory, gui_title, script_name)
         require File.join(setup_directory,'get_main_directory')
@@ -37,10 +40,11 @@ module Script
     end
 
     class InAppScript
-        attr_reader: settings, timer
+        attr_reader :settings, :timer, :main_directory
 
         def initialize(main_directory, gui_title, script_name)
-        
+            @main_directory = main_directory
+
             # For GUI.
             require File.join(main_directory,'utils','nx_utils')
             # Timings.
@@ -52,7 +56,7 @@ module Script
 
             @gui_title = gui_title
             @settings = Settings.new(main_directory, script_name)
-            @timer = Timer::Timer.new
+            @timer = Timing::Timer.new
 
             @settings_dialog = NXUtils.create_dialog(gui_title)
             @input_validater = Proc.new{ |values| next true }
@@ -76,6 +80,7 @@ module Script
                         @settings[key] = values[key]
                     elsif type == 'radio_button'
                         options_hash = @radio_button_groups[key]
+                        puts('gedde: ' + NXUtils::radio_group_value(values, options_hash).to_s)
                         @settings[key] = NXUtils::radio_group_value(values, options_hash)
                     end
                 end
@@ -95,15 +100,16 @@ module Script
 
                     @timer.stop('total')
         
-                    timer.print_timings
+                    @timer.print_timings
 
                     progress_dialog.set_main_status_and_log_it('Script finished. ' + script_finished_message)
-                    CommonDialogs.show_information('Script finished.' + script_finished_message, gui_title)
+                    CommonDialogs.show_information('Script finished.' + script_finished_message, @gui_title)
                     progress_dialog.set_completed
                 end
             else
                 Utils.print_progress('Script cancelled.')
             end
+        end
 
         def dialog_add_tab(identifier, label)
             @settings_dialog.add_tab(identifier, label)
@@ -112,8 +118,9 @@ module Script
         def dialog_append_check_box(tab_identifier, identifier, label, tooltip)
             value = @settings[identifier]
 
-            tab = @settings_dialog.tab(tab_identifier)
-            tab.append_check_box(identifier, label, value)
+            tab = @settings_dialog.get_tab(tab_identifier)
+            # Value must be compared to true to get a boolean value understood by JRuby.
+            tab.append_check_box(identifier, label, value == true)
             tab.get_control(identifier).set_tool_tip_text(tooltip)
 
             @settings_inputs[identifier] = 'value'
@@ -122,7 +129,7 @@ module Script
         def dialog_append_text_field(tab_identifier, identifier, label, tooltip)
             value = @settings[identifier]
 
-            tab = @settings_dialog.tab(tab_identifier)
+            tab = @settings_dialog.get_tab(tab_identifier)
             tab.append_text_field(identifier, label, value)
             tab.get_control(identifier).set_tool_tip_text(tooltip)
 
@@ -132,7 +139,7 @@ module Script
         def dialog_append_horizontal_radio_button_group(tab_identifier, identifier, label, options_hash)
             value = @settings[identifier]
 
-            tab = @settings_dialog.tab(tab_identifier)
+            tab = @settings_dialog.get_tab(tab_identifier)
             tab.append_radio_button_group(label, identifier, options_hash)
             if options_hash.has_value?(value)
                 tab.set_checked(value, true) 
@@ -145,7 +152,8 @@ module Script
         def dialog_append_vertical_radio_button_group(tab_identifier, identifier, label, options_hash)
             value = @settings[identifier]
 
-            tab = @settings_dialog.tab(tab_identifier)
+            tab = @settings_dialog.get_tab(tab_identifier)
+            puts('hvilling: ' + value.to_s)
             NXUtils::append_vertical_radio_button_group(tab, label, identifier + '_label', identifier, options_hash, value)
 
             @settings_inputs[identifier] = 'radio_button'
