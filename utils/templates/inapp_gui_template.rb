@@ -2,12 +2,15 @@ script_directory = File.dirname(__FILE__)
 setup_directory = File.join(script_directory,'..','setup.nuixscript')
 require File.join(setup_directory,'inapp_script')
 
+# GUI_TITLE is the name given to all GUI elements created by the InAppScript.
 # SCRIPT_NAME should be of the form inapp_gui_template2.
 unless script = Script::create_inapp_script(setup_directory, GUI_TITLE, SCRIPT_NAME)
+    # This happens if no main_directory can be found.
     return
 end
 
 # Main directory path can be found in script.main_directory.
+# Add requires here.
 
 script.dialog_add_tab('main_tab', 'Main')
 
