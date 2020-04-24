@@ -2,8 +2,9 @@ script_directory = File.dirname(__FILE__)
 setup_directory = File.join(script_directory,'..','..','setup.nuixscript')
 require File.join(setup_directory,'inapp_script')
 
+gui_title = 'Find and Fix Unidentified Emails'
 # SCRIPT_NAME should be of the form inapp_gui_template2.
-unless script = Script::create_inapp_script(setup_directory, 'Find and Fix Unidentified Emails', 'find_and_fix')
+unless script = Script::create_inapp_script(setup_directory, gui_title, 'find_and_fix')
     return
 end
 
@@ -60,7 +61,7 @@ script.dialog_append_vertical_radio_button_group('email_mime_type_tab', 'email_m
 
 # Checks the input before closing the dialog.
 script.dialog_validate_before_closing do |values|
-    
+
     # Make sure allowed start offset is not empty.
     if values['allowed_start_offset'].strip.empty?
         CommonDialogs.show_warning('Please provide an allowed start offset.', gui_title)
@@ -87,6 +88,11 @@ script.dialog_validate_before_closing do |values|
 
     if values['email_tag'].strip.empty?
         CommonDialogs.show_warning('Please provide an email tag.', gui_title)
+        next false
+    end
+
+    if values['email_mime_type'] == ''
+        CommonDialogs.show_warning('Please provide a MIME-type for the non-RFC emails.', gui_title)
         next false
     end
 
