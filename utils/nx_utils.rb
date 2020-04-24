@@ -39,7 +39,8 @@ module NXUtils
         if selected_value == nil
             return ''
         else
-            return selected_value
+            # First returns a array [key, value]. Since we are interested in the value:
+            return selected_value[1]
         end
     end
 
