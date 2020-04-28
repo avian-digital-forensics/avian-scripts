@@ -62,7 +62,7 @@ module SettingsUtils
     end
 
     def inapp_script_settings_path(main_directory, script_name)
-        default_settings_file = File.join(main_directory,'data','inapp-script-settings',"default_#{script_name}_settings.yml")
+        default_settings_file = File.join(main_directory,'data','default-inapp-script-settings',"#{script_name}_settings.yml")
         settings_file = File.join(main_directory,'data','inapp-script-settings',"#{script_name}_settings.yml")
 
         # If the settings file does not exist, create it from defaults.
