@@ -58,7 +58,8 @@ module Script
 
     # A class meant to abstract away as much boiler plate as possible from individual inapp scripts.
     class InAppScript
-        attr_reader :settings, :timer, :main_directory
+        # The settings_dialog can be set up manually, but the input to these fields will not be saved automatically.
+        attr_reader :settings, :timer, :main_directory, :settings_dialog
 
         # Initializes the InAppScript. Inapp scripts should use create_inapp_script instead.
         # Params:
