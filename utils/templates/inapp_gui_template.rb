@@ -12,6 +12,9 @@ end
 # Main directory path can be found in script.main_directory.
 # Add requires here.
 
+# Setup GUI here.
+# Fields added using InAppScript methods are saved automatically.
+# The settings_dialog can be set up manually, but the input to these fields will not be saved automatically.
 script.dialog_add_tab('main_tab', 'Main')
 
 script.dialog_append_check_box('main_tab', 'example_checkbox', 'Example Checkbox', 
