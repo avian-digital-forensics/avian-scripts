@@ -61,7 +61,8 @@ if dialog.get_dialog_result == true
     default_wss_caller_path = File.join(main_directory, "data", "default_wss_caller.rb")
     wss_caller_path = File.join(main_directory, "wss_caller.rb")
     wss_caller = File.read(default_wss_caller_path)
-    new_wss_caller = wss_caller.gsub(/PATH = '.*'/, "PATH = '" + main_directory + "'")
+	main_directory_string = main_directory.gsub(/\\/,'\\\\\\\\\\\\\\\\')
+    new_wss_caller = wss_caller.gsub(/PATH = '.*'/, "PATH = '" + main_directory_string + "'")
     File.open(wss_caller_path, "w") { |file| file.write(new_wss_caller) }
     
     # Write the new settings.
