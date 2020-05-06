@@ -45,6 +45,18 @@ This includes the GUI library.
 All in-app scripts should print their progress often.
 This is useful when trying to find out when the scripts misbehave as well as being nice for the viewer.
 
+# Errors in WSSs
+## How to stop processing
+When a WSS fails, Nuix won't tell you in the processing screen.
+Instead processing will just stall.
+To check whether this has happened, look in the logs.
+If it has, the only solution is to cancel processing, but beware!
+If you choose to 'stop' processing once such an error has occured, Nuix might not be closeable.
+Instead, choose to 'abort'.
+This will close the case and resume processing next time you open the case.
+This is often fine, since you can edit the required files and try again.
+If you don't want this, then repoen the case and _before the WSS fails_, 'stop' processing.
+
 # WSS error messages aren't where you think they are
 When debugging it is very useful to print messages.
 For WSS's it can be difficult to see where these messages end up.
