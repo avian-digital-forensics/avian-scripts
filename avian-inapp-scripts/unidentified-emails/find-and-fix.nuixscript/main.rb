@@ -179,12 +179,6 @@ script.run do |progress_dialog|
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
     FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type) { |string| string.split(/[,;]\s/).map(&:strip) }
-
-    # Remove RFC822 tags.
-    progress_dialog.set_main_status_and_log_it('Removing RFC822 tags...')
-    timer.start('remove_rfc822_tag')
-    bulk_annotater.remove_tag(rfc_tag, current_case.search("\"tag:#{rfc_tag}\""))
-    timer.stop('remove_rfc822_tag')
     
     # No script finished message.
     ''
