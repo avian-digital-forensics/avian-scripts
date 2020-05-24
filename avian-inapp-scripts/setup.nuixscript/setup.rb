@@ -49,7 +49,7 @@ if dialog.get_dialog_result == true
     
     # Save the current case settings in the file.
     if current_case
-        wss_settings[:case] = SettingsUtils::CaseInformation.store_case_information(current_case, main_directory).to_yaml_hash
+        wss_settings[:case] = SettingsUtils::CaseInformation.store_case_information(current_case.name, current_case.guid, main_directory).to_yaml_hash
     end
     
     # Set the new activation values for wss's.
