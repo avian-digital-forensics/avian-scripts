@@ -41,7 +41,6 @@ module WSSSetup
     end
 
     def generate_wss_caller
-
       # Update wss_caller.rb with the new path.
       default_wss_caller_path = File.join(main_directory, "data", "default_wss_caller.rb")
       wss_caller_path = File.join(main_directory, "wss_caller.rb")
