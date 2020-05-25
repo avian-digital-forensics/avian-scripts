@@ -13,11 +13,11 @@ module SettingsUtils
         end
         
         # Creates a new CaseInformation about the given case.
-        def self.store_case_information(nuix_case, main_directory)
+        def self.store_case_information(case_name, case_guid, main_directory)
             case_information = new
-            case_information.guid = nuix_case.guid
-            case_information.name = nuix_case.name
-            case_information.data_path = SettingsUtils::case_data_dir(main_directory, nuix_case)
+            case_information.guid = case_guid
+            case_information.name = case_name
+            case_information.data_path = SettingsUtils::case_data_dir(main_directory, case_name, case_guid)
             return case_information
         end
         
@@ -37,10 +37,7 @@ module SettingsUtils
     end
 
     # Gets the data directory for the specified case.
-    def case_data_dir(main_directory, current_case)
-        case_guid = current_case.guid
-        case_name = current_case.name
-        
+    def case_data_dir(main_directory, case_name, case_guid)
         dir_name = File.join(main_directory, "data", "cases", case_name)
         
         # If the directory already exists, check if it is the same case.
@@ -62,7 +59,7 @@ module SettingsUtils
     end
 
     def inapp_script_settings_path(main_directory, script_name)
-        default_settings_file = File.join(main_directory,'data','inapp-script-settings',"default_#{script_name}_settings.yml")
+        default_settings_file = File.join(main_directory,'data','default-inapp-script-settings',"#{script_name}_settings.yml")
         settings_file = File.join(main_directory,'data','inapp-script-settings',"#{script_name}_settings.yml")
 
         # If the settings file does not exist, create it from defaults.
