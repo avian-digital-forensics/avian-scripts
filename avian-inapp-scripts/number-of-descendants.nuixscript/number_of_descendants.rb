@@ -1,69 +1,81 @@
-# Standard code for finding main directory.
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
-
-main_directory = get_main_directory(false)
-
-unless main_directory
-    puts("Script cancelled.")
-    return
-end
-
-# For GUI.
-require File.join(main_directory,"utils","nx_utils")
-
-gui_title = "Number of Descendants"
-
-dialog = NXUtils.create_dialog(gui_title)
-
-# Add main tab.
-main_tab = dialog.addTab("main_tab", "Main")
-
-# Add a text field for the custom metadata name.
-main_tab.appendTextField("metadata_key", "Custom metadata name", "NumberOfDescendants")
-main_tab.getControl("metadata_key").setToolTipText("The metadata field items receive will have this name.")
-
-
-# Checks the input before closing the dialog.
-dialog.validateBeforeClosing do |values|
+module NumberOfDescendants
+    extend self
     
-    unless NXUtils.assert_non_empty_field(values, "metadata_key", "custom metadata name")
-        next false
+    class NumDescendantsHash
+        def initialize()
+            @hash = {}
+        end
+
+        def add_item(item, num_descendants)
+            unless @hash.key?(num_descendants)
+                @hash[num_descendants] = Set[]
+            end
+            @hash[num_descendants].add(item)
+        end
+
+        # Adds the number of descendants of each item as custom metadata.
+        def annotate(bulk_annotater, metadata_key, timer=nil, progress_dialog=nil)
+            if timer
+                timer.start('num_descendants_add_metadata')
+            end
+
+            num_items = @hash.values.sum(&:size)
+            
+            # Setup progress dialog
+            if progress_dialog
+                progress_dialog.set_main_status_and_log_it('Adding number of descendants custom metadata...')
+                progress_dialog.set_main_progress(0, num_items)
+            end
+            main_progress = 0
+            for num_descendants,item_set in @hash
+                if item_set.size < 5
+                    # If the item set is too small, add metadata individually. This should maybe be removed.
+                    for item in item_set
+                        item.custom_metadata.put_integer(metadata_key, num_descendants.to_s)
+                    end
+                else
+                    # Bulk annotate.
+                    bulk_annotater.put_custom_metadata(metadata_key, num_descendants, item_set, nil)
+                end
+
+                # Update progress dialog.
+                if progress_dialog
+                    progress_dialog.set_main_progress(main_progress += item_set.size)
+                    progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
+                end
+            end
+
+            if timer
+                timer.stop('num_descendants_add_metadata')
+            end
+        end
     end
-    
-    # Everything is fine; close the dialog.
-    next true
-end
 
-# Display dialog. Duh.
-dialog.display
-
-# If dialog result is false, the user has cancelled.
-if dialog.getDialogResult == true
-    puts("Running script...")
-    
-    # values contains the information the user inputted.
-    values = dialog.toMap
-    
-    metadata_key = values["metadata_key"]
-    
     # Returns the number of descendants of the item.
+    # +item+:: The item to find the number of descendants of.
     def num_descendants(item)
         return item.descendants.length
     end
-    
-    items = current_selected_items
-    puts("Processing " + current_selected_items.length.to_s + " items...")
-    
-    # Add a custom metadata field to each item with the number of descendants.
-    for item in items
-        item.custom_metadata[metadata_key] = num_descendants(item)
+
+    def number_of_descendants(current_case, progress_dialog, timer, items, metadata_key, bulk_annotater)
+
+        progress_dialog.set_sub_progress_visible(false)
+        
+        # Add metadata to items.
+        progress_dialog.set_main_status_and_log_it('Finding number of descendants of items...')
+        timer.start('num_descendants_find_num_descendants')
+        progress_dialog.set_main_progress(0, items.size)
+        num_descendants_hash = NumDescendantsHash.new
+        items.each_with_index do |item, item_index|
+            # Find the number of descendants for item and add to hash.
+            num_descendants_hash.add_item(item, num_descendants(item))
+
+            # Update progress dialog.
+            progress_dialog.increment_main_progress
+            progress_dialog.set_sub_status("#{(item_index+1).to_s}/#{items.size.to_s}")
+        end
+        timer.stop('num_descendants_find_num_descendants')
+
+        num_descendants_hash.annotate(bulk_annotater, metadata_key, timer, progress_dialog)
     end
-    
-    # Tell the user the script has finished.
-    CommonDialogs.show_information("Script finished." , gui_title)
-    
-    puts("Script finished.")
-else
-    puts("Script cancelled.")
 end

@@ -4,7 +4,7 @@ require File.join(setup_directory,'inapp_script')
 
 gui_title = 'Find and Fix Unidentified Emails'
 # SCRIPT_NAME should be of the form inapp_gui_template2.
-unless script = Script::create_inapp_script(setup_directory, gui_title, 'find_and_fix')
+unless script = Script::create_inapp_script(setup_directory, gui_title, 'find_and_fix', current_case, utilities)
     return
 end
 
@@ -12,23 +12,29 @@ require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emai
 
 require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails','fix-unidentified-emails.nuixscript','fix_unidentified_emails')
 
-# Add main tab.
-script.dialog_add_tab('main_tab', 'Main')
+# Add find tab.
+script.dialog_add_tab('find_tab', 'Find Unidentified Emails')
 
-script.dialog_append_check_box('main_tab', 'process_unselected_rfc_mails', 'Process unselected RFC mails', 
-        'Whether to process all RFC mail items in the case or only those in the selection.')
+script.dialog_append_check_box('find_tab', 'find_unselected_items', 'Run on unselected items',
+        'Whether to run the script only on selected items, or to run the script on the result of a preliminary search.')
 
-script.dialog_append_text_field('main_tab', 'allowed_start_offset', 'Allowed start offset', 
+script.dialog_append_text_field('find_tab', 'allowed_start_offset', 'Allowed start offset', 
         'Number of non-whitespace characters allowed before "from".')
 
-script.dialog_append_text_field('main_tab', 'start_area_line_num', 'Start area size', 
+script.dialog_append_text_field('find_tab', 'start_area_line_num', 'Start area size', 
         'The number of lines from the start of the items content in which the email information must appear.')
 
-script.dialog_append_text_field('main_tab', 'email_tag', 'Email tag', 
+script.dialog_append_text_field('find_tab', 'email_tag', 'Email tag', 
         'The tag given to all found emails. "Avian|" will automatically be added as prefix.')
 
-# Add email MIME-type tab.
-script.dialog_add_tab('email_mime_type_tab', 'Email MIME-type')
+# Add fix tab.
+script.dialog_add_tab('fix_tab', 'Fix Unidentified Emails')
+
+script.dialog_append_check_box('fix_tab', 'fix_unselected_items', 'Run on unselected items',
+        'Whether to run the script only on selected items, or to ignore selection.')
+
+script.dialog_append_check_box('fix_tab', 'fix_rfc_items', 'Run on RFC mails',
+        'Whether to run the script on all (selected) RFC mails or only items identified by the Find Unidentified Emails script.')
 
 # List of possible email MIME-type options.
 email_mime_types = ['application/pcm-email', 
@@ -56,8 +62,8 @@ end
 
 # Add radio buttons for MIME-type choice.
 default_email_mime_type = 'message/rfc822'
-email_mime_type_description = 'All found emails that a not already of kind email will be given the following MIME-type. Every one of the options indicates a specific type of email that probably won\'t fit for all items, so just choose the best available option.'
-script.dialog_append_vertical_radio_button_group('email_mime_type_tab', 'email_mime_type', email_mime_type_description, email_mime_type_options)
+email_mime_type_description = 'All found emails that are not already of kind email will be given the following MIME-type. Every one of the options indicates a specific type of email that probably won\'t fit for all items, so just choose the best available option.'
+script.dialog_append_vertical_radio_button_group('fix_tab', 'email_mime_type', email_mime_type_description, email_mime_type_options)
 
 # Checks the input before closing the dialog.
 script.dialog_validate_before_closing do |values|
@@ -105,38 +111,29 @@ script.run do |progress_dialog|
 
     timer = script.timer
     
-    process_unselected_rfc_mails = script.settings['process_unselected_rfc_mails']
+    find_unselected_items = script.settings['find_unselected_items']
     allowed_start_offset = Integer(script.settings['allowed_start_offset'])
     start_area_line_num = Integer(script.settings['start_area_line_num'])
     email_tag = script.settings['email_tag']
+
+    fix_unselected_items = script.settings['fix_unselected_items']
+    fix_rfc_items = script.settings['fix_rfc_items']
     email_mime_type = script.settings['email_mime_type']
 
     bulk_annotater = utilities.get_bulk_annotater
         
     # Find which items to run on.
-    progress_dialog.set_main_status_and_log_it('Making preliminary search...')
-    if current_selected_items.size > 0 
-        # If items are selected, run on those.
+    if find_unselected_items
+        progress_dialog.set_main_status_and_log_it('Making preliminary search...')
+        items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer)
+    else
         progress_dialog.log_message('Using selection. Skipping preliminary search.')
         items = current_selected_items
-    else
-        # If not, do a specific search.
-        items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer)
     end
     
     num_emails = FindUnidentifiedEmails::find_unidentified_emails(current_case, items, progress_dialog, timer, allowed_start_offset, start_area_line_num, email_tag, bulk_annotater)
     
     progress_dialog.log_message('Found ' + num_emails.to_s + ' emails.')
-    progress_dialog.set_main_status_and_log_it('Identifying which items to process...')
-
-    # Create set of items to be processed.
-    items = current_case.search("tag:\"Avian|#{email_tag}\"").to_set
-    if process_unselected_rfc_mails
-        items.merge(FixUnidentifiedEmails::find_rfc_mails(current_case))
-    end
-
-    # Find the case data directory.
-    case_data_dir = SettingsUtils::case_data_dir(script.main_directory, current_case)
 
     communication_field_aliases = {
         :date => ['date', 'Date', 'dato', 'Dato', 'sendt', 'Sendt', 'modtaget', 'Modtaget'],
@@ -153,23 +150,35 @@ script.run do |progress_dialog|
         /\'?\"?()(.*@.*?)\'?\"?$/,  		# Addresses like example@ex.com or 'example@ex.com'
         /\'?\"?()(.*?)\'?\"?$/      		# Addresses like Example Exampleson or 'Example Exampleson'
     ]
-    
-    # Add tags so RFC822 items don't have their text searched.
-    progress_dialog.set_main_status_and_log_it('Adding tag to RFC822 items...')
-    timer.start('add_rfc822_tag')
-    rfc822_tag = 'Avian|UnidentifiedEmails|RFC822'
-    bulk_annotater = utilities.get_bulk_annotater
-    bulk_annotater.add_tag(rfc822_tag, FixUnidentifiedEmails::find_rfc_mails(current_case))
-    timer.stop('add_rfc822_tag')
+
+    progress_dialog.set_main_status_and_log_it('Identifying which items to process...')
+
+    # Create set of items to be processed.
+    items = Set[]
+    rfc_tag = script.to_script_tag('RFC822')
+    if fix_unselected_items
+        items.merge(current_case.search("tag:\"Avian|#{email_tag}\""))
+        if fix_rfc_items
+            rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
+            script.create_temporary_tag(rfc_tag, rfc_items, 'RFC822 items', progress_dialog)
+            items.merge(current_case.search('tag:"' + rfc_tag + '"'))
+        end
+    else
+        selected_items_tag = script.to_script_tag('SelectedItems')
+        script.create_temporary_tag(selected_items_tag, current_selected_items, 'selected items', progress_dialog)
+        items.merge(current_case.search("tag:\"Avian|#{email_tag}\" AND tag:\"#{selected_items_tag}\""))
+        if fix_rfc_items
+            rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
+            script.create_temporary_tag(rfc_tag, rfc_items, 'RFC822 items', progress_dialog)
+            items.merge(current_case.search("tag:\"#{rfc_tag}\" AND tag:\"#{selected_items_tag}\""))
+        end
+    end
+
+    # Find the case data directory.
+    case_data_dir = SettingsUtils::case_data_dir(script.main_directory, current_case)
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
-    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, rfc822_tag, address_regexps, email_mime_type) { |string| string.split(/[,;]\s/).map(&:strip) }
-
-    # Remove RFC822 tags.
-    progress_dialog.set_main_status_and_log_it('Removing RFC822 tags...')
-    timer.start('remove_rfc822_tag')
-    bulk_annotater.remove_tag(rfc822_tag, current_case.search("\"tag:#{rfc822_tag}\""))
-    timer.stop('remove_rfc822_tag')
+    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type) { |string| string.split(/[,;]\s/).map(&:strip) }
     
     # No script finished message.
     ''
