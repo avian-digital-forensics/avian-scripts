@@ -266,6 +266,31 @@ module Script
             @settings_inputs[identifier] = 'value'
         end
 
+        # Appends a open file chooser to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the open file chooser.
+        # +identifier+:: The internal identifier for the open file chooser. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +file_type_name+:: The name of the file type.
+        # +file_type_extension+:: the extension of the file type. E.g. .rtf, .csv.
+        # +tooltip+:: The tooltip that appears when the user hovers over the field with their mouse.
+        # +file_chosen_callback+:: Run whenever a new path is chosen.
+        def dialog_append_open_file_chooser(tab_identifier, identifier, label, file_type_name, file_type_extension, tooltip, file_chosen_callback = nil)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            if file_chosen_callback
+                tab.append_open_file_chooser(identifier, label, file_type_name, file_type_extension, file_chosen_callback)
+            else
+                tab.append_open_file_chooser(identifier, label, file_type_name, file_type_extension)
+            end
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
+
+            @settings_inputs[identifier] = 'value'
+        end
+
         # Appends a horizontal group of radio buttons to the specified tab.
         # Params:
         # +tab_identifier+:: The identifier for the tab in which to add the radio buttons.
