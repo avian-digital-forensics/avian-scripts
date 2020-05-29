@@ -75,12 +75,12 @@ end
 
 script.run do |progress_dialog|
     # This next part takes the information the user inputted and updates the stored settings so the input will be remembered.
-    num_descendants_metadata_key = values['num_descendants_metadata_key']
+    num_descendants_metadata_key = script.settings['num_descendants_metadata_key']
 
     exclude_tag_prefixes = {}
     for k in 1..exclusion_prefix_num
-        prefix = values["exclusion_prefix_#{k}"]
-        reason = values["exclusion_reason_#{k}"]
+        prefix = script.settings["exclusion_prefix_#{k}"]
+        reason = script.settings["exclusion_reason_#{k}"]
         unless prefix.empty?
             if reason.empty?
                 STDERR.puts('Sum ting wong! sdfgonvr')
@@ -89,7 +89,8 @@ script.run do |progress_dialog|
         end
     end
 
-    search_and_tag_file = values["search_and_tag_file"]
+    search_and_tag_file = script.settings["search_and_tag_file"]
+
 
     selected_item_tag = 'Avian|SELECTEDITEMS_INTERNAL'
 
@@ -111,11 +112,11 @@ script.run do |progress_dialog|
     timer.stop('add_selected_items_tag')
 
     # Search and Tag.
-    # Skipped if no .json files are specified.
-    if search_and_tag_files.empty?
-        progress_dialog.log_message('Skipping search and tag since no files are selected.')
+    # Skipped if no .json file is specified.
+    if search_and_tag_file == ''
+        progress_dialog.log_message('Skipping search and tag since no file is selected.')
     else
-        QCCull::search_and_tag(current_case,progress_dialog,timer,search_and_tag_files,'tag:"' + selected_item_tag + '"')
+        QCCull::search_and_tag(current_case,progress_dialog,timer,[search_and_tag_files],'tag:"' + selected_item_tag + '"')
     end
 
     # Culling.
