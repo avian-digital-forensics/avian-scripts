@@ -21,23 +21,26 @@ module NumberOfDescendants
             
             # Setup progress dialog
             progress_dialog.set_main_status_and_log_it('Adding number of descendants custom metadata...')
-            progress_dialog.set_main_progress(0, num_items)
-            
             main_progress = 0
+            progress_dialog.set_main_progress(main_progress, num_items)
+            progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
             for num_descendants,item_set in @hash
                 if item_set.size < 5
                     # If the item set is too small, add metadata individually. This should maybe be removed.
                     for item in item_set
                         item.custom_metadata.put_integer(metadata_key, num_descendants.to_s)
+                        # Update progress dialog.
                         progress_dialog.set_main_progress(main_progress += 1)
+                        progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
                     end
                 else
                     # Bulk annotate.
-                    bulk_annotater.put_custom_metadata(metadata_key, num_descendants, item_set) { |item_event_info| progress_dialog.set_main_progress(main_progress += 1) }
+                    bulk_annotater.put_custom_metadata(metadata_key, num_descendants, item_set) do |item_event_info| 
+                        # Update progress dialog.
+                        progress_dialog.set_main_progress(main_progress += 1)
+                        progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
+                    end
                 end
-
-                # Update progress dialog.
-                progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
             end
 
             timer.stop('num_descendants_add_metadata')
