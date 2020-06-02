@@ -123,8 +123,7 @@ module Script
                         settings[key] = NXUtils::radio_group_value(values, options_hash)
                     end
                 end
-                result = @input_validater.call(settings)
-                next result
+                next @input_validater.call(settings)
             end
             @settings_dialog.display
 
@@ -289,6 +288,25 @@ module Script
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
             tab.set_text(identifier, value)
+
+            @settings_inputs[identifier] = 'value'
+        end
+
+        # Appends a save file chooser to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the save file chooser.
+        # +identifier+:: The internal identifier for the save file chooser. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +file_type_name+:: The name of the file type.
+        # +file_type_extension+:: the extension of the file type. E.g. .rtf, .csv.
+        # +tooltip+:: The tooltip that appears when the user hovers over the field with their mouse.
+        def dialog_append_save_file_chooser(tab_identifier, identifier, label, file_type_name, file_type_extension, tooltip)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            tab.append_save_file_chooser(identifier, label, file_type_name, file_type_extension, value)
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
 
             @settings_inputs[identifier] = 'value'
         end
