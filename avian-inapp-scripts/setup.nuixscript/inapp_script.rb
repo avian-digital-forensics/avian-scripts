@@ -308,6 +308,7 @@ module Script
             tab.append_save_file_chooser(identifier, label, file_type_name, file_type_extension, value)
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
 
             @settings_inputs[identifier] = 'value'
         end
