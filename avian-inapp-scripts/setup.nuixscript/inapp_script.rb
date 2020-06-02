@@ -203,6 +203,7 @@ module Script
         end
 
         # Add tag to the specified items.
+        # The tag will be modified to ensure the proper prefix. The modified tag is returned.
         # Tag will be removed from all items in the case when the script is finished.
         # Params:
         # +tag+:: The tag to give to the items. Automatically adds the Avian| prefix if it is missing.
@@ -217,6 +218,7 @@ module Script
             Utils.bulk_add_tag(@utilities, progress_dialog, tag, items)
             @temporary_tags[tag] = item_group_name
             @timer.stop('add_temp_tag_' + tag)
+            return tag
         end
 
         # Add tab to the script's settings dialog.
