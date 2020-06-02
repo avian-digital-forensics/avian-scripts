@@ -123,7 +123,8 @@ module Script
                         settings[key] = NXUtils::radio_group_value(values, options_hash)
                     end
                 end
-                next @input_validater.call(settings)
+                result = @input_validater.call(settings)
+                next result
             end
             @settings_dialog.display
 
