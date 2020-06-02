@@ -60,7 +60,7 @@ module Utils
         progress_dialog.set_main_progress(0, items.size)
         bulk_annotater = utilities.get_bulk_annotater
         num_items = items.size
-        item_num = 1
+        item_num = 0
         bulk_annotater.remove_tag(tag, items) do |event_info|
             progress_dialog.increment_main_progress
             progress_dialog.set_sub_status("#{item_num += 1}/#{num_items}")
@@ -74,7 +74,7 @@ module Utils
         progress_dialog.set_main_progress(0, items.size)
         bulk_annotater = utilities.get_bulk_annotater
         num_items = items.size
-        item_num = 1
+        item_num = 0
         bulk_annotater.exclude(exclusion_reason, items) do |event_info|
             progress_dialog.increment_main_progress
             progress_dialog.set_sub_status("#{item_num += 1}/#{num_items}")
