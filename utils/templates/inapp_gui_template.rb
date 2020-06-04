@@ -5,7 +5,7 @@ require File.join(setup_directory,'inapp_script')
 # GUI_TITLE is the name given to all GUI elements created by the InAppScript.
 # SCRIPT_NAME should be of the form inapp_gui_template2.
 unless script = Script::create_inapp_script(setup_directory, GUI_TITLE, SCRIPT_NAME)
-    # This happens if no main_directory can be found.
+    STDERR.puts('Could not find main directory.')
     return
 end
 
@@ -15,6 +15,7 @@ end
 # Setup GUI here.
 # Fields added using InAppScript methods are saved automatically.
 # The settings_dialog can be set up manually, but the input to these fields will not be saved automatically.
+# To add default values, create a default settings file.
 script.dialog_add_tab('main_tab', 'Main')
 
 script.dialog_append_check_box('main_tab', 'example_checkbox', 'Example Checkbox', 

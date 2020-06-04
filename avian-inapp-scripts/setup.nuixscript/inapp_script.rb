@@ -10,7 +10,9 @@ module Script
     # +setup_directory+:: The directory of the setup script. The location where the main_directory utilities are located.
     # +gui_title+:: The title given to all GUI elements.
     # +script_name+:: The internal script identifier. Should be the same as used in the directory name but with _ instead of -.
-    def create_inapp_script(setup_directory, gui_title, script_name)
+    # +current_case+:: The case the script is being run on.
+    # +utilites+:: The Utilities object provided by Nuix.
+    def create_inapp_script(setup_directory, gui_title, script_name, current_case, utilities)
         require File.join(setup_directory,'get_main_directory')
         
         main_directory = get_main_directory(false)
@@ -22,7 +24,7 @@ module Script
         end
         
         # Create and return a new InAppScript.
-        return InAppScript.new(main_directory, gui_title, script_name)
+        return InAppScript.new(main_directory, gui_title, script_name, current_case, utilities)
     end
 
     # Used to store settings of an inapp script.
@@ -59,15 +61,20 @@ module Script
     # A class meant to abstract away as much boiler plate as possible from individual inapp scripts.
     class InAppScript
         # The settings_dialog can be set up manually, but the input to these fields will not be saved automatically.
-        attr_reader :settings, :timer, :main_directory, :settings_dialog
+        attr_reader :settings, :timer, :main_directory, :settings_dialog, :current_case, :utilities
 
         # Initializes the InAppScript. Inapp scripts should use create_inapp_script instead.
         # Params:
         # +main_directory+:: The main directory. The one where the data directory is located.
         # +gui_title+:: The title given to all GUI elements.
         # +script_name+:: The internal script identifier. Should be the same as used in the directory name but with _ instead of -.
-        def initialize(main_directory, gui_title, script_name)
+        # +current_case+:: The case the script is being run on.
+        # +utilites+:: The Utilities object provided by Nuix.
+        def initialize(main_directory, gui_title, script_name, current_case, utilities)
             @main_directory = main_directory
+            @utilities = utilities
+            @current_case = current_case
+            @script_name = script_name
 
             # For GUI.
             require File.join(main_directory,'utils','nx_utils')
@@ -90,6 +97,9 @@ module Script
             @settings_inputs = {}
             # All options for all radio button groups.
             @radio_button_groups = {}
+
+            # A list of all the temporary tags added by the script.
+            @temporary_tags = {}
         end
 
         # Sets the dialog's input validater.
@@ -147,6 +157,18 @@ module Script
                     # Run actual script.
                     script_finished_message = run.call(progress_dialog)
 
+                    # Remove temporary tags.
+                    progress_dialog.set_main_status_and_log_it('Removing temporary tags...')
+                    @timer.start('remove_temporary_tags')
+                    for tag,group_name in @temporary_tags
+                        @timer.start('remove_temp_tag_' + tag)
+                        progress_dialog.set_main_status_and_log_it('Removing temporary tag from ' + group_name + '...')
+                        items_with_tag = @current_case.search("tag:\"#{tag}\"")
+                        Utils.bulk_remove_tag(@utilities, progress_dialog, tag, items_with_tag)
+                        @current_case.delete_tag(tag)
+                        @timer.stop('remove_temp_tag_' + tag)
+                    end
+
                     @timer.stop('total')
         
                     @timer.print_timings
@@ -158,6 +180,45 @@ module Script
             else
                 Utils.print_progress('Script cancelled.')
             end
+        end
+
+        # Returns the string placed between Avian| and |<tag_name> in tags from this script.
+        def self.find_script_tag_prefix(script_name)
+            script_name.split('_').map{|e| e.capitalize}.join
+        end
+
+        # Returns the given tag in script tag format, i.e. Avian|<script name>|<tag>.
+        # If tag already has some of the prefix, this is not duplicated.
+        def to_script_tag(tag)
+            script_tag_prefix = InAppScript.find_script_tag_prefix(@script_name)
+            if tag.start_with?('Avian|' + script_tag_prefix + '|')
+                return tag
+            elsif tag.start_with?('Avian|')
+                return 'Avian|' + InAppScript.find_script_tag_prefix(@script_name) + '|' + tag[6..-1]
+            elsif tag.start_with?(script_tag_prefix + '|')
+                return 'Avian|' + tag
+            else
+                return 'Avian|' + script_tag_prefix + '|' + tag
+            end
+        end
+
+        # Add tag to the specified items.
+        # The tag will be modified to ensure the proper prefix. The modified tag is returned.
+        # Tag will be removed from all items in the case when the script is finished.
+        # Params:
+        # +tag+:: The tag to give to the items. Automatically adds the Avian| prefix if it is missing.
+        # +items+:: The items to give the tag to.
+        # +item_group_name+:: What to call the items in messages, e.g. item_group_name='RFC mails' -> 'Adding temporary tag to RFC mails for internal use...'
+        # +progress_dialog+:: The ProgressDialog used to update the user on progress.
+        def create_temporary_tag(tag, items, item_group_name, progress_dialog)
+            # Add Avian| prefix to tag if it isn't there already.
+            tag = to_script_tag(tag)
+            @timer.start('add_temp_tag_' + tag)
+            progress_dialog.set_main_status_and_log_it('Adding temporary tag to ' + item_group_name + ' for internal use...')
+            Utils.bulk_add_tag(@utilities, progress_dialog, tag, items)
+            @temporary_tags[tag] = item_group_name
+            @timer.stop('add_temp_tag_' + tag)
+            return tag
         end
 
         # Add tab to the script's settings dialog.
@@ -178,6 +239,9 @@ module Script
             value = @settings[identifier]
 
             tab = @settings_dialog.get_tab(tab_identifier)
+            unless tab
+                raise 'No such tab "' + tab_identifier + '"'
+            end
             # Value must be compared to true to get a boolean value understood by JRuby.
             tab.append_check_box(identifier, label, value == true)
             tab.get_control(identifier).set_tool_tip_text(tooltip)
@@ -195,8 +259,56 @@ module Script
             value = @settings[identifier]
 
             tab = @settings_dialog.get_tab(tab_identifier)
+            unless tab
+                raise 'No such tab "' + tab_identifier + '"'
+            end
             tab.append_text_field(identifier, label, value)
             tab.get_control(identifier).set_tool_tip_text(tooltip)
+
+            @settings_inputs[identifier] = 'value'
+        end
+
+        # Appends a open file chooser to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the open file chooser.
+        # +identifier+:: The internal identifier for the open file chooser. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +file_type_name+:: The name of the file type.
+        # +file_type_extension+:: the extension of the file type. E.g. .rtf, .csv.
+        # +tooltip+:: The tooltip that appears when the user hovers over the field with their mouse.
+        # +file_chosen_callback+:: Run whenever a new path is chosen.
+        def dialog_append_open_file_chooser(tab_identifier, identifier, label, file_type_name, file_type_extension, tooltip, file_chosen_callback = nil)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            if file_chosen_callback
+                tab.append_open_file_chooser(identifier, label, file_type_name, file_type_extension, file_chosen_callback)
+            else
+                tab.append_open_file_chooser(identifier, label, file_type_name, file_type_extension)
+            end
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
+
+            @settings_inputs[identifier] = 'value'
+        end
+
+        # Appends a save file chooser to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the save file chooser.
+        # +identifier+:: The internal identifier for the save file chooser. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +file_type_name+:: The name of the file type.
+        # +file_type_extension+:: the extension of the file type. E.g. .rtf, .csv.
+        # +tooltip+:: The tooltip that appears when the user hovers over the field with their mouse.
+        def dialog_append_save_file_chooser(tab_identifier, identifier, label, file_type_name, file_type_extension, tooltip)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            tab.append_save_file_chooser(identifier, label, file_type_name, file_type_extension, value)
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
 
             @settings_inputs[identifier] = 'value'
         end
@@ -211,6 +323,9 @@ module Script
             value = @settings[identifier]
 
             tab = @settings_dialog.get_tab(tab_identifier)
+            unless tab
+                raise 'No such tab "' + tab_identifier + '"'
+            end
             tab.append_radio_button_group(label, identifier, options_hash)
             if options_hash.has_value?(value)
                 tab.set_checked(value, true) 
@@ -230,6 +345,9 @@ module Script
             value = @settings[identifier]
 
             tab = @settings_dialog.get_tab(tab_identifier)
+            unless tab
+                raise 'No such tab "' + tab_identifier + '"'
+            end
             NXUtils::append_vertical_radio_button_group(tab, label, identifier + '_label', identifier, options_hash, value)
 
             @settings_inputs[identifier] = 'radio_button'

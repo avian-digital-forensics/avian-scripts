@@ -24,6 +24,9 @@ dialog = NXUtils.create_dialog(gui_title)
 main_tab = dialog.add_tab('main_tab', 'Main')
 
 
+main_tab.append_check_box('process_unselected_items', 'Run on unselected items', true)
+main_tab.get_control('process_unselected_items').set_tool_tip_text('Whether to run the script only on selected items, or to run the script on the result of a preliminary search.')
+
 main_tab.append_text_field('allowed_start_offset', 'Allowed start offset', '10')
 main_tab.get_control('allowed_start_offset').set_tool_tip_text('Number of non-whitespace characters allowed before "from".')
 
@@ -83,6 +86,7 @@ if dialog.dialog_result == true
     # values contains the information the user inputted.
     values = dialog.to_map
 
+    process_unselected_items = values['process_unselected_items']
     allowed_start_offset = Integer(values['allowed_start_offset'])
     start_area_line_num = Integer(values['start_area_line_num'])
     email_tag = values['email_tag']
@@ -98,14 +102,12 @@ if dialog.dialog_result == true
         bulk_annotater = utilities.get_bulk_annotater
         
         # Find which items to run on.
-        progress_dialog.set_main_status_and_log_it('Making preliminary search...')
-        if current_selected_items.size > 0 
-            # If items are selected, run on those.
+        if process_unselected_items
+            progress_dialog.set_main_status_and_log_it('Making preliminary search...')
+            items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer)
+        else
             progress_dialog.log_message('Using selection. Skipping preliminary search.')
             items = current_selected_items
-        else
-            # If not, do a specific search.
-            items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer)
         end
 		
         num_emails = FindUnidentifiedEmails::find_unidentified_emails(current_case, items, progress_dialog, timer, allowed_start_offset, start_area_line_num, email_tag, bulk_annotater)
@@ -119,8 +121,6 @@ if dialog.dialog_result == true
         CommonDialogs.show_information('Script finished.', gui_title)
         progress_dialog.set_completed
     end
-
-    puts('Script finished.')
 else
     puts('Script cancelled.')
 end

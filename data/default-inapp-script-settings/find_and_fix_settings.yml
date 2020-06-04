@@ -1,6 +1,8 @@
 ---
-  process_unselected_rfc_mails: true
+  find_unselected_items: true
   allowed_start_offset: '10'
   start_area_line_num: '15'
   email_tag: UnidentifiedEmail
+  fix_unselected_items: true
+  fix_rfc_items: true
   email_mime_type: 
