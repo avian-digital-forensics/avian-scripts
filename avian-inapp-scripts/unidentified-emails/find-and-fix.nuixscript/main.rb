@@ -175,7 +175,7 @@ script.run do |progress_dialog|
     end
 
     # Find the case data directory.
-    case_data_dir = SettingsUtils::case_data_dir(script.main_directory, current_case)
+    case_data_dir = SettingsUtils::case_data_dir(script.main_directory, current_case.name, current_case.guid)
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
     FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type) { |string| string.split(/[,;]\s/).map(&:strip) }
