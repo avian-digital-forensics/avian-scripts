@@ -41,10 +41,20 @@ script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report
 script.dialog_append_text_field('main_tab', 'num_descendants_metadata_key', 'Number of descendants custom metadata name', 
     'All items will receive a custom metadata field with this key.')
 
-# Add file chooser for search and tag.
-script.dialog_append_open_file_chooser('main_tab', 'search_and_tag_file', 'Search and Tag file', 'JSON', 'json', 
+# Add file chooser for the QC search and tag.
+script.dialog_append_open_file_chooser('main_tab', 'qc_search_and_tag_file', 'QC Search and Tag file', 'JSON', 'json', 
     'This file will be loaded into the search and tag.')
 
+# Add file chooser for the Culling search and tag.
+script.dialog_append_open_file_chooser('main_tab', 'culling_search_and_tag_file', 'Culling Search and Tag file', 'JSON', 'json', 
+    'This file will be loaded into the search and tag.')
+
+# Add information tab.
+script.dialog_add_tab('information', 'Info')
+script.dialog_append_text_field('information', 'project_name', 'Project name',
+    'The name of the project. Used when generating the report.')
+script.dialog_append_text_field('information', 'collection_number', 'Collection number',
+    'The collection number. Used when generating the report.')
 
 # Add exclusion tab.
 script.dialog_add_tab('exclusion', 'Culling')
@@ -104,7 +114,13 @@ script.run do |progress_dialog|
     end
   end
 
-  search_and_tag_file = script.settings["search_and_tag_file"]
+  search_and_tag_files = []
+  if script.settings['qc_search_and_tag_file'] != ''
+    search_and_tag_files << script.settings['qc_search_and_tag_file']
+  end
+  if script.settings['culling_search_and_tag_file'] != ''
+    search_and_tag_files << script.settings['culling_search_and_tag_file']
+  end
 
   bulk_annotater = utilities.get_bulk_annotater
   
@@ -118,12 +134,12 @@ script.run do |progress_dialog|
   
   selected_item_tag = script.create_temporary_tag('SELECTEDITEMS', items, 'selected items', progress_dialog)
 
-  # Search and Tag.
+  # Search and Tag. Both QC and culling.
   # Skipped if no .json file is specified.
-  if search_and_tag_file == ''
-    progress_dialog.log_message('Skipping search and tag since no file is selected.')
+  if search_and_tag_files.any?
+    QCCull::search_and_tag(current_case,progress_dialog,timer,search_and_tag_files,'tag:"' + selected_item_tag + '"')
   else
-    QCCull::search_and_tag(current_case,progress_dialog,timer,[search_and_tag_file],'tag:"' + selected_item_tag + '"')
+    progress_dialog.log_message('Skipping search and tag since no files were selected.')
   end
 
   # Culling.
@@ -168,20 +184,17 @@ script.run do |progress_dialog|
 
   # Report.
   result_hash = {}
-
+  # Add ingestion information to report.
+  result_hash['FIELD_project_name'] = script.settings['project_name']
+  result_hash['FIELD_collection_number'] = script.settings['collection_number']
+  current_time = Time.now.strftime("%d/%m/%Y")
+  result_hash['FIELD_qc_start_date'] = current_time
 
   # Find report template.
   report_template_path = File.join(main_directory,'data','qc_report_template.rtf')
   FileUtils.cp(report_template_path, report_path)
   # Update report with results.
   QCCull::update_report(result_hash, report_path)
-
-  # ...and then from the case.
-  if current_case.delete_tag(selected_item_tag)
-    progress_dialog.log_message('Selected item tag succesfully removed.')
-  else
-    progress_dialog.log_message('Selected item tag not successfully removed. This may be because some items already had the tag. Tag: ' + selected_item_tag)
-  end
 
   # No script finished message.
   ''
