@@ -203,6 +203,7 @@ module Script
         end
 
         # Add tag to the specified items.
+        # The tag will be modified to ensure the proper prefix. The modified tag is returned.
         # Tag will be removed from all items in the case when the script is finished.
         # Params:
         # +tag+:: The tag to give to the items. Automatically adds the Avian| prefix if it is missing.
@@ -217,6 +218,7 @@ module Script
             Utils.bulk_add_tag(@utilities, progress_dialog, tag, items)
             @temporary_tags[tag] = item_group_name
             @timer.stop('add_temp_tag_' + tag)
+            return tag
         end
 
         # Add tab to the script's settings dialog.
@@ -262,6 +264,51 @@ module Script
             end
             tab.append_text_field(identifier, label, value)
             tab.get_control(identifier).set_tool_tip_text(tooltip)
+
+            @settings_inputs[identifier] = 'value'
+        end
+
+        # Appends a open file chooser to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the open file chooser.
+        # +identifier+:: The internal identifier for the open file chooser. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +file_type_name+:: The name of the file type.
+        # +file_type_extension+:: the extension of the file type. E.g. .rtf, .csv.
+        # +tooltip+:: The tooltip that appears when the user hovers over the field with their mouse.
+        # +file_chosen_callback+:: Run whenever a new path is chosen.
+        def dialog_append_open_file_chooser(tab_identifier, identifier, label, file_type_name, file_type_extension, tooltip, file_chosen_callback = nil)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            if file_chosen_callback
+                tab.append_open_file_chooser(identifier, label, file_type_name, file_type_extension, file_chosen_callback)
+            else
+                tab.append_open_file_chooser(identifier, label, file_type_name, file_type_extension)
+            end
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
+
+            @settings_inputs[identifier] = 'value'
+        end
+
+        # Appends a save file chooser to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the save file chooser.
+        # +identifier+:: The internal identifier for the save file chooser. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +file_type_name+:: The name of the file type.
+        # +file_type_extension+:: the extension of the file type. E.g. .rtf, .csv.
+        # +tooltip+:: The tooltip that appears when the user hovers over the field with their mouse.
+        def dialog_append_save_file_chooser(tab_identifier, identifier, label, file_type_name, file_type_extension, tooltip)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            tab.append_save_file_chooser(identifier, label, file_type_name, file_type_extension, value)
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
 
             @settings_inputs[identifier] = 'value'
         end

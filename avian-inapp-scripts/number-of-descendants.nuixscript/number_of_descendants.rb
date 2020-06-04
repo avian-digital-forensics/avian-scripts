@@ -14,40 +14,36 @@ module NumberOfDescendants
         end
 
         # Adds the number of descendants of each item as custom metadata.
-        def annotate(bulk_annotater, metadata_key, timer=nil, progress_dialog=nil)
-            if timer
-                timer.start('num_descendants_add_metadata')
-            end
+        def annotate(bulk_annotater, metadata_key, timer, progress_dialog)
+            timer.start('num_descendants_add_metadata')
 
             num_items = @hash.values.sum(&:size)
             
             # Setup progress dialog
-            if progress_dialog
-                progress_dialog.set_main_status_and_log_it('Adding number of descendants custom metadata...')
-                progress_dialog.set_main_progress(0, num_items)
-            end
+            progress_dialog.set_main_status_and_log_it('Adding number of descendants custom metadata...')
             main_progress = 0
+            progress_dialog.set_main_progress(main_progress, num_items)
+            progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
             for num_descendants,item_set in @hash
                 if item_set.size < 5
                     # If the item set is too small, add metadata individually. This should maybe be removed.
                     for item in item_set
                         item.custom_metadata.put_integer(metadata_key, num_descendants.to_s)
+                        # Update progress dialog.
+                        progress_dialog.set_main_progress(main_progress += 1)
+                        progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
                     end
                 else
                     # Bulk annotate.
-                    bulk_annotater.put_custom_metadata(metadata_key, num_descendants, item_set, nil)
-                end
-
-                # Update progress dialog.
-                if progress_dialog
-                    progress_dialog.set_main_progress(main_progress += item_set.size)
-                    progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
+                    bulk_annotater.put_custom_metadata(metadata_key, num_descendants, item_set) do |item_event_info| 
+                        # Update progress dialog.
+                        progress_dialog.set_main_progress(main_progress += 1)
+                        progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
+                    end
                 end
             end
 
-            if timer
-                timer.stop('num_descendants_add_metadata')
-            end
+            timer.stop('num_descendants_add_metadata')
         end
     end
 

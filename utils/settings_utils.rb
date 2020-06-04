@@ -62,6 +62,12 @@ module SettingsUtils
         default_settings_file = File.join(main_directory,'data','default-inapp-script-settings',"#{script_name}_settings.yml")
         settings_file = File.join(main_directory,'data','inapp-script-settings',"#{script_name}_settings.yml")
 
+        unless File.file?(default_settings_file)
+            raise 'No default settings file for script ' + script_name
+        end
+
+        FileUtils.mkdir_p(File.expand_path('..', settings_file))
+
         # If the settings file does not exist, create it from defaults.
         unless File.file?(settings_file)
             FileUtils.cp(default_settings_file, settings_file)
