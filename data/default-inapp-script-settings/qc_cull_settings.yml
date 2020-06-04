@@ -1,6 +1,7 @@
 ---
 report_destination: 
 num_descendants_metadata_key: 
-search_and_tag_file: 
+qc_search_and_tag_file: 
+culling_search_and_tag_file: 
 exclusion_prefix_1: ''
 exclusion_reason_1: ''
