@@ -191,7 +191,7 @@ script.run do |progress_dialog|
   result_hash['FIELD_qc_start_date'] = current_time
 
   # Find report template.
-  report_template_path = File.join(main_directory,'data','qc_report_template.rtf')
+  report_template_path = File.join(main_directory,'data','templates','qc_report_template.rtf')
   FileUtils.cp(report_template_path, report_path)
   # Update report with results.
   QCCull::update_report(result_hash, report_path)
