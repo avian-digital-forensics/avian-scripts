@@ -90,8 +90,8 @@ module WSSSetup
     # Generates a wss_caller.
     def generate_wss_caller
       # Update wss_caller.rb with the new path.
-      default_wss_caller_path = File.join(@main_directory, "data", "default_wss_caller.rb")
-      wss_caller_path = File.join(@main_directory, "wss_caller.rb")
+      default_wss_caller_path = File.join(@main_directory, 'data', 'templates', 'wss_caller_template.rb')
+      wss_caller_path = File.join(@main_directory, 'wss_caller.rb')
       default_wss_caller = File.read(default_wss_caller_path)
       main_directory_string = @main_directory.gsub(/\\/,'\\\\\\\\\\\\\\\\') # These are all necessary to make up for escaping.
       wss_caller = default_wss_caller.gsub(/PATH = '.*'/, "PATH = '" + main_directory_string + "'")
