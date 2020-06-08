@@ -1,5 +1,5 @@
 script_directory = File.dirname(__FILE__)
-require File.join(script_directory,'..','..','setup.nuixscript','get_main_directory')
+require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
 
 main_directory = get_main_directory(false)
 
@@ -16,7 +16,7 @@ require File.join(main_directory, 'utils', 'custom_communication')
 
 require File.join(main_directory, 'utils', 'dates')
 
-require File.join(main_directory, 'avian-inapp-scripts', 'unidentified-emails', 'find-unidentified-emails.nuixscript', 'find_unidentified_emails')
+require File.join(main_directory, 'avian-inapp-scripts', 'unidentified-emails.nuixscript', 'find_unidentified_emails')
 
 module FixUnidentifiedEmails
     extend self

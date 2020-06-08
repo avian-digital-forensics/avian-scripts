@@ -1,16 +1,16 @@
 script_directory = File.dirname(__FILE__)
-setup_directory = File.join(script_directory,'..','..','setup.nuixscript')
+setup_directory = File.join(script_directory,'..','setup.nuixscript')
 require File.join(setup_directory,'inapp_script')
 
 gui_title = 'Find and Fix Unidentified Emails'
 # SCRIPT_NAME should be of the form inapp_gui_template2.
-unless script = Script::create_inapp_script(setup_directory, gui_title, 'find_and_fix', current_case, utilities)
+unless script = Script::create_inapp_script(setup_directory, gui_title, 'unidentified_emails', current_case, utilities)
     return
 end
 
-require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails','find-unidentified-emails.nuixscript','find_unidentified_emails')
+require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails.nuixscript','find_unidentified_emails')
 
-require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails','fix-unidentified-emails.nuixscript','fix_unidentified_emails')
+require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails.nuixscript','fix_unidentified_emails')
 
 # Add find tab.
 script.dialog_add_tab('find_tab', 'Find Unidentified Emails')
