@@ -36,35 +36,6 @@ script.dialog_append_check_box('fix_tab', 'fix_unselected_items', 'Run on unsele
 script.dialog_append_check_box('fix_tab', 'fix_rfc_items', 'Run on RFC mails',
         'Whether to run the script on all (selected) RFC mails or only items identified by the Find Unidentified Emails script.')
 
-# List of possible email MIME-type options.
-email_mime_types = ['application/pcm-email', 
-                    'application/pdf-mail', 
-                    'application/vnd.hp-trim-email', 
-                    'application/vnd.lotus-domino-xml-mail-document', 
-                    'application/vnd.lotus-notes-document', 
-                    'application/vnd.ms-entourage-message', 
-                    'application/vnd.ms-outlook-item', 
-                    'application/vnd.ms-outlook-mac-email', 
-                    'application/vnd.ms-outlook-note', 
-                    'application/vnd.rim-blackberry-email', 
-                    'application/vnd.rim-blackberry-sms', 
-                    'application/vnd.rimarts-becky-email', 
-                    'application/x-microsoft-restricted-permission-message', 
-                    'message/rfc822', 
-                    'message/rfc822-headers', 
-                    'message/x-scraped']
-
-# The options for the MIME-type.
-email_mime_type_options = {}
-for email_mime_type in email_mime_types
-    email_mime_type_options[email_mime_type] = email_mime_type
-end
-
-# Add radio buttons for MIME-type choice.
-default_email_mime_type = 'message/rfc822'
-email_mime_type_description = 'All found emails that are not already of kind email will be given the following MIME-type. Every one of the options indicates a specific type of email that probably won\'t fit for all items, so just choose the best available option.'
-script.dialog_append_vertical_radio_button_group('fix_tab', 'email_mime_type', email_mime_type_description, email_mime_type_options)
-
 # Checks the input before closing the dialog.
 script.dialog_validate_before_closing do |values|
 
@@ -118,7 +89,7 @@ script.run do |progress_dialog|
 
     fix_unselected_items = script.settings['fix_unselected_items']
     fix_rfc_items = script.settings['fix_rfc_items']
-    email_mime_type = script.settings['email_mime_type']
+    email_mime_type = 'message/rfc822'
 
     bulk_annotater = utilities.get_bulk_annotater
         
