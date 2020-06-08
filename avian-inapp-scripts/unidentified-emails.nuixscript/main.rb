@@ -68,11 +68,6 @@ script.dialog_validate_before_closing do |values|
         next false
     end
 
-    if values['email_mime_type'] == ''
-        CommonDialogs.show_warning('Please provide a MIME-type for the non-RFC emails.', gui_title)
-        next false
-    end
-
     # Everything is fine; close the dialog.
     next true
 end
