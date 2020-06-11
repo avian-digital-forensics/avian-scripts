@@ -125,13 +125,15 @@ module FixUnidentifiedEmails
     # +items+:: The items on which to run the script.
     # +progress_dialog+:: The progress_dialog to update with script progress.
     # +timer+:: The timer to record internal timings in.
+    # +utilities+:: A reference to the Nuix Utitilies class.
     # +communication_field_aliases+:: Lists of aliases for each of the communication fields. In text, a ':' will be added to the end of each.
     # +start_area_line_num+:: The number of lines that will be searched for communication fields.
 	# +no_text_search_tag+:: Any item will this text will only have its properties searched for fields.
     # +address_regexps+:: Regexps for possible address formats. First capture group should be the personal part and second is the address part. The address part should never be empty.
     # +email_mime_type+:: The MIME-type to give to those items that are not already of kind email.
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
-    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, email_mime_type, &address_splitter)
+    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, email_mime_type, &address_splitter)
+        puts('aborre: ' + items.size.to_s)
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         progress_dialog.set_main_progress(0,items.size)
         items_processed = 0
@@ -198,5 +200,9 @@ module FixUnidentifiedEmails
         timer.start('save_communications')
         File.open(data_path, 'w') { |file| file.write(item_communications.to_yaml) }
         timer.stop('save_communications')
+
+        # Export printed images.
+        printed_image_dir = File.join(case_data_dir, 'unidentified_emails_printed_images')
+        Utils::export_printed_images(items, printed_image_dir, utilities, progress_dialog)
     end
 end
