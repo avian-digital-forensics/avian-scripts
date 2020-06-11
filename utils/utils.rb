@@ -91,4 +91,25 @@ module Utils
             total = total | set
         end
     end
+
+    # Exports the printed images of the given images to the specified directory.
+    # Params:
+    # +items+:: The items whose printed images to export.
+    # +directory+:: The directory to export them to.
+    # +utilities+:: A reference to the Nuix Utitilies class.
+    # +progress_dialog+:: The progress dialog to show results in.Only used if non-null.
+    def self.export_printed_images(items, directory, utilities, progress_dialog=nil)
+        FileUtils.mkdir_p(directory)
+        if progress_dialog
+            progress_dialog.set_main_status_and_log_it('Exporting printed images...')
+            progress_dialog.set_main_progress(0, items.size)
+        end
+        exporter = utilities.pdf_print_exporter
+        for item in items
+            exporter.export_item(item, "#{directory}/#{item.guid}.pdf")
+            if progress_dialog
+                progress_dialog.increment_main_progress
+            end
+        end
+    end
 end
