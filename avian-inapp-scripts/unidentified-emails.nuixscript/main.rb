@@ -35,6 +35,9 @@ script.dialog_append_check_box('fix_tab', 'fix_unselected_items', 'Run on unsele
 
 script.dialog_append_check_box('fix_tab', 'fix_rfc_items', 'Run on RFC mails',
         'Whether to run the script on all (selected) RFC mails or only items identified by the Find Unidentified Emails script.')
+        
+script.dialog_append_check_box('fix_tab', 'export_printed_images', 'Export printed images',
+        'Whether to export printed images for items whose types change. This can then be used by a WSS to keep the images on reload.')
 
 # Checks the input before closing the dialog.
 script.dialog_validate_before_closing do |values|
@@ -85,6 +88,8 @@ script.run do |progress_dialog|
     fix_unselected_items = script.settings['fix_unselected_items']
     fix_rfc_items = script.settings['fix_rfc_items']
     email_mime_type = 'message/rfc822'
+
+    export_printed_images = script.settings['export_printed_images']
 
     bulk_annotater = utilities.get_bulk_annotater
         
@@ -144,7 +149,7 @@ script.run do |progress_dialog|
     case_data_dir = SettingsUtils::case_data_dir(script.main_directory, current_case.name, current_case.guid)
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
-    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type) { |string| string.split(/[,;]\s/).map(&:strip) }
+    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, export_printed_images) { |string| string.split(/[,;]\s/).map(&:strip) }
     
     # No script finished message.
     ''

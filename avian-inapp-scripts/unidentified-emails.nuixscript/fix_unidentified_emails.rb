@@ -132,7 +132,7 @@ module FixUnidentifiedEmails
     # +address_regexps+:: Regexps for possible address formats. First capture group should be the personal part and second is the address part. The address part should never be empty.
     # +email_mime_type+:: The MIME-type to give to those items that are not already of kind email.
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
-    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, email_mime_type, &address_splitter)
+    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, email_mime_type, export_printed_images, &address_splitter)
         puts('aborre: ' + items.size.to_s)
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         progress_dialog.set_main_progress(0,items.size)
@@ -202,7 +202,10 @@ module FixUnidentifiedEmails
         timer.stop('save_communications')
 
         # Export printed images.
-        printed_image_dir = File.join(case_data_dir, 'unidentified_emails_printed_images')
-        Utils::export_printed_images(items, printed_image_dir, utilities, progress_dialog)
+        if export_printed_images
+            printed_image_dir = File.join(case_data_dir, 'unidentified_emails_printed_images')
+            items_for_export = items.select { |item| item_communications[item.guid][1] != item.type.name }
+            Utils::export_printed_images(items_for_export, printed_image_dir, utilities, progress_dialog)
+        end
     end
 end
