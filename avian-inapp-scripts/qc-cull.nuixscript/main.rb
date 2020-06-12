@@ -146,10 +146,7 @@ script.run do |progress_dialog|
   if exclude_tag_prefixes.empty?
     progress_dialog.log_message('Skipping exclude because no exclude tag prefixes were specified.')
   else
-    timer.start('exclude_items')
-    
     QCCull::exclude_items("tag:\"#{selected_item_tag}\"", exclude_tag_prefixes, progress_dialog, timer, utilities)
-    timer.stop('exclude_items')
   end
 
   # Report.

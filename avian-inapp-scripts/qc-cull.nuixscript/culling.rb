@@ -8,6 +8,7 @@ module QCCull
   # +progress_handler+:: An object that can work as a progress dialog.
   # +utilities+:: A reference to the Nuix utilities object.
   def exclude_items(scoping_query, exclude_tag_prefixes, progress_handler, timer, utilities)
+    timer.start('exclude_items')
     progress_dialog.set_main_status_and_log_it("Excluding items...")
     exclude_tag_prefixes.each do |prefix, reason|
       # Create a list of which tags in the case are exclusion tags.
@@ -39,6 +40,7 @@ module QCCull
         Utils::bulk_exclude(utilities, progress_dialog, exclude_items, reason)
       end
     end
+    timer.stop('exclude_items')
   end
 end
 
