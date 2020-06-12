@@ -4,7 +4,7 @@ require File.join(setup_directory,'inapp_script')
 
 # GUI_TITLE is the name given to all GUI elements created by the InAppScript.
 # SCRIPT_NAME should be of the form inapp_gui_template2.
-unless script = Script::create_inapp_script(setup_directory, GUI_TITLE, SCRIPT_NAME)
+unless script = Script::create_inapp_script(setup_directory, GUI_TITLE, SCRIPT_NAME, current_case, utilities)
   STDERR.puts('Could not find main directory.')
   return
 end
