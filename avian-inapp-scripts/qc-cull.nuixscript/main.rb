@@ -26,6 +26,8 @@ require File.join(main_directory,'avian-inapp-scripts','number-of-descendants.nu
 require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','search_and_tag')
 # Report.
 require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','report')
+# Culling.
+require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','culling')
 
 # Load saved settings.
 script_settings = SettingsUtils::load_script_settings(main_directory,'qc_cull')
@@ -146,22 +148,13 @@ script.run do |progress_dialog|
   if exclude_tag_prefixes.empty?
     progress_dialog.log_message('Skipping exclude because no exclude tag prefixes were specified.')
   else
-    QCCull::exclude_items("tag:\"#{selected_item_tag}\"", exclude_tag_prefixes, progress_dialog, timer, utilities)
+    QCCull::exclude_items(current_case, "tag:\"#{selected_item_tag}\"", exclude_tag_prefixes, progress_dialog, timer, utilities)
   end
 
   # Report.
-  result_hash = {}
-  # Add ingestion information to report.
-  result_hash['FIELD_project_name'] = script.settings['project_name']
-  result_hash['FIELD_collection_number'] = script.settings['collection_number']
-  current_time = Time.now.strftime("%d/%m/%Y")
-  result_hash['FIELD_qc_start_date'] = current_time
-
   # Find report template.
   report_template_path = File.join(main_directory,'data','templates','qc_report_template.rtf')
-  FileUtils.cp(report_template_path, report_path)
-  # Update report with results.
-  QCCull::update_report(result_hash, report_path)
+  QCCull::generate_report(report_template_path, report_path, script.settings)
 
   # No script finished message.
   ''
