@@ -313,6 +313,29 @@ module Script
             @settings_inputs[identifier] = 'value'
         end
 
+        # Appends a directory chooser to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the save file chooser.
+        # +identifier+:: The internal identifier for the save file chooser. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +tooltip+:: The tooltip that appears when the user hovers over the field with their mouse.
+        # +path_selected_callback+:: Run whenever a new path is chosen.
+        def dialog_append_directory_chooser(tab_identifier, identifier, label, tooltip, path_selected_callback = nil)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            if path_selected_callback
+                tab.append_directory_chooser(identifier, label, value, path_selected_callback)
+            else
+                tab.append_directory_chooser(identifier, label, value)
+            end
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
+
+            @settings_inputs[identifier] = 'value'
+        end
+
         # Appends a horizontal group of radio buttons to the specified tab.
         # Params:
         # +tab_identifier+:: The identifier for the tab in which to add the radio buttons.
