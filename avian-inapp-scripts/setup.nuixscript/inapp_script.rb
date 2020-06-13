@@ -150,13 +150,12 @@ module Script
                     # Setup progress dialog.
                     progress_dialog.set_title(@gui_title)
                     progress_dialog.on_message_logged do |message|
-                        Utils.print_progress(message)
+                        Utils.print_progress(message.to_s)
                     end
                     progress_dialog.set_sub_progress_visible(false)
 
                     # Run actual script.
                     script_finished_message = run.call(progress_dialog)
-
                     # Remove temporary tags.
                     progress_dialog.set_main_status_and_log_it('Removing temporary tags...')
                     @timer.start('remove_temporary_tags')
