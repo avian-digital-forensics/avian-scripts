@@ -1,4 +1,6 @@
 module ImportPrintedImages
+  extend self
+
   # Imports a printed image for all items with an image in the source directory.
   # Params:
   # +items+:: The items to look for printed images for.
@@ -10,6 +12,7 @@ module ImportPrintedImages
     total_images = 0
 
     # Find the names of alle pdf's in the source directory
+    progress_handler.set_main_status_and_log_it('Finding files to import from...')
     files = Dir.children(source_path).select { |file| file.end_with?('.pdf') }.to_set
     importer = utilities.pdf_print_importer
 
