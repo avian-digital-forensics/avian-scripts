@@ -196,7 +196,7 @@ module FixUnidentifiedEmails
         data_path = File.join(case_data_dir, 'unidentified_emails_data.yml')
 
         # Save communications to file.
-        progress_dialog.set_main_status_and_log_it('Writing result to file...')
+        progress_dialog.set_main_status_and_log_it('Writing result to file, this may take a while...')
         timer.start('save_communications')
         File.open(data_path, 'w') { |file| file.write(item_communications.to_yaml) }
         timer.stop('save_communications')
