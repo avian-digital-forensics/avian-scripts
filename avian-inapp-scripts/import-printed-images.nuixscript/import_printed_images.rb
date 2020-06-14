@@ -13,7 +13,7 @@ module ImportPrintedImages
 
     # Find the names of alle pdf's in the source directory
     progress_handler.set_main_status_and_log_it('Finding files to import from...')
-    files = Dir.children(source_path).select { |file| file.end_with?('.pdf') }.to_set
+    files = Dir.entries(source_path).select { |file| file.end_with?('.pdf') }.to_set
     importer = utilities.pdf_print_importer
 
     timer.start('import_printed_images')
