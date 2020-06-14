@@ -29,9 +29,6 @@ module AddCommunicationToUnidentifiedEmails
         if wss_global.vars[:add_communication_to_unidentified_emails_has_data]
             data = wss_global.vars[:add_communication_to_unidentified_emails_data]
             if data.key?(worker_item.item_guid)
-                # Prevent Nuix from removing the current, working printed image.
-                worker_item.set_create_printed_image(false, 'Default')
-
                 # Create a CustomCommunication from the guid's data.
                 communication = Custom::CustomCommunication::from_yaml_hash(data[worker_item.item_guid][0])
 				
