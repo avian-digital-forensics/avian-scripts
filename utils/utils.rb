@@ -100,15 +100,18 @@ module Utils
     # +progress_dialog+:: The progress dialog to show results in.Only used if non-null.
     def self.export_printed_images(items, directory, utilities, progress_dialog=nil)
         FileUtils.mkdir_p(directory)
+        items_processed = 0
         if progress_dialog
             progress_dialog.set_main_status_and_log_it('Exporting printed images...')
             progress_dialog.set_main_progress(0, items.size)
+            progress_dialog.set_sub_status("Printed images exported: " + items_processed.to_s)
         end
         exporter = utilities.pdf_print_exporter
         for item in items
             exporter.export_item(item, "#{directory}/#{item.guid}.pdf")
             if progress_dialog
                 progress_dialog.increment_main_progress
+                progress_dialog.set_sub_status("Printed images exported: " + (items_processed += 1).to_s)
             end
         end
     end
