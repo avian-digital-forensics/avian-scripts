@@ -149,8 +149,10 @@ script.run do |progress_dialog|
     case_data_dir = SettingsUtils::case_data_dir(script.main_directory, current_case.name, current_case.guid)
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
+    timer.start('fix_unidentified_emails')
     FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, export_printed_images) { |string| string.split(/[,;]\s/).map(&:strip) }
-    
+    timer.stop('fix_unidentified_emails')
+
     # No script finished message.
     ''
 end
