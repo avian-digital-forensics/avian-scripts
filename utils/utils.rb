@@ -1,4 +1,5 @@
 require 'set'
+require 'fileutils'
 
 module Utils
     def self.alpha_num_char_set 
@@ -106,17 +107,27 @@ module Utils
             progress_dialog.set_main_progress(0, items.size)
             progress_dialog.set_sub_status("Printed images exported: " + items_processed.to_s)
         end
-        exporter = utilities.pdf_print_exporter
-        for item in items
-			if item.is_kind?('no-data')
-				progress_dialog.log_message("Unable to export printed image for item '#{item.name}'. Could not find data. GUID:#{item.guid}")
-			else
-				exporter.export_item(item, "#{directory}/#{item.guid}.pdf")
-			end
-            if progress_dialog
-                progress_dialog.increment_main_progress
-                progress_dialog.set_sub_status("Printed images exported: " + (items_processed += 1).to_s)
-            end
-        end
+
+        exporter = utilities.create_batch_exporter(directory);
+
+        exporter.set_parallel_processing_settings({"workerTemp":'C:\Users\aga\Documents\worker_temp'});
+
+        exporter.add_product("pdf",{"naming":"md5","regenerateStored":true});
+
+        exporter.set_imaging_profile("Default");
+
+        exporter.export_items(items)
+
+        #for item in items
+		#	if item.is_kind?('no-data')
+		#		progress_dialog.log_message("Unable to export printed image for item '#{item.name}'. Could not find data. GUID:#{item.guid}")
+		#	else
+		#		exporter.export_item(item, "#{directory}/#{item.guid}.pdf")
+		#	end
+        #    if progress_dialog
+        #        progress_dialog.increment_main_progress
+        #        progress_dialog.set_sub_status("Printed images exported: " + (items_processed += 1).to_s)
+        #    end
+        #end
     end
 end
