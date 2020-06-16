@@ -1,3 +1,15 @@
+script_directory = File.dirname(__FILE__)
+require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
+
+main_directory = get_main_directory(false)
+
+unless main_directory
+    puts('Script cancelled because no main directory could be found.')
+    return
+end
+
+require File.join(main_directory, 'utils', 'utils')
+
 module QCCull
   extend self
 
@@ -17,7 +29,8 @@ module QCCull
   # Adds to the result_hash the number of items tagged as encrypted items of various types.
   # +nuix_case+:: The case in which to search.
   # +result_hash+:: The hash to add the results to.
-  def report_encrypted_items(nuix_case, result_hash)
+  # +utilities+:: A reference to the Nuix utilities object.
+  def report_encrypted_items(nuix_case, result_hash, utilities)
     encrypted_tag_hash = {
       'Avian|QC|Encrypted|PDF' => 'encrypted_pdf_num',
       'Avian|QC|Encrypted|Text Documents' => 'encrypted_text_num',
@@ -25,16 +38,17 @@ module QCCull
       'Avian|QC|Encrypted|Presentations' => 'encrypted_presentation_num'
     }
     for tag,field_key in encrypted_tag_hash
-      result_hash[field_key] = nuix_case.count("tag:\"#{tag}\"")
+      result_hash["FIELD_#{field_key}"] = Utils::search_count_deduplicated(nuix_case, "tag:\"#{tag}\"", utilities)
     end
   end
 
-  # Generates the report from a template.
+  # Creates a hash of field key=>field value.
+  # Used to gsub the report.
   # Params:
-  # +template_path+:: The path to the report template.
-  # +report_destination+:: The path in which to place the generated report.
+  # +nuix_case+:: The case in which to search.
   # +info_hash+:: A hash with information about the ingestion.
-  def generate_report(template_path, report_destination, info_hash)
+  # +utilities+:: A reference to the Nuix utilities object.
+  def create_result_hash(nuix_case, info_hash, utilities)
     result_hash = {}
     # Add ingestion information to report.
     for key,info in info_hash
@@ -42,7 +56,19 @@ module QCCull
     end
     current_time = Time.now.strftime("%d/%m/%Y")
     result_hash['FIELD_qc_start_date'] = current_time
+    report_encrypted_items(nuix_case, result_hash, utilities)
 
+    return result_hash
+  end
+
+  # Generates the report from a template.
+  # Params:
+  # +template_path+:: The path to the report template.
+  # +report_destination+:: The path in which to place the generated report.
+  # +info_hash+:: A hash with information about the ingestion.
+  def generate_report(nuix_case, template_path, report_destination, info_hash, utilities)
+    # Create hash.
+    result_hash = create_result_hash(nuix_case, info_hash, utilities)
     # Copy report template.
     FileUtils.cp(template_path, report_destination)
     # Update report with results.

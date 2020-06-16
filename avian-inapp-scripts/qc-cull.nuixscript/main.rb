@@ -152,9 +152,11 @@ script.run do |progress_dialog|
   end
 
   # Report.
+  progress_dialog.set_main_status_and_log_it('Generating report...')
   # Find report template.
   report_template_path = File.join(main_directory,'data','templates','qc_report_template.rtf')
-  QCCull::generate_report(report_template_path, report_path, script.settings)
+  # Generate report.
+  QCCull::generate_report(current_case, report_template_path, report_path, script.settings, utilities)
 
   # No script finished message.
   ''
