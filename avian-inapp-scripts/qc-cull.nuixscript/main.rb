@@ -57,6 +57,12 @@ script.dialog_append_text_field('information', 'project_name', 'Project name',
     'The name of the project. Used when generating the report.')
 script.dialog_append_text_field('information', 'collection_number', 'Collection number',
     'The collection number. Used when generating the report.')
+script.dialog_append_text_field('information', 'requested_by', 'Ingestion requested by',
+    'Who requested the ingestion. Used when generating the report.')
+script.dialog_append_text_field('information', 'ingestion_performed_by', 'Ingestion performed by',
+    'Who performed the ingestion. Used when generating the report.')
+script.dialog_append_text_field('information', 'qc_performed_by', 'QC performed by',
+    'Who performed the qc. Used when generating the report.')
 
 # Add exclusion tab.
 script.dialog_add_tab('exclusion', 'Culling')
