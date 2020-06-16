@@ -91,4 +91,9 @@ module Utils
             total = total | set
         end
     end
+
+    def self.search_count_deduplicated(nuix_case, search, utilities)
+        item_utility = utilities.item_utility
+        item_utility.deduplicate(nuix_case.search_unsorted(search)).size.to_s
+    end
 end
