@@ -133,7 +133,6 @@ module FixUnidentifiedEmails
     # +email_mime_type+:: The MIME-type to give to those items that are not already of kind email.
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
     def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, email_mime_type, export_printed_images, &address_splitter)
-        puts('aborre: ' + items.size.to_s)
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         progress_dialog.set_main_progress(0,items.size)
         items_processed = 0
