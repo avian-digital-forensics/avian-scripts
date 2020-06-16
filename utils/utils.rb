@@ -107,8 +107,9 @@ module Utils
             progress_dialog.set_main_progress(0, items.size)
             progress_dialog.set_sub_status("Printed images exported: " + items_processed.to_s)
         end
-
+        
         # Use single export because batch export seems to be only slightly faster, while this is far simpler.
+        exporter = utilities.pdf_print_exporter
         for item in items
 			if item.is_kind?('no-data')
 				progress_dialog.log_message("Unable to export printed image for item '#{item.name}'. Could not find data. GUID:#{item.guid}")
