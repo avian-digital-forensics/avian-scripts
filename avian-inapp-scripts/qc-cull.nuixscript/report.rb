@@ -27,6 +27,7 @@ module QCCull
   end
 
   # Adds to the result_hash the number of items tagged as encrypted items of various types.
+  # Params:
   # +nuix_case+:: The case in which to search.
   # +result_hash+:: The hash to add the results to.
   # +utilities+:: A reference to the Nuix utilities object.
@@ -40,6 +41,15 @@ module QCCull
     for tag,field_key in encrypted_tag_hash
       result_hash["FIELD_#{field_key}"] = Utils::search_count_deduplicated(nuix_case, "tag:\"#{tag}\"", utilities)
     end
+  end
+
+  # Adds to the result_hash the number of excluded items.
+  # Params:
+  # +nuix_case+:: The case in which to search.
+  # +result_hash+:: The hash to add the results to.
+  # +utilities+:: A reference to the Nuix utilities object.
+  def report_culling(nuix_case, result_hash, utilities)
+    result_hash['FIELD_num_excluded_items'] = nuix_case.count('has-exclusion:1').to_s
   end
 
   # Creates a hash of field key=>field value.
@@ -57,6 +67,10 @@ module QCCull
     current_time = Time.now.strftime("%d/%m/%Y")
     result_hash['FIELD_qc_start_date'] = current_time
     report_encrypted_items(nuix_case, result_hash, utilities)
+
+    result_hash['FIELD_num_ocr_items'] = nuix_case.count('tag:"Avian|QC|OCR"').to_s
+
+    report_culling(nuix_case, result_hash, utilities)
 
     return result_hash
   end
