@@ -52,6 +52,18 @@ module QCCull
   # +utilities+:: A reference to the Nuix utilities object.
   def report_culling(nuix_case, result_hash, utilities)
     result_hash['FIELD_num_excluded_items'] = nuix_case.count('has-exclusion:1').to_s
+    exclusions = nuix_case.all_exclusions
+
+    # Change newline settings.
+    text = '\pard\sa200\sl240\slmult1'
+    for exclusion in exclusions
+      text += "#{exclusion}: #{nuix_case.count("exclusion:\"#{exclusion}\"")}#{RTFUtils::newline}"
+    end
+
+    # Change newline settings back.
+    text += '\pard\sa200\sl276\slmult1'
+
+    result_hash['FIELD_exclusion_statistics'] = text
   end
 
   # Converts a two layer hash to rtf.
@@ -69,9 +81,9 @@ module QCCull
     
     # Change newline settings.
     text = '\pard\sa200\sl240\slmult1'
-    for category,sub_hash in hash.sort_by { |category,sub_hash| category_values[category] }
+    for category,sub_hash in hash.sort_by { |category,sub_hash| -category_values[category] }
       text += "#{category}: #{category_values[category].to_s}#{RTFUtils::newline}"
-      for field,value in sub_hash.sort_by { |field, value| value }
+      for field,value in sub_hash.sort_by { |field, value| -value }
         text += "#{RTFUtils::tab}#{field}: #{value}#{RTFUtils::newline}"
       end
     end
