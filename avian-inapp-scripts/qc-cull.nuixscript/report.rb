@@ -67,7 +67,7 @@ module QCCull
       category_values[category] = sub_hash.values.inject(0){ |sum,x| sum + x }
     end
     
-    # Change new line settings.
+    # Change newline settings.
     text = '\pard\sa200\sl240\slmult1'
     for category,sub_hash in hash.sort_by { |category,sub_hash| category_values[category] }
       text += "#{category}: #{category_values[category].to_s}#{RTFUtils::newline}"
@@ -77,7 +77,7 @@ module QCCull
     end
 
 
-    # Change new line settings back.
+    # Change newline settings back.
     text += '\pard\sa200\sl276\slmult1'
   end
 
@@ -127,6 +127,10 @@ module QCCull
     result_hash['FIELD_num_ocr_items'] = nuix_case.count('tag:"Avian|QC|OCR"').to_s
 
     report_culling(nuix_case, result_hash, utilities)
+
+    report_item_types(nuix_case, result_hash, 'FIELD_no_text', 'has-exclusion:0 AND tag:"Avian|QC|Unsupported|No text"')
+
+    report_item_types(nuix_case, result_hash, 'FIELD_ingestion_statistics')
 
     return result_hash
   end
