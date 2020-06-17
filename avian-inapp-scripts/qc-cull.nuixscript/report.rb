@@ -10,6 +10,8 @@ end
 
 require File.join(main_directory, 'utils', 'utils')
 
+require File.join(main_directory, 'utils', 'rtf_utils')
+
 module QCCull
   extend self
 
@@ -50,6 +52,60 @@ module QCCull
   # +utilities+:: A reference to the Nuix utilities object.
   def report_culling(nuix_case, result_hash, utilities)
     result_hash['FIELD_num_excluded_items'] = nuix_case.count('has-exclusion:1').to_s
+  end
+
+  # Converts a two layer hash to rtf.
+  # The keys are the categories, the values are themselves hashes.
+  # The subhashes contain fields and values.
+  # The value for the category is taken to be the total of the subhash values.
+  # Results are reported in descending order by values.
+  # Params:
+  # +hash+:: The hash to report.
+  def report_two_layer_hash(hash)
+    category_values = {}
+    for category,sub_hash in hash
+      category_values[category] = sub_hash.values.inject(0){ |sum,x| sum + x }
+    end
+    
+    # Change new line settings.
+    text = '\pard\sa200\sl240\slmult1'
+    for category,sub_hash in hash.sort_by { |category,sub_hash| category_values[category] }
+      text += "#{category}: #{category_values[category].to_s}#{RTFUtils::newline}"
+      for field,value in sub_hash.sort_by { |field, value| value }
+        text += "#{RTFUtils::tab}#{field}: #{value}#{RTFUtils::newline}"
+      end
+    end
+
+
+    # Change new line settings back.
+    text += '\pard\sa200\sl276\slmult1'
+  end
+
+  # Add a list of the number of each item type within the query scope to the report.
+  # Params:
+  # +nuix_case+:: The case in which to find the number of items of each type.
+  # +result_hash+:: The result hash to add the result to.
+  # +field_key+:: The key to substitute with the result.
+  # +scoping_query+:: Only records items within this scope.
+  def report_item_types(nuix_case, result_hash, field_key, scoping_query='')
+    type_hash = {}
+    for type in nuix_case.item_types
+      query = scoping_query == '' ? "mime-type:#{type.name}" : "(#{scoping_query}) AND mime-type:#{type.name}"
+      num_items = nuix_case.count(query)
+      # Add line for this type if there are any items.
+      if num_items > 0
+        kind_name = type.kind.localised_name
+        unless type_hash.key?(kind_name)
+          # Create hash for the kind if it isn't there already.
+          type_hash[kind_name] = {}
+        end
+        type_hash[kind_name][type.localised_name] = num_items
+      end
+    end
+
+    text = report_two_layer_hash(type_hash)
+
+    result_hash[field_key] = text
   end
 
   # Creates a hash of field key=>field value.
