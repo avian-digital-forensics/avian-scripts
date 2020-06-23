@@ -154,13 +154,12 @@ module Script
                     # Setup progress dialog.
                     progress_dialog.set_title(@gui_title)
                     progress_dialog.on_message_logged do |message|
-                        Utils.print_progress(message)
+                        Utils.print_progress(message.to_s)
                     end
                     progress_dialog.set_sub_progress_visible(false)
 
                     # Run actual script.
                     script_finished_message = run.call(progress_dialog)
-
                     # Remove temporary tags.
                     progress_dialog.set_main_status_and_log_it('Removing temporary tags...')
                     @timer.start('remove_temporary_tags')
@@ -310,6 +309,29 @@ module Script
 
             tab = @settings_dialog.get_tab(tab_identifier)
             tab.append_save_file_chooser(identifier, label, file_type_name, file_type_extension, value)
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
+
+            @settings_inputs[identifier] = 'value'
+        end
+
+        # Appends a directory chooser to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the save file chooser.
+        # +identifier+:: The internal identifier for the save file chooser. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +tooltip+:: The tooltip that appears when the user hovers over the field with their mouse.
+        # +path_selected_callback+:: Run whenever a new path is chosen.
+        def dialog_append_directory_chooser(tab_identifier, identifier, label, tooltip, path_selected_callback = nil)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            if path_selected_callback
+                tab.append_directory_chooser(identifier, label, value, path_selected_callback)
+            else
+                tab.append_directory_chooser(identifier, label, value)
+            end
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
             tab.set_text(identifier, value)

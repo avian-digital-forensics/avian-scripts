@@ -5,4 +5,5 @@
   email_tag: UnidentifiedEmail
   fix_unselected_items: true
   fix_rfc_items: true
-  email_mime_type: 
+  export_printed_images: true
+  

@@ -1,16 +1,16 @@
 script_directory = File.dirname(__FILE__)
-setup_directory = File.join(script_directory,'..','..','setup.nuixscript')
+setup_directory = File.join(script_directory,'..','setup.nuixscript')
 require File.join(setup_directory,'inapp_script')
 
 gui_title = 'Find and Fix Unidentified Emails'
 # SCRIPT_NAME should be of the form inapp_gui_template2.
-unless script = Script::create_inapp_script(setup_directory, gui_title, 'find_and_fix', current_case, utilities)
+unless script = Script::create_inapp_script(setup_directory, gui_title, 'unidentified_emails', current_case, utilities)
     return
 end
 
-require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails','find-unidentified-emails.nuixscript','find_unidentified_emails')
+require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails.nuixscript','find_unidentified_emails')
 
-require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails','fix-unidentified-emails.nuixscript','fix_unidentified_emails')
+require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails.nuixscript','fix_unidentified_emails')
 
 # Add find tab.
 script.dialog_add_tab('find_tab', 'Find Unidentified Emails')
@@ -35,35 +35,9 @@ script.dialog_append_check_box('fix_tab', 'fix_unselected_items', 'Run on unsele
 
 script.dialog_append_check_box('fix_tab', 'fix_rfc_items', 'Run on RFC mails',
         'Whether to run the script on all (selected) RFC mails or only items identified by the Find Unidentified Emails script.')
-
-# List of possible email MIME-type options.
-email_mime_types = ['application/pcm-email', 
-                    'application/pdf-mail', 
-                    'application/vnd.hp-trim-email', 
-                    'application/vnd.lotus-domino-xml-mail-document', 
-                    'application/vnd.lotus-notes-document', 
-                    'application/vnd.ms-entourage-message', 
-                    'application/vnd.ms-outlook-item', 
-                    'application/vnd.ms-outlook-mac-email', 
-                    'application/vnd.ms-outlook-note', 
-                    'application/vnd.rim-blackberry-email', 
-                    'application/vnd.rim-blackberry-sms', 
-                    'application/vnd.rimarts-becky-email', 
-                    'application/x-microsoft-restricted-permission-message', 
-                    'message/rfc822', 
-                    'message/rfc822-headers', 
-                    'message/x-scraped']
-
-# The options for the MIME-type.
-email_mime_type_options = {}
-for email_mime_type in email_mime_types
-    email_mime_type_options[email_mime_type] = email_mime_type
-end
-
-# Add radio buttons for MIME-type choice.
-default_email_mime_type = 'message/rfc822'
-email_mime_type_description = 'All found emails that are not already of kind email will be given the following MIME-type. Every one of the options indicates a specific type of email that probably won\'t fit for all items, so just choose the best available option.'
-script.dialog_append_vertical_radio_button_group('fix_tab', 'email_mime_type', email_mime_type_description, email_mime_type_options)
+        
+script.dialog_append_check_box('fix_tab', 'export_printed_images', 'Export printed images',
+        'Whether to export printed images for items whose types change. This can then be used by a WSS to keep the images on reload.')
 
 # Checks the input before closing the dialog.
 script.dialog_validate_before_closing do |values|
@@ -97,11 +71,6 @@ script.dialog_validate_before_closing do |values|
         next false
     end
 
-    if values['email_mime_type'] == ''
-        CommonDialogs.show_warning('Please provide a MIME-type for the non-RFC emails.', gui_title)
-        next false
-    end
-
     # Everything is fine; close the dialog.
     next true
 end
@@ -118,7 +87,9 @@ script.run do |progress_dialog|
 
     fix_unselected_items = script.settings['fix_unselected_items']
     fix_rfc_items = script.settings['fix_rfc_items']
-    email_mime_type = script.settings['email_mime_type']
+    email_mime_type = 'message/rfc822'
+
+    export_printed_images = script.settings['export_printed_images']
 
     bulk_annotater = utilities.get_bulk_annotater
         
@@ -178,8 +149,10 @@ script.run do |progress_dialog|
     case_data_dir = SettingsUtils::case_data_dir(script.main_directory, current_case.name, current_case.guid)
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
-    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type) { |string| string.split(/[,;]\s/).map(&:strip) }
-    
+    timer.start('fix_unidentified_emails')
+    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, export_printed_images) { |string| string.split(/[,;]\s/).map(&:strip) }
+    timer.stop('fix_unidentified_emails')
+
     # No script finished message.
     ''
 end
