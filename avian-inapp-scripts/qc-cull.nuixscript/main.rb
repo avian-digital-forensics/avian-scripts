@@ -61,6 +61,7 @@ script.dialog_append_text_field('information', 'requested_by', 'Ingestion reques
     'Who requested the ingestion. Used when generating the report.')
 script.dialog_append_text_field('information', 'ingestion_performed_by', 'Ingestion performed by',
     'Who performed the ingestion. Used when generating the report.')
+
 script.dialog_append_text_field('information', 'qc_performed_by', 'QC performed by',
     'Who performed the qc. Used when generating the report.')
 
