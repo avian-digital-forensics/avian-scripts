@@ -14,7 +14,7 @@ module ProgressHandler
     # Params:
     # +status+:: The message to pass the the callback.
     def set_main_status_and_log_it(status)
-      call_log_callbacks(message)
+      call_log_callbacks(status)
     end
 
     # Does nothing.
