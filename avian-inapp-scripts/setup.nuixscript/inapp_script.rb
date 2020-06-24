@@ -173,7 +173,7 @@ module Script
                     @timer.print_timings
 
                     progress_dialog.set_main_status_and_log_it('Script finished. ' + script_finished_message)
-                    CommonDialogs.show_information('Script finished.' + script_finished_message, @gui_title)
+                    CommonDialogs.show_information('Script finished. ' + script_finished_message, @gui_title)
                     progress_dialog.set_completed
                 end
             else
