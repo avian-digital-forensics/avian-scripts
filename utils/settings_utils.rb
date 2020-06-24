@@ -77,8 +77,13 @@ module SettingsUtils
 
     def load_script_settings(main_directory, script_name)
         settings_file = inapp_script_settings_path(main_directory, script_name)
-
-        YAML.load(File.read(settings_file))
+        file_contents = File.read(settings_file)
+        settings = YAML.load(file_contents)
+        if settings
+            return settings
+        else
+            return {}
+        end
     end
 
     def save_script_settings(main_directory, script_name, yaml_hash)
