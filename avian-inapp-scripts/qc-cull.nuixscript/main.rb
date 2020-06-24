@@ -26,6 +26,8 @@ require File.join(main_directory,'avian-inapp-scripts','number-of-descendants.nu
 require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','search_and_tag')
 # Report.
 require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','report')
+# Culling.
+require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','culling')
 
 # Load saved settings.
 script_settings = SettingsUtils::load_script_settings(main_directory,'qc_cull')
@@ -146,55 +148,13 @@ script.run do |progress_dialog|
   if exclude_tag_prefixes.empty?
     progress_dialog.log_message('Skipping exclude because no exclude tag prefixes were specified.')
   else
-    timer.start('exclude_items')
-    
-    progress_dialog.set_main_status_and_log_it("Excluding items...")
-    exclude_tag_prefixes.each do |prefix, reason|
-      # Create a list of which tags in the case are exclusion tags.
-      # All items with these tags will be excluded.
-      progress_dialog.set_main_status_and_log_it("Finding exclusion tags with prefix '#{prefix}'...")
-      timer.start('find_exclude_tags')
-      exclude_tags = current_case.all_tags.select { |tag| tag.start_with?(prefix) }
-      timer.stop('find_exclude_tags')
-
-
-      # Finds all selected items with exclusion tags.
-      progress_dialog.set_main_status_and_log_it('Finding exclusion items...')
-      timer.start('find_exclude_items')
-      # Create a search string matching all items with exclusion tags.
-      exclude_search = exclude_tags.map { |tag| "tag:\"#{tag}\""}.join(' OR ')
-      if exclude_search.empty?
-        # If there are no exclusion tags, skip exclusion.
-        progress_dialog.log_message("Skipping exclusion for prefix '#{prefix}' since no matching tags were found.")
-        timer.stop('find_exclude_items')
-      else
-        # Add a clause to ensure that only selected items will match the search.
-        exclude_search += " AND tag:\"#{selected_item_tag}\""
-        # Perform the search.
-        exclude_items = current_case.search(exclude_search)
-        timer.stop('find_exclude_items')
-  
-        # Actually exclude the items.
-        progress_dialog.set_main_status_and_log_it("Excluding items for prefix '#{prefix}'...")
-        Utils::bulk_exclude(utilities, progress_dialog, exclude_items, reason)
-      end
-    end
-    timer.stop('exclude_items')
+    QCCull::exclude_items(current_case, "tag:\"#{selected_item_tag}\"", exclude_tag_prefixes, progress_dialog, timer, utilities)
   end
 
   # Report.
-  result_hash = {}
-  # Add ingestion information to report.
-  result_hash['FIELD_project_name'] = script.settings['project_name']
-  result_hash['FIELD_collection_number'] = script.settings['collection_number']
-  current_time = Time.now.strftime("%d/%m/%Y")
-  result_hash['FIELD_qc_start_date'] = current_time
-
   # Find report template.
   report_template_path = File.join(main_directory,'data','templates','qc_report_template.rtf')
-  FileUtils.cp(report_template_path, report_path)
-  # Update report with results.
-  QCCull::update_report(result_hash, report_path)
+  QCCull::generate_report(report_template_path, report_path, script.settings)
 
   # No script finished message.
   ''

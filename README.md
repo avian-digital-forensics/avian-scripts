@@ -1,5 +1,5 @@
 # Avian Scripts
-Version 0.9.4
+Version 0.9.6
 
 A collection of all scripts for Nuix created by Avian.
 
@@ -41,7 +41,8 @@ These can be found in the script directory by following the links.
 * [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-correct-addresses.nuixscript) - (WIP) identifies all addresses and identifiers that refer to the same person and create a file with that information.
 Used by the WSS 'Fix From Addresses'.
 * [Find Paragraphs](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-paragraphs.nuixscript) - (NOT TESTED) searches all items to look for references to paragraphs.
-* [Find Unidentified Emails](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-unidentified-emails.nuixscript) - (NOT TESTED) tries to find items that should be emails but aren't identified as such by Nuix.
+* [Find and Fix Unidentified Emails](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/unidentified-emails.nuixscript) - tries to find items that should be emails but aren't identified as such by Nuix and the identify the correct communication data for them.
+* [Import Printed Images](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/import-printed-images.nuixscript) - imports printed images from directory.
 * [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-messages-to-self.nuixscript) - (NOT TESTED) tags all items sent to the sender of that item.
 * [Tag Exchange Emails with Duplicates](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-exchange-emails-with-duplicates.nuixscript) - tags exchange server emails with and without archived duplicates.
 * [Tag Weird Characters](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-weird-characters.nuixscript) - (NOT TESTED) tags all items with names that include characters not in standard 7-bit ascii and not specified.
