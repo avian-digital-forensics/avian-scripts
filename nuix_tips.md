@@ -21,7 +21,8 @@ This is because the boxes to the items' left must be ticked for the option to be
 # Use ruby
 Not everything is supported in python (for example __file__), and Javascript (ECMAScript) is terrible.
 (It may be possible to circumvent this in python by using 'inspect.getfile(inspect.currentframe())')
-Nuix 8.0 uses ruby v2.3.3
+Nuix 8.0 uses ruby v2.3.3.
+Nuix 8.4 uses ruby v2.5.3.
 
 # Ruby scripts are slow to start...
 Any time an in-app ruby script is run, including from the console, Nuix waits a few seconds before doing so.

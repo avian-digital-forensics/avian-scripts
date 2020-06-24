@@ -56,6 +56,10 @@ module Script
         def save
             SettingsUtils::save_script_settings(@main_directory, @script_name, @settings)
         end
+        
+        def each &block
+            @settings.each &block
+        end
     end
 
     # A class meant to abstract away as much boiler plate as possible from individual inapp scripts.
