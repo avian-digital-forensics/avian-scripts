@@ -6,4 +6,5 @@
   fix_unselected_items: true
   fix_rfc_items: true
   export_printed_images: true
+  fixed_item_tag: FixedEmail
   

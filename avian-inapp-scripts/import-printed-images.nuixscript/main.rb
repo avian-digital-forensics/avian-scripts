@@ -22,6 +22,8 @@ require File.join(script.main_directory,'utils','settings_utils')
 # The settings_dialog can be set up manually, but the input to these fields will not be saved automatically.
 # To add default values, create a default settings file.
 script.dialog_add_tab('main_tab', 'Main')
+script.dialog_append_check_box('main_tab', 'run_on_unselected_items', 'Run on unselected items', 
+    'Whether to import printed images (if found) for all items or only those seleced.')
 
 # Checks the input before closing the dialog.
 script.dialog_validate_before_closing do |values|
@@ -39,7 +41,7 @@ script.run do |progress_dialog|
   printed_image_dir = File.join(data_dir, 'unidentified_emails_printed_images')
 
   items = []
-  if current_selected_items.size == 0
+  if script.settings['run_on_unselected_items']
     items = current_case.search('')
   else
     items = current_selected_items

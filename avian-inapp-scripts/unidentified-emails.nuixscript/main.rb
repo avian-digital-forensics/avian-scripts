@@ -39,6 +39,9 @@ script.dialog_append_check_box('fix_tab', 'fix_rfc_items', 'Run on RFC mails',
 script.dialog_append_check_box('fix_tab', 'export_printed_images', 'Export printed images',
         'Whether to export printed images for items whose types change. This can then be used by a WSS to keep the images on reload.')
 
+script.dialog_append_text_field('fix_tab', 'fixed_item_tag', 'Fixed email tag', 
+        'The tag given to all fixed emails. "Avian|" will automatically be added as prefix.')
+
 # Checks the input before closing the dialog.
 script.dialog_validate_before_closing do |values|
 
@@ -71,6 +74,11 @@ script.dialog_validate_before_closing do |values|
         next false
     end
 
+    if values['fixed_item_tag'].strip.empty?
+        CommonDialogs.show_warning('Please provide a tag for fixed emails.', gui_title)
+        next false
+    end
+
     # Everything is fine; close the dialog.
     next true
 end
@@ -88,8 +96,8 @@ script.run do |progress_dialog|
     fix_unselected_items = script.settings['fix_unselected_items']
     fix_rfc_items = script.settings['fix_rfc_items']
     email_mime_type = 'message/rfc822'
-
     export_printed_images = script.settings['export_printed_images']
+    fixed_item_tag = script.to_script_tag(script.settings['fixed_item_tag'])
 
     bulk_annotater = utilities.get_bulk_annotater
         
@@ -150,7 +158,7 @@ script.run do |progress_dialog|
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
     timer.start('fix_unidentified_emails')
-    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, export_printed_images) { |string| string.split(/[,;]\s/).map(&:strip) }
+    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, export_printed_images, fixed_item_tag) { |string| string.split(/[,;]\s/).map(&:strip) }
     timer.stop('fix_unidentified_emails')
 
     # No script finished message.
