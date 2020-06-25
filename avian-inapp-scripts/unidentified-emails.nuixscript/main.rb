@@ -143,8 +143,7 @@ script.run do |progress_dialog|
             items.merge(current_case.search('tag:"' + rfc_tag + '"'))
         end
     else
-        selected_items_tag = script.to_script_tag('SelectedItems')
-        script.create_temporary_tag(selected_items_tag, current_selected_items, 'selected items', progress_dialog)
+        selected_items_tag = script.create_temporary_tag('SelectedItems', current_selected_items, 'selected items', progress_dialog)
         items.merge(current_case.search("tag:\"Avian|#{email_tag}\" AND tag:\"#{selected_items_tag}\""))
         if fix_rfc_items
             rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
@@ -158,7 +157,7 @@ script.run do |progress_dialog|
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
     timer.start('fix_unidentified_emails')
-    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, export_printed_images, fixed_item_tag) { |string| string.split(/[,;]\s/).map(&:strip) }
+    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items.to_a, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, export_printed_images, fixed_item_tag) { |string| string.split(/[,;]\s/).map(&:strip) }
     timer.stop('fix_unidentified_emails')
 
     # No script finished message.
