@@ -1,5 +1,5 @@
 # Avian Scripts
-Version 0.9.6
+Version 0.9.7
 
 A collection of all scripts for Nuix created by Avian.
 

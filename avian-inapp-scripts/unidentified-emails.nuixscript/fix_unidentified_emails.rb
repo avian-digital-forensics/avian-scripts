@@ -212,7 +212,7 @@ module FixUnidentifiedEmails
         # Add tag to fixed items.
         timer.start('add_tag_to_fixed_items')
         progress_dialog.set_main_status_and_log_it('Adding tag to fixed items...')
-        Utils.bulk_add_tag(@utilities, progress_dialog, fixed_item_tag, items)
+        Utils.bulk_add_tag(utilities, progress_dialog, fixed_item_tag, items)
         timer.stop('add_tag_to_fixed_items')
     end
 end
