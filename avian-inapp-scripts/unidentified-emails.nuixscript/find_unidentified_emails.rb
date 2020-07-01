@@ -48,7 +48,7 @@ module FindUnidentifiedEmails
         # Finds all items that have text containing 'From:' or 'Fra:' and aren't Outlook files.
         non_mail_mime_types = ['application/vnd.ms-outlook-*', 'application/pdf-mail', 'application/x-mime-html', 'image/vnd.ms-emf']
         # non_mail_mime_types.push('image/png')
-        non_mail_mime_types_search = '(' + non_mail_mime_types.map{ |s| '(NOT mime-type:' + s + ')'}.join(' AND ') + ')'
+        non_mail_mime_types_search = '(' + non_mail_mime_types.map{ |s| '(NOT mime-type:' + s + ')'}.join(' AND ') + ' AND (NOT kind:calendar))'
         search_term = non_mail_mime_types_search + ' AND content:((from AND \to AND subject) OR (fra AND til AND emne))'
         items = current_case.search(search_term)
         timer.stop('preliminary_search')
