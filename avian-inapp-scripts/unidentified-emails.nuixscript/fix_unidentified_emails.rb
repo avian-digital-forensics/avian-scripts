@@ -52,6 +52,8 @@ module FixUnidentifiedEmails
     # +field+:: The string to cleanup.
     def clean_field(field)
         field.strip!
+        # Remove a weird whitespace character found in the emails.
+        field.gsub!(/ /, '')
         if field.start_with?('"') && field.end_with?('"')
             field[1..-2]
         else
