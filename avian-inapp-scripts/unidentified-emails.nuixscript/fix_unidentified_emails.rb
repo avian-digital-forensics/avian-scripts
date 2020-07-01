@@ -47,6 +47,18 @@ module FixUnidentifiedEmails
         return nuix_case.search('mime-type:message/rfc822')
     end
 
+    # Cleans up the field. Removes surrounding quotation marks and whitespace.
+    # Params:
+    # +field+:: The string to cleanup.
+    def clean_field(field)
+        field.strip!
+        if field.start_with?('"') && field.end_with?('"')
+            field[1..-2]
+        else
+            field
+        end
+    end
+
     # Return a hash of possible fields and their values.
     # Params:
     # +item+:: The item whose fields to find.
@@ -84,6 +96,8 @@ module FixUnidentifiedEmails
             end
         end
 
+        # Clean up fields.
+        fields.each { |key,field| fields[key] = clean_field(field) }
         return fields
     end
 
