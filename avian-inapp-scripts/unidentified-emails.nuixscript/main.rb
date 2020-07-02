@@ -119,7 +119,7 @@ script.run do |progress_dialog|
         :subject => ['subject', 'Subject', 'emne', 'Emne'],
         :from => ['from', 'From', 'fra', 'Fra', 'afsender', 'Afsender'],
         :to => ['to', 'To', 'til', 'Til', 'modtager', 'Modtager'],
-        :cc => ['cc', 'Cc'],
+        :cc => ['cc', 'Cc', 'kopi', 'Kopi'],
         :bcc => ['bcc', 'Bcc']
     }
 
