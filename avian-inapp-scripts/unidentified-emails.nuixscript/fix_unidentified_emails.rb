@@ -129,6 +129,9 @@ module FixUnidentifiedEmails
         end
         english_date_string = Dates::danish_date_string_to_english(date_string)
         ruby_date_time = DateTime.parse(english_date_string)
+        # Subtract 1/24th of a day=one hour to correct for danish timezone.
+        # This may cause weird problems with leap seconds and the like, but these hopefully won't be a problem.
+        ruby_date_time -= 1.0/24
         joda_time = Dates::date_time_to_joda_time(ruby_date_time)
         return joda_time
     end
