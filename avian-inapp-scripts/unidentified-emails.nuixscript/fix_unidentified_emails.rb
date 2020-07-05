@@ -74,8 +74,18 @@ module FixUnidentifiedEmails
 			for field_key, aliases in communication_field_aliases
 				contained_alias = aliases.find { |field_alias| lines.any? { |line| line.start_with?(field_alias + ':') } }
 				if contained_alias
-					# If at least one alias is found in the text, store the first value.
-                    fields[field_key] = lines.find { |line| line.start_with?(contained_alias + ':') }[contained_alias.size+1..-1].strip
+                    # If at least one alias is found in the text, store the first value.
+                    # Get all lines that store the value of the field.
+                    # If a line ends with , or ; it probably continues on the next line.
+                    line_index_start = lines.find_index { |line| line.start_with?(contained_alias + ':') }
+                    line_index_end = line_index_start + 1
+                    while lines[line_index_end - 1].end_with?(',', ';')
+                        line_index_end += 1
+                    end
+
+                    first_line = lines[line_index_start][contained_alias.size+1..-1].strip
+
+                    fields[field_key] = first_line + lines[line_index_start+1..line_index_end].map { |line| ' ' + line.strip }
                 else
                     fields[field_key] = ''
 				end
