@@ -12,7 +12,7 @@ module AddChildren
       wss_global.vars[:add_children_has_data] = true
     else
       wss_global.vars[:add_children_has_data] = false
-      STDERR.puts("Could not find data file. Did you remember to run 'FixUnidentifiedEmails'?")
+      STDERR.puts("AddChildren: Could not find data file.")
     end
   end
   
@@ -20,22 +20,24 @@ module AddChildren
     # Will be run for each item.
     # This is the main body of the script.
     if wss_global.vars[:add_children_has_data]
-        data = wss_global.vars[:add_communication_to_unidentified_emails_data]
-        if data.key?(worker_item.item_guid)
-            # Create a CustomCommunication from the guid's data.
-            communication = Custom::CustomCommunication::from_yaml_hash(data[worker_item.item_guid][0])
-            
-            # Set the item's communication to the created CustomCommunication.
-            worker_item.set_item_communication(communication)
+      data = wss_global.vars[:add_children]
+      if data.key?(worker_item.item_guid)
+        child_guids = data[worker_item.item_guid]
 
-            # Get the desired MIME-type.
-            mime_type = data[worker_item.item_guid][1]
-
-            # Set the item's MIME-type.
-            worker_item.set_item_type(mime_type)
+        child_binary_dir = File.join(wss_global.case_data_path, 'add_children_binaries')
+        binaries = []
+        for child_guid in child_guids
+          binary_path = File.join(child_binary_dir, child_guid)
+          if File.exist?(binary_path)
+            binaries << binary_path
+          else
+            STDERR.puts("AddChildren: Missing binary for child: #{child_guid}.")
+          end
         end
+        worker_item.set_children(binaries)
+      end
     else
-        STDERR.puts("AddChildren: No data file. Skipping.")
+      STDERR.puts("AddChildren: No data file. Skipping.")
     end
   end
   

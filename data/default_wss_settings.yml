@@ -24,3 +24,8 @@
   :label: Add Communication to Unidentified Emails
   :path: wss/add-communication-to-unidentified-emails/add_communication_to_unidentified_emails.rb
   :active: false
+- :identifier: add_children
+  :label: Add Children
+  :path: wss/add-children/add_children.rb
+  :active: false
+  
