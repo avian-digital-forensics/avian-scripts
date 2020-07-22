@@ -85,7 +85,7 @@ module FixUnidentifiedEmails
 
                     first_line = lines[line_index_start][contained_alias.size+1..-1].strip
 
-                    fields[field_key] = first_line + lines[line_index_start+1..line_index_end].map { |line| ' ' + line.strip }
+                    fields[field_key] = first_line + lines[line_index_start+1..line_index_end].map { |line| ' ' + line.strip }.join('')
                 else
                     fields[field_key] = ''
 				end
