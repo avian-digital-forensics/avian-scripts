@@ -78,8 +78,8 @@ module FixUnidentifiedEmails
                     # Get all lines that store the value of the field.
                     # If a line ends with , or ; it probably continues on the next line.
                     line_index_start = lines.find_index { |line| line.start_with?(contained_alias + ':') }
-                    line_index_end = line_index_start + 1
-                    while lines[line_index_end - 1].end_with?(',', ';')
+                    line_index_end = line_index_start
+                    while lines[line_index_end].end_with?(',', ';')
                         line_index_end += 1
                     end
 
