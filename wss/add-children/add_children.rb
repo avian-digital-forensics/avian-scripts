@@ -14,6 +14,8 @@ module AddChildren
       wss_global.vars[:add_children_has_data] = false
       STDERR.puts("AddChildren: Could not find data file.")
     end
+
+    require File.join(wss_global.root_path, 'utils', 'utils')
   end
   
   def run(wss_global, worker_item)
@@ -21,21 +23,8 @@ module AddChildren
     # This is the main body of the script.
     if wss_global.vars[:add_children_has_data]
       data = wss_global.vars[:add_children]
-      if data.key?(worker_item.item_guid)
-        child_guids = data[worker_item.item_guid]
-
-        child_binary_dir = File.join(wss_global.case_data_path, 'add_children_binaries')
-        binaries = []
-        for child_guid in child_guids
-          binary_path = File.join(child_binary_dir, child_guid)
-          if File.exist?(binary_path)
-            binaries << binary_path
-          else
-            STDERR.puts("AddChildren: Missing binary for child: #{child_guid}.")
-          end
-        end
-        worker_item.set_children(binaries)
-      end
+      child_binary_dir = File.join(wss_global.case_data_path, 'add_children_binaries')
+      Utils::execute_add_children(child_binary_dir, data, worker_item)
     else
       STDERR.puts("AddChildren: No data file. Skipping.")
     end
