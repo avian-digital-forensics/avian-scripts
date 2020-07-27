@@ -167,7 +167,7 @@ module Utils
   # +worker_item+:: A Nuix worker item to work on if its GUID is listen in child_hash as a parent.
   def self.execute_add_children(child_binary_dir, child_hash, worker_item)
     if child_hash.key?(worker_item.item_guid)
-      child_guids = data[worker_item.item_guid]
+      child_guids = child_hash[worker_item.item_guid]
 
       binaries = []
       for child_guid in child_guids
