@@ -27,7 +27,7 @@ module ProgressHandler
     # Does nothing.
     # Params:
     # +status+:: The substatus set in the progress dialog. Unused here.
-    def set_substatus(status)
+    def set_sub_status(status)
     end
 
     # Does nothing.
