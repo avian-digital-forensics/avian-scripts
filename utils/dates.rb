@@ -1,10 +1,5 @@
-# If this package is used, ruby DateTime will be renamed RubyDateTime to free up the namespace for Joda DateTime.
-
 require 'date'
 JodaTime = org.joda.time
-#RubyDateTime = Object.send(:remove_const, :DateTime)
-#java_import 'org.joda.time.DateTime'
-#java_import 'org.joda.time.DateTimeZone'
 
 module Dates
     extend self
