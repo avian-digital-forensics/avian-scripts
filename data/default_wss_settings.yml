@@ -28,4 +28,11 @@
   :label: Add Children
   :path: wss/add-children/add_children.rb
   :active: false
-  
+- :identifier: ingest_fixed_width_as_csv
+  :label: Ingest Fixed Width as CSV
+  :path: wss/ingest-fixed-width-as-csv/ingest_fixed_width_as_csv.rb
+  :active: false
+:case:
+  :guid: 42acc743-0fac-4fb9-ac4e-62af44d49377
+  :name: Enron
+  :data_path: C:\Users\aga\Documents\scripts\avian-scripts/data/cases/Enron
