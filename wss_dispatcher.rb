@@ -42,6 +42,8 @@ class WSS
     def run_init(wss_global)
         if @module.method_defined? :run_init
             @module.run_init(wss_global)
+        else
+            STDERR.puts('Module not defined! ' + @module_name)
         end
         return
     end
