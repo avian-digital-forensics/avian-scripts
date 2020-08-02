@@ -5,16 +5,14 @@ module FixedWidthData
   extend self
 
   def read_text_lines(text, line_format, &action)
-    reader = text.reader
-    buffered_reader = Java::Io::BufferedReader.new(reader)
-    unpack_string = 'A' + line_format.join('A')
-    # Read first line.
-    first_line = buffered_reader.read_line
-    # Read other lines.
-    if first_line
-      while line = buffered_reader.read_line
-        action.call(line.unpack(unpack_string))
-      end
+    #reader = text.reader
+    #buffered_reader = Java::Io::BufferedReader.new(reader)
+    fixed_width_parser = FixedWidthData::LineParser.new(line_format)
+    puts('torsk: Reading entire text into string...')
+    text_string = text.to_s
+    puts('sej: Processing lines...')
+    for line in text_string.lines.drop(1)
+      action.call(fixed_width_parser.parse(line))
     end
   end
 
