@@ -12,6 +12,9 @@ module FixedWidthData
     text_string = text.to_s
     puts('sej: Processing lines...')
     for line in text_string.lines.drop(1)
+      if line.start_with?('Summary:')
+        break
+      end
       action.call(fixed_width_parser.parse(line))
     end
   end

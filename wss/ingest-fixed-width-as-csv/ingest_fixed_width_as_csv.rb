@@ -54,6 +54,7 @@ module IngestFixedWidthAsCsv
     require File.join(wss_global.root_path, 'utils', 'timer')
 
     column_types = [:date, :id, :id, :id, :discard, :id, :id, :discard, :id, :sum, :sum]
+    column_headers = ['Date first seen', 'Event', 'XEvent Proto', 'Src IP Addr:Port', 'Dst IP Addr:Port', 'X-Src IP Addr:Port', 'X-Dst IP Addr:Port', 'In Byte', 'Out Byte']
     line_format = [0, 24, 33, 45, 69, 71, 95, 118, 120, 143, 152, 161]
     csv_dir = File.join(wss_global.case_data_path, 'ingest_fixed_width_as_csv')
     # Ensure that csv_dir is empty.
@@ -64,6 +65,7 @@ module IngestFixedWidthAsCsv
     FileUtils.mkdir_p(csv_dir)
 
     wss_global.vars[:csv_dir] = csv_dir
+    wss_global.vars[:column_headers] = column_headers
     wss_global.vars[:line_format] = line_format
     wss_global.vars[:date_index] = column_types.each_index.select { |index| column_types[index] == :date }.first
     puts("helleflynder Date index: #{wss_global.vars[:date_index]}")
@@ -88,6 +90,7 @@ module IngestFixedWidthAsCsv
     if worker_item.source_item.name.end_with?('.netflow')
       # Get the format information from wss_global.
       csv_dir = wss_global.vars[:csv_dir]
+      column_headers = wss_global.vars[:column_headers]
       line_format = wss_global.vars[:line_format]
       date_index = wss_global.vars[:date_index]
       id_indices = wss_global.vars[:id_indices]
@@ -107,6 +110,8 @@ module IngestFixedWidthAsCsv
       item_text = worker_item.source_item.text
       # Get ready to write to a CSV file.
       CSV.open(csv_path, "wb") do |csv|
+        # Write column headers.
+        csv << column_headers
         # Maps all lines in the file to arrays of values according to the line_format.
         FixedWidthData.read_text_lines(item_text, line_format) do |line|
           entry = Entry.new(line, date_index, id_indices, sum_indices)
