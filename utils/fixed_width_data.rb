@@ -19,12 +19,20 @@ module FixedWidthData
     end
   end
 
+  # Takes a raw yml map of format information and converts it into data more directly usable by the other methods.
+  # Format of input:
+  #   :column_types: A comma seperated string of column types (date/id/sum).
+  #   :column_headers: A comma seperated string of column headers.
+  #   :line_format: A comma seperated string of start positions for each column in the fixed width file.
+  #   :max_date_diff: The maximum second difference for two entries to be combined into one.
+  # Params:
+  # +format_info+:: A raw yml map of format information.
   def preprocess_format_info(format_info)
     format = {}
-    column_types = metadata[:column_types].split(',')
-    column_headers = metadata[:column_headers].split(',')
-    line_format = metadata[:line_format].split(',').map { |column_pos| column_pos.to_i }
-    max_date_diff_seconds = metadata[:max_date_diff]
+    column_types = format_info[:column_types].split(',')
+    column_headers = format_info[:column_headers].split(',')
+    line_format = format_info[:line_format].split(',').map { |column_pos| column_pos.to_i }
+    max_date_diff_seconds = format_info[:max_date_diff]
     format[:column_headers] = column_headers
     format[:line_format] = line_format
     format[:date_index] = column_types.each_index.select { |index| column_types[index] == 'date' }.first
