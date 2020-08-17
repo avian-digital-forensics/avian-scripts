@@ -53,93 +53,51 @@ module IngestFixedWidthAsCsv
     require File.join(wss_global.root_path, 'utils', 'fixed_width_data')
     require File.join(wss_global.root_path, 'utils', 'timer')
 
-    column_types = [:date, :id, :id, :id, :discard, :id, :id, :discard, :id, :sum, :sum]
-    column_headers = ['Date first seen', 'Event', 'XEvent Proto', 'Src IP Addr:Port', 'Dst IP Addr:Port', 'X-Src IP Addr:Port', 'X-Dst IP Addr:Port', 'In Byte', 'Out Byte']
-    line_format = [0, 24, 33, 45, 69, 71, 95, 118, 120, 143, 152, 161]
-    csv_dir = File.join(wss_global.case_data_path, 'ingest_fixed_width_as_csv')
-    # Ensure that csv_dir is empty.
-    puts('Ensuring that the directory for the csv files is empty.')
-    if Dir.exist?(csv_dir)
-      FileUtils.rm_rf(csv_dir)
+    data_path = File.join(wss_global.case_data_path, 'ingest_fixed_width_as_csv_metadata.yml')
+    
+    if File.file?(data_path)
+      # Load data from file and save to wss_global.
+      data = YAML.load_file(data_path)
+      wss_global.vars[:ingest_fixed_width_as_csv] = data
+      wss_global.vars[:ingest_fixed_width_as_csv_has_data] = true
+    else
+      wss_global.vars[:ingest_fixed_width_as_csv_has_data] = false
+      STDERR.puts("IngestFixedWidthAsCsv: Could not find data file. Skipping script")
     end
-    FileUtils.mkdir_p(csv_dir)
 
-    wss_global.vars[:csv_dir] = csv_dir
-    wss_global.vars[:column_headers] = column_headers
-    wss_global.vars[:line_format] = line_format
-    wss_global.vars[:date_index] = column_types.each_index.select { |index| column_types[index] == :date }.first
-    puts("helleflynder Date index: #{wss_global.vars[:date_index]}")
-    wss_global.vars[:id_indices] = column_types.each_index.select { |index| column_types[index] == :id }
-    puts("helleflynder ID indices: #{wss_global.vars[:id_indices]}")
-    wss_global.vars[:sum_indices] = column_types.each_index.select { |index| column_types[index] == :sum }
-    puts("helleflynder Sum indices: #{wss_global.vars[:sum_indices]}")
-    input_indices = []
-    for index in 0..column_types.size-1
-      unless column_types[index] == :discard
-        input_indices << index
+    if wss_global.vars[:ingest_fixed_width_as_csv_has_data]
+      # The directory to write the resulting csv's from.
+      csv_dir = File.join(wss_global.case_data_path, 'ingest_fixed_width_as_csv')
+      # Ensure that csv_dir is empty.
+      puts('Ensuring that the directory for the csv files is empty...')
+      if Dir.exist?(csv_dir)
+        FileUtils.rm_rf(csv_dir)
       end
+      FileUtils.mkdir_p(csv_dir)
+
+      wss_global.vars[:ingest_fixed_width_as_csv_csv_dir] = csv_dir
     end
-    wss_global.vars[:input_indices] = input_indices
-    puts("helleflynder Input indices: #{input_indices}")
-    wss_global.vars[:max_date_diff] = 1r/(24*60)
   end
 
   def run(wss_global, worker_item)
     # Will be run for each item.
     # This is the main body of the script.
-    if worker_item.source_item.name.end_with?('.netflow')
+    if wss_global.vars[:ingest_fixed_width_as_csv_has_data] && wss_global.vars[:ingest_fixed_width_as_csv].key?(worker_item.item_guid)
       # Get the format information from wss_global.
-      csv_dir = wss_global.vars[:csv_dir]
-      column_headers = wss_global.vars[:column_headers]
-      line_format = wss_global.vars[:line_format]
-      date_index = wss_global.vars[:date_index]
-      id_indices = wss_global.vars[:id_indices]
-      sum_indices = wss_global.vars[:sum_indices]
-      input_indices = wss_global.vars[:input_indices]
-      max_date_diff = wss_global.vars[:max_date_diff]
+      data = wss_global.vars[:ingest_fixed_width_as_csv]
+      csv_dir = wss_global.vars[:ingest_fixed_width_as_csv_csv_dir]
+      format_info = data[worker_item.item_guid]
 
       # Find path on which to create the csv file.
       item_name = worker_item.source_item.name
       child_name = "#{item_name.split('.')[0..-2].join('.')}.csv"
       csv_path = File.join(csv_dir, child_name)
-      puts('gedde: ' + csv_path)
 
-      entry_history = []
-      entry_history_hash = {}
-
-      item_text = worker_item.source_item.text
       # Get ready to write to a CSV file.
       CSV.open(csv_path, "wb") do |csv|
-        # Write column headers.
-        csv << column_headers
-        # Maps all lines in the file to arrays of values according to the line_format.
-        FixedWidthData.read_text_lines(item_text, line_format) do |line|
-          entry = Entry.new(line, date_index, id_indices, sum_indices)
-          date = entry.date
-          # Writes and removes all entries that are too far back now to be combined with.
-          if entry_history.first
-            puts('aborre: ' + (date - entry_history.first.date).to_s)
-          end
-          while entry_history.first && date - entry_history.first.date > max_date_diff
-            first = entry_history.shift
-            first.to_csv(csv, input_indices)
-            entry_history_hash.delete(first.id)
-          end
-          # Checks if there is a previous entry the new entry should be combined into.
-          combiner = entry_history_hash[entry.id]
-          if combiner
-            combiner.add(line, sum_indices)
-          else
-            entry_history << entry
-            entry_history_hash[entry.id] = entry
-          end
-        end
-        for entry in entry_history
-          entry.to_csv(csv, input_indices)
-        end
+        FixedWidthData.fixed_width_to_csv(worker_item.source_item.text.to_s, format_info, csv)
       end
       # Add a child based on the newly created csv file.
-      puts('skrubbe: ')
       worker_item.set_children([csv_path])
     end
     
