@@ -380,5 +380,15 @@ module Script
             @settings_inputs[identifier] = 'radio_button'
             @radio_button_groups[identifier] = options_hash
         end
+
+        def show_warning(warning_message)
+            CommonDialogs.show_warning(warning_message, @gui_title)
+            STDERR.puts(warning_message)
+        end
+
+        def show_error(error_message)
+            CommonDialogs.show_error(error_message, @gui_title)
+            STDERR.puts(error_message)
+        end
     end
 end
