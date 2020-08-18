@@ -53,6 +53,7 @@ module IngestFixedWidthAsCsv
     require File.join(wss_global.root_path, 'utils', 'fixed_width_data')
     require File.join(wss_global.root_path, 'utils', 'timer')
 
+    # Has the format { guid: format_info }.
     data_path = File.join(wss_global.case_data_path, 'ingest_fixed_width_as_csv_metadata.yml')
     
     if File.file?(data_path)
