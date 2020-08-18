@@ -49,6 +49,12 @@ module FixedWidthData
     return format
   end
 
+  # Takes fixed width data and transforms it into csv which is given to the CSV object.
+  # Follows the given format_info (see preprocess_format_info).
+  # Params:
+  # +text+:: A stringable object holding the fixed width data.
+  # +format_info+:: Information about the format of the fixed width data.
+  # +csv+:: A ruby CSV object to receive each row array.
   def fixed_width_to_csv(text, format_info, csv)
     format = preprocess_format_info(format_info)
     column_headers = format[:column_headers]
@@ -88,19 +94,11 @@ module FixedWidthData
   end
 
   class LineParser
-
     def initialize(line_format)
-      #cur_pos = 0
-      #@line_format = line_format.map do |seg_length|
-      #  prev_pos = cur_pos
-      #  cur_pos += seg_length
-      #  [prev_pos, seg_length]
-      #end
       @line_format = line_format
     end
 
     def parse(line)
-      #@line_format.map { |seg_info| line[seg_info[0], seg_info[1]] }
       cur_pos = 0
       @line_format.each_cons(2).map { |seg_start_pos, seg_end_pos| line[seg_start_pos..seg_end_pos - 1].strip }
     end
