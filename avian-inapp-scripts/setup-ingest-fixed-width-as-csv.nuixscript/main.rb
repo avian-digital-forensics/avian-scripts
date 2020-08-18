@@ -54,13 +54,13 @@ script.run do |progress_dialog|
       break
     end
     column_types = custom_metadata['ColumnTypes'].split(',')
-    possible_column_types = ['date', 'id', 'sum', 'ignore']
-    if invalid_column_type = column_types.find { |column_type| !possible_column_types.include?(column_type) }
+    possible_column_types = { 'date' => :date, 'id' => :id, 'sum' => :sum, 'discard' => :discard }
+    if invalid_column_type = column_types.find { |column_type| !possible_column_types.key?(column_type) }
       script.show_error("Invalid ColumnType '#{invalid_column_type}' for item #{item.guid}")
       error = true
       break
     else
-      column_format_hash[:column_types] = column_types
+      column_format_hash[:column_types] = column_types.map { |column_type| possible_column_types[column_type] }
     end
 
     # Column headers.
@@ -70,8 +70,8 @@ script.run do |progress_dialog|
       break
     end
     column_headers = custom_metadata['ColumnHeaders'].split(',')
-    unless column_headers.size == column_types.count { |column_type| column_type != 'ignore' }
-      script.show_error("Invalid column headers for item #{item.guid}. There must be as many column headers as there are non-'ignore' column types.")
+    unless column_headers.size == column_types.count { |column_type| column_type != 'discard' }
+      script.show_error("Invalid column headers for item #{item.guid}. There must be as many column headers as there are non-'discard' column types.")
       error = true
       break
     end
