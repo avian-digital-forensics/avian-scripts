@@ -4,6 +4,49 @@ require 'csv'
 module FixedWidthData
   extend self
 
+  class Entry
+    attr_accessor :date, :id
+
+    def initialize(elements, date_index, id_indices, sum_indices)
+      @date = DateTime.parse(elements[date_index])
+      @id = []
+      for index in id_indices
+        @id << elements[index]
+      end
+      @data = elements
+      for index in sum_indices
+        @data[index] = number_string_to_int(@data[index])
+      end
+    end
+
+    def add(elements, sum_indices)
+      for index in sum_indices
+        @data[index] += elements[index]
+      end
+    end
+
+    def to_csv(csv, input_indices)
+      output_data = []
+      for index in input_indices
+        output_data << @data[index]
+      end
+      puts('klumpfisk: ' + output_data.to_s)
+      csv << output_data
+    end
+
+    def number_string_to_int(number_string)
+      if number_string[-1] == 'M'
+        (number_string[0..-3].to_f*1000000).to_i
+      elsif number_string[-1] == 'K'
+        (number_string[0..-3].to_f*1000).to_i
+      elsif number_string[-1] == 'G'
+        (number_string[0..-3].to_f*1000000000).to_i
+      else
+        number_string.to_i
+      end
+    end
+  end
+
   def read_text_lines(text, line_format, &action)
     #reader = text.reader
     #buffered_reader = Java::Io::BufferedReader.new(reader)
@@ -23,21 +66,21 @@ module FixedWidthData
   # Format of input:
   #   :column_types: A comma seperated string of column types (date/id/sum).
   #   :column_headers: A comma seperated string of column headers.
-  #   :line_format: A comma seperated string of start positions for each column in the fixed width file.
+  #   :line_format: A comma seperated string of start positions for each column in the fixed width file. Includes the index of the end of the line.
   #   :max_date_diff: The maximum second difference for two entries to be combined into one.
   # Params:
   # +format_info+:: A raw yml map of format information.
   def preprocess_format_info(format_info)
     format = {}
-    column_types = format_info[:column_types].split(',')
-    column_headers = format_info[:column_headers].split(',')
-    line_format = format_info[:line_format].split(',').map { |column_pos| column_pos.to_i }
+    column_types = format_info[:column_types]
+    column_headers = format_info[:column_headers]
+    line_format = format_info[:line_format].map { |column_pos| column_pos.to_i }
     max_date_diff_seconds = format_info[:max_date_diff]
     format[:column_headers] = column_headers
     format[:line_format] = line_format
-    format[:date_index] = column_types.each_index.select { |index| column_types[index] == 'date' }.first
-    format[:id_indices] = column_types.each_index.select { |index| column_types[index] == 'id' }
-    format[:sum_indices] = column_types.each_index.select { |index| column_types[index] == 'sum' }
+    format[:date_index] = column_types.each_index.select { |index| column_types[index] == :date }.first
+    format[:id_indices] = column_types.each_index.select { |index| column_types[index] == :id }
+    format[:sum_indices] = column_types.each_index.select { |index| column_types[index] == :sum }
     input_indices = []
     for index in 0..column_types.size-1
       unless column_types[index] == :discard
@@ -70,7 +113,7 @@ module FixedWidthData
     # Write column headers.
     csv << column_headers
     # Maps all lines in the file to arrays of values according to the line_format.
-    FixedWidthData.read_text_lines(item_text, line_format) do |line|
+    FixedWidthData.read_text_lines(text, line_format) do |line|
       entry = Entry.new(line, date_index, id_indices, sum_indices)
       date = entry.date
       # Writes and removes all entries that are too far back now to be combined with.

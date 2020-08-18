@@ -4,49 +4,6 @@ require 'fileutils'
 module IngestFixedWidthAsCsv
   extend self
 
-  class Entry
-    attr_accessor :date, :id
-
-    def initialize(elements, date_index, id_indices, sum_indices)
-      @date = DateTime.parse(elements[date_index])
-      @id = []
-      for index in id_indices
-        @id << elements[index]
-      end
-      @data = elements
-      for index in sum_indices
-        @data[index] = number_string_to_int(@data[index])
-      end
-    end
-
-    def add(elements, sum_indices)
-      for index in sum_indices
-        @data[index] += elements[index]
-      end
-    end
-
-    def to_csv(csv, input_indices)
-      output_data = []
-      for index in input_indices
-        output_data << @data[index]
-      end
-      puts('klumpfisk: ' + output_data.to_s)
-      csv << output_data
-    end
-
-    def number_string_to_int(number_string)
-      if number_string[-1] == 'M'
-        (number_string[0..-3].to_f*1000000).to_i
-      elsif number_string[-1] == 'K'
-        (number_string[0..-3].to_f*1000).to_i
-      elsif number_string[-1] == 'G'
-        (number_string[0..-3].to_f*1000000000).to_i
-      else
-        number_string.to_i
-      end
-    end
-  end
-
   def run_init(wss_global)
     # Will be run once before loading items.
     # Setup script here.
