@@ -65,7 +65,7 @@ module Script
     # A class meant to abstract away as much boiler plate as possible from individual inapp scripts.
     class InAppScript
         # The settings_dialog can be set up manually, but the input to these fields will not be saved automatically.
-        attr_reader :settings, :timer, :main_directory, :settings_dialog, :current_case, :utilities, :gui_title
+        attr_reader :settings, :timer, :main_directory, :settings_dialog, :current_case, :utilities, :gui_title, :case_data_dir
 
         # Initializes the InAppScript. Inapp scripts should use create_inapp_script instead.
         # Params:
@@ -92,6 +92,7 @@ module Script
             @gui_title = gui_title
             @settings = Settings.new(main_directory, script_name)
             @timer = Timing::Timer.new
+            @case_data_dir = SettingsUtils::case_data_dir(main_directory, current_case.name, current_case.guid)
 
             @settings_dialog = NXUtils.create_dialog(gui_title)
             # Default value for input validater for dialog.
