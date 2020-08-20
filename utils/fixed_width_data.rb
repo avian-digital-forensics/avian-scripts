@@ -64,7 +64,7 @@ module FixedWidthData
 
   # Takes a raw yml map of format information and converts it into data more directly usable by the other methods.
   # Format of input:
-  #   :column_types: A comma seperated string of column types (date/id/sum).
+  #   :column_types: A comma seperated string of column types (date/id/sum/discard).
   #   :column_headers: A comma seperated string of column headers.
   #   :line_format: A comma seperated string of start positions for each column in the fixed width file. Includes the index of the end of the line.
   #   :max_date_diff: The maximum second difference for two entries to be combined into one.
