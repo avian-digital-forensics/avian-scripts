@@ -17,7 +17,7 @@ module LoadTimer
     wss_global.vars[:load_timer_file_path] = File.join(wss_global.case_data_path, 'load_times_' + id + '.csv')
     # Write headers.
     CSV.open(wss_global.vars[:load_timer_file_path], 'a') do |csv|
-      csv << ['guid','load_time_since_prev','mime_type','parent_guid','file_size','path','time_stamp']
+      csv << ['guid','load_time_since_prev','mime_type','parent_guid','evidence_guid','file_size','path','time_stamp']
     end
   end
   
@@ -53,11 +53,12 @@ module LoadTimer
     guid = worker_item.item_guid
     mime_type = worker_item.source_item.type
     parent_guid = worker_item.guid_path[-2]
+    evidence_guid = worker_item.guid_path[0]
     file_size = worker_item.source_item.file_size
     path = worker_item.source_item.path
     time_stamp = current_time
     CSV.open(wss_global.vars[:load_timer_file_path], 'a') do |csv|
-      csv << [guid, seconds_since_prev || 'NIL', mime_type, parent_guid || 'NIL', file_size || 'NIL', worker_item, path, time_stamp]
+      csv << [guid, seconds_since_prev || 'NIL', mime_type, parent_guid || 'NIL', evidence_guid, file_size || 'NIL', worker_item, path, time_stamp]
     end
   end
   
