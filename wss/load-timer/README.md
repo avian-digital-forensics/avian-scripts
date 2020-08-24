@@ -5,6 +5,7 @@ Also creates a CSV-file with the following information about each item:
 * Time since previous item (load time). NIL if unavailable.
 * MIME type
 * GUID of parent item. NIL if this is unavailable
+* GUID of evidence
 * File size. NIL if this is unavailable
 * Path
 * Time stamp
