@@ -30,7 +30,6 @@ module FixedWidthData
       for index in input_indices
         output_data << @data[index]
       end
-      puts('klumpfisk: ' + output_data.to_s)
       csv << output_data
     end
 
@@ -78,9 +77,11 @@ module FixedWidthData
     max_date_diff_seconds = format_info[:max_date_diff]
     format[:column_headers] = column_headers
     format[:line_format] = line_format
-    format[:date_index] = column_types.each_index.select { |index| column_types[index] == :date }.first
+    format[:date_index] = column_types.find_index(:date)
     format[:id_indices] = column_types.each_index.select { |index| column_types[index] == :id }
     format[:sum_indices] = column_types.each_index.select { |index| column_types[index] == :sum }
+    format[:from_index] = column_types.find_index(:from)
+    format[:to_index] = column_types.find_index(:to)
     input_indices = []
     for index in 0..column_types.size-1
       unless column_types[index] == :discard
@@ -93,20 +94,19 @@ module FixedWidthData
   end
 
   # Takes fixed width data and transforms it into csv which is given to the CSV object.
-  # Follows the given format_info (see preprocess_format_info).
+  # Format info should be preprocessed with preprocess_format_info
   # Params:
   # +text+:: A stringable object holding the fixed width data.
   # +format_info+:: Information about the format of the fixed width data.
   # +csv+:: A ruby CSV object to receive each row array.
   def fixed_width_to_csv(text, format_info, csv)
-    format = preprocess_format_info(format_info)
-    column_headers = format[:column_headers]
-    line_format = format[:line_format]
-    date_index = format[:date_index]
-    id_indices = format[:id_indices]
-    sum_indices = format[:sum_indices]
-    input_indices = format[:input_indices]
-    max_date_diff = format[:max_date_diff]
+    column_headers = format_info[:column_headers]
+    line_format = format_info[:line_format]
+    date_index = format_info[:date_index]
+    id_indices = format_info[:id_indices]
+    sum_indices = format_info[:sum_indices]
+    input_indices = format_info[:input_indices]
+    max_date_diff = format_info[:max_date_diff]
 
     entry_history = []
     entry_history_hash = {}
