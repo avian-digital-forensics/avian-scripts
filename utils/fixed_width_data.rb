@@ -50,9 +50,7 @@ module FixedWidthData
     #reader = text.reader
     #buffered_reader = Java::Io::BufferedReader.new(reader)
     fixed_width_parser = FixedWidthData::LineParser.new(line_format)
-    puts('torsk: Reading entire text into string...')
     text_string = text.to_s
-    puts('sej: Processing lines...')
     for line in text_string.lines.drop(1)
       if line.start_with?('Summary:')
         break
