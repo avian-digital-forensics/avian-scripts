@@ -11,7 +11,8 @@ end
 # Add requires here.
 require 'yaml'
 
-require File.join(script.main_directory, 'utils', 'settings_utils')
+# Preprocess format info.
+require File.join(script.main_directory, 'utils', 'fixed_width_data')
 
 # Setup GUI here.
 # Fields added using InAppScript methods are saved automatically.
@@ -54,7 +55,7 @@ script.run do |progress_dialog|
       break
     end
     column_types = custom_metadata['ColumnTypes'].split(',')
-    possible_column_types = { 'date' => :date, 'id' => :id, 'sum' => :sum, 'discard' => :discard }
+    possible_column_types = { 'date' => :date, 'id' => :id, 'from' => :from, 'to' => :to, 'sum' => :sum, 'discard' => :discard }
     if invalid_column_type = column_types.find { |column_type| !possible_column_types.key?(column_type) }
       script.show_error("Invalid ColumnType '#{invalid_column_type}' for item #{item.guid}")
       error = true
@@ -105,7 +106,7 @@ script.run do |progress_dialog|
     max_date_diff = custom_metadata['MaxDateDiff'].to_f
     column_format_hash[:max_date_diff] = max_date_diff
 
-    data[item.guid] = column_format_hash
+    data[item.guid] = FixedWidthData::preprocess_format_info(column_format_hash)
   end
   
   if error
