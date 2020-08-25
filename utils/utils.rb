@@ -2,22 +2,24 @@ require 'set'
 require 'fileutils'
 
 module Utils
-  def self.alpha_num_char_set 
+  extend self
+
+  def alpha_num_char_set 
     [('a'..'z'), ('A'..'Z'), ('0'..'9')].map(&:to_a).flatten
   end
   
   # Returns a string time stamp with the current time.
-  def self.time_stamp()
+  def time_stamp()
     return Time.now.getutc.to_s[0...-4]
   end
   
   # Print to the log a message with a timestamp.
-  def self.print_progress(message)
+  def print_progress(message)
     puts(time_stamp + "  " + message)
   end
   
   # Creates a sample of size num_elements, from array.
-  def self.sample(array, num_elements, with_replacement=false)
+  def sample(array, num_elements, with_replacement=false)
     if with_replacement
       return Array.new(num_elements) { rand(0..array.length-1) }.map { |index| array[index] }
     else
@@ -26,23 +28,23 @@ module Utils
   end
   
   # Returns the number of nano seconds since epoch in the time as a single big integer.
-  def self.time_to_nano(time)
+  def time_to_nano(time)
     return time.tv_sec*(10**9)+time.tv_nsec
   end
   
   # Returns the current number of nano seconds since epoch as a single big integer.
-  def self.nano_now
+  def nano_now
     return time_to_nano(Time.now)
   end
   
   # Returns a random string of length num_chars from the given char_set.
-  def self.random_string(num_chars, char_set)
+  def random_string(num_chars, char_set)
     return sample(char_set, num_chars, true).join
   end
 
   # Adds the specified tag to all given items.
   # Progress is shown in the main progress bar of the given progress dialog.
-  def self.bulk_add_tag(utilities, progress_dialog, tag, items)
+  def bulk_add_tag(utilities, progress_dialog, tag, items)
     progress_dialog.set_sub_progress_visible(false)
     progress_dialog.set_main_progress(0, items.size)
     bulk_annotater = utilities.get_bulk_annotater
@@ -56,7 +58,7 @@ module Utils
 
   # Removes the specified tag from all given items.
   # Progress is shown in the main progress bar of the given progress dialog.
-  def self.bulk_remove_tag(utilities, progress_dialog, tag, items)
+  def bulk_remove_tag(utilities, progress_dialog, tag, items)
     progress_dialog.set_sub_progress_visible(false)
     progress_dialog.set_main_progress(0, items.size)
     bulk_annotater = utilities.get_bulk_annotater
@@ -70,7 +72,7 @@ module Utils
 
   # Excludes the specified items with the specified reason.
   # Progress is shown in the main progress bar of the given progress dialog.
-  def self.bulk_exclude(utilities, progress_dialog, items, exclusion_reason)
+  def bulk_exclude(utilities, progress_dialog, items, exclusion_reason)
     progress_dialog.set_sub_progress_visible(false)
     progress_dialog.set_main_progress(0, items.size)
     bulk_annotater = utilities.get_bulk_annotater
@@ -83,7 +85,7 @@ module Utils
   end
   
   # Returns true if all the given sets are disjoint.
-  def self.sets_disjoint?(*sets)
+  def sets_disjoint?(*sets)
     total = Set[]
     for set in sets.map(&:to_set)
       unless set.disjoint?(total)
@@ -99,7 +101,7 @@ module Utils
   # +directory+:: The directory to export them to.
   # +utilities+:: A reference to the Nuix Utitilies class.
   # +progress_dialog+:: The progress dialog to show results in. Only used if non-null.
-  def self.export_printed_images(items, directory, utilities, progress_dialog=nil)
+  def export_printed_images(items, directory, utilities, progress_dialog=nil)
     FileUtils.mkdir_p(directory)
 		items_processed = 0
     if progress_dialog
@@ -129,7 +131,7 @@ module Utils
   # +child_hash+:: A hash of parent->[children] stored as item references.
   # +utilities+:: A reference to the Nuix Utitilies class.
   # +progress_dialog+:: The progress dialog to show results in.
-  def self.prepare_add_children(case_data_dir, child_hash, utilities, progress_dialog)
+  def prepare_add_children(case_data_dir, child_hash, utilities, progress_dialog)
     binary_dir = File.join(case_data_dir, 'add_children_binaries')
     FileUtils.mkdir_p(binary_dir)
     children = child_hash.values.flatten
@@ -165,7 +167,7 @@ module Utils
   # +child_binary_dir+:: A directory with binaries of all the children listed in child_hash. The files should have the items GUID as name.
   # +child_hash+:: A hash of parent->[children] stored as GUIDs.
   # +worker_item+:: A Nuix worker item to work on if its GUID is listen in child_hash as a parent.
-  def self.execute_add_children(child_binary_dir, child_hash, worker_item)
+  def execute_add_children(child_binary_dir, child_hash, worker_item)
     if child_hash.key?(worker_item.item_guid)
       child_guids = child_hash[worker_item.item_guid]
 
