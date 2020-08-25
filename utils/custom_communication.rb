@@ -3,7 +3,7 @@ java_import 'nuix.Communication'
 require_relative 'dates'
 
 module Custom
-    class CustomAddress
+  class CustomAddress
 		include Address
         
         attr_accessor :personal, :address
