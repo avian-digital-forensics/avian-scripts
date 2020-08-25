@@ -181,4 +181,12 @@ module Utils
       worker_item.set_children(binaries)
     end
   end
+
+  def add_hyphens_to_guid(guid)
+    if guid.include?('-')
+      guid
+    else
+      "#{guid[0..7]}-#{guid[8..11]}-#{guid[12..15]}-#{guid[16..19]}-#{guid[20..31]}"
+    end
+  end
 end
