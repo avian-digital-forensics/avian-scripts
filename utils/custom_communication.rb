@@ -5,8 +5,7 @@ require_relative 'dates'
 module Custom
   class CustomAddress
 		include Address
-        
-        attr_accessor :personal, :address
+    attr_accessor :personal, :address
 
 		def self.from_address(address)
 			return CustomAddress.new(address.personal, address.address)
@@ -59,7 +58,7 @@ module Custom
 
 	class CustomCommunication
 		include Communication
-        attr_accessor :joda_time, :subject, :from_addresses, :to_addresses, :cc_addresses, :bcc_addresses
+		attr_accessor :joda_time, :subject, :from_addresses, :to_addresses, :cc_addresses, :bcc_addresses
 
 		def self.from_communication(communication)
 			joda_time = communication.date_time
@@ -101,20 +100,20 @@ module Custom
 		def getTo
 			@to_addresses
 		end
-        def set_to(to_addresses)
-            @to_addresses = to_addresses
-        end
-        def getCc
-            @cc_addresses
-        end
-        def set_cc(cc_addresses)
-            @cc_addresses = cc_addresses
-        end
-        def getBcc
-            @bcc_addresses
-        end
-        def set_bcc(bcc_addresses)
-            @bcc_addresses = bcc_addresses
+		def set_to(to_addresses)
+			@to_addresses = to_addresses
+		end
+		def getCc
+			@cc_addresses
+		end
+		def set_cc(cc_addresses)
+			@cc_addresses = cc_addresses
+		end
+		def getBcc
+			@bcc_addresses
+		end
+		def set_bcc(bcc_addresses)
+			@bcc_addresses = bcc_addresses
 		end
 		
 		def to_yaml_hash()
