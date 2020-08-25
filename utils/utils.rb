@@ -162,7 +162,7 @@ module Utils
 
   # If the worker_item is a parent in the child_hash, it is given its children.
   # Params:
-  # +child_binary_dir+:: A directory with binaries of all the children listed in child_hash. The files should have the items GUID as name.
+  # +child_binary_dir+:: A directory with binaries of all the children listed in child_hash. The each file should have the item's GUID as name.
   # +child_hash+:: A hash of parent->[children] stored as GUIDs.
   # +worker_item+:: A Nuix worker item to work on if its GUID is listen in child_hash as a parent.
   def self.execute_add_children(child_binary_dir, child_hash, worker_item)
