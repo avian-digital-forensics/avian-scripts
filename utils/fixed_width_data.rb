@@ -76,10 +76,14 @@ module FixedWidthData
     format[:column_headers] = column_headers
     format[:line_format] = line_format
     format[:date_index] = column_types.find_index(:date)
+    date_index = column_types.find_index(:date)
+    format[:date_header] = column_headers[date_index - column_types[0..date_index].count(:discard)]
     format[:id_indices] = column_types.each_index.select { |index| column_types[index] == :id }
     format[:sum_indices] = column_types.each_index.select { |index| column_types[index] == :sum }
-    format[:from_index] = column_types.find_index(:from)
-    format[:to_index] = column_types.find_index(:to)
+    from_index = column_types.find_index(:from)
+    format[:from_header] = column_headers[from_index - column_types[0..from_index].count(:discard)]
+    to_index = column_types.find_index(:to)
+    format[:to_header] = column_headers[to_index - column_types[0..to_index].count(:discard)]
     input_indices = []
     for index in 0..column_types.size-1
       unless column_types[index] == :discard
