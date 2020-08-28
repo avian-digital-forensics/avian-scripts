@@ -184,6 +184,10 @@ module Utils
     end
   end
 
+  # Adds hyphens to a GUID that doesn't have any.
+  # Mostly useful when working with GUIDs from WorkerItem.getGuidPath.
+  # Params:
+  # +guid+:: The GUID to add hyphens to.
   def add_hyphens_to_guid(guid)
     if guid.include?('-')
       guid
