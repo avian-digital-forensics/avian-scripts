@@ -62,6 +62,15 @@ script.run do |progress_dialog|
       break
     else
       column_format_hash[:column_types] = column_types.map { |column_type| possible_column_types[column_type] }
+      unless column_format_hash[:column_types].include?(:date)
+        script.show_error("The date column type must be included. Item: #{item.guid}")
+      end
+      unless column_format_hash[:column_types].include?(:from)
+        script.show_error("The from column type must be included. Item: #{item.guid}")
+      end
+      unless column_format_hash[:column_types].include?(:from)
+        script.show_error("The to column type must be included. Item: #{item.guid}")
+      end
     end
 
     # Column headers.
