@@ -60,6 +60,7 @@ module IngestFixedWidthAsCsv
   end
 
 
+  # The part of this WSS that handles the original netflow items.
   def process_netflow(wss_global, worker_item)
     # Get the format information from wss_global.
     data = wss_global.vars[:ingest_fixed_width_as_csv]
@@ -79,6 +80,7 @@ module IngestFixedWidthAsCsv
     worker_item.set_children([csv_path])
   end
 
+  # The part of this WSS that handles the CSV children given to the original netflow items.
   def process_csv(wss_global, worker_item)
     # Get the format information from wss_global.
     data = wss_global.vars[:ingest_fixed_width_as_csv]
@@ -88,6 +90,7 @@ module IngestFixedWidthAsCsv
     worker_item.set_item_type('application/x-chat-conversation')
   end
 
+  # The part of this WSS that handles the database row items of the created CSV items.
   def process_row(wss_global, worker_item)
     # Get the format information from wss_global.
     data = wss_global.vars[:ingest_fixed_width_as_csv]
