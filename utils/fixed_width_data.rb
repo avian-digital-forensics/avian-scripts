@@ -4,9 +4,11 @@ require 'csv'
 module FixedWidthData
   extend self
 
+  # Represents a single entry in the netflow data.
   class Entry
     attr_accessor :date, :id
 
+    # Initialize
     def initialize(elements, date_index, id_indices, sum_indices)
       @date = DateTime.parse(elements[date_index])
       @id = []
@@ -46,9 +48,13 @@ module FixedWidthData
     end
   end
 
+  # Parses a text with fixed width data into arrays and runs a block on each array.
+  # Lines starting with 'Summary:' are ignored.
+  # Params:
+  # +text+:: The text to parse as fixed width data.
+  # +line_format+:: An array of column start indices. Lines are parsed according to this format.
+  # +action+:: A block run on every resulting array.
   def read_text_lines(text, line_format, &action)
-    #reader = text.reader
-    #buffered_reader = Java::Io::BufferedReader.new(reader)
     fixed_width_parser = FixedWidthData::LineParser.new(line_format)
     text_string = text.to_s
     for line in text_string.lines.drop(1)
