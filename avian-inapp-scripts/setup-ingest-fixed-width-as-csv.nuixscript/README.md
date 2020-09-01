@@ -9,5 +9,5 @@ Selected items should have custom metadata fields "ColumnTypes", "ColumnHeaders"
   * sum - When two entries are combined, these valued will be summed in the resulting entry.
   * discard - These values will be ignored and have no effect on the final CSV.
 * ColumnHeaders - A comma separated list of the headers for each column.
-* LineFormat - A comma separated string of the start positions (zero-indexed) for each column in the fixed width file with and additional index for the end of the line.
+* LineFormat - A comma separated string of the start positions (zero-indexed) for each column in the fixed width file with.
 * MaxDateDiff - The maximum difference in seconds between two entries' date fields for them to be combined.
