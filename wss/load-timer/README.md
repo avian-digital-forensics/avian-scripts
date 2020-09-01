@@ -10,7 +10,9 @@ Also creates a CSV-file with the following information about each item:
 * Path
 * Time stamp
 
-The CSV-file is updated live as the items are processed.
+The CSV-file is updated live as the items are processed and can be found at "[Avian Scripts Directory]\data\cases\\[Case Name/GUID]\load_times[Time Stamp].csv".
+There may be other files in the same directory used by other scripts.
+Please leave them be.
 
 ## Remarks
 The timings are done by recording the time when the script is called for each item.
