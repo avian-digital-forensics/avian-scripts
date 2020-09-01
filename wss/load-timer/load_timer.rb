@@ -3,8 +3,9 @@ module LoadTimer
   
   def run_init(wss_global)
     # Will be run once before loading items.
-    require File.join(wss_global.root_path, 'utils', 'utils') 
-    require File.join(wss_global.root_path, 'utils', 'timer') 
+    require File.join(wss_global.root_path, 'utils', 'utils')
+    require File.join(wss_global.root_path, 'utils', 'timer')
+    require File.join(wss_global.root_path, 'utils', 'dates')
     require 'csv'
     wss_global.vars[:load_timer_start_time] = Utils::nano_now
     wss_global.vars[:load_timer_item_times] = {}
@@ -12,8 +13,7 @@ module LoadTimer
     wss_global.vars[:load_timer_last_item_time] = nil
 
     # Setup the output file.
-    id_char_set = Utils::alpha_num_char_set
-    id = Utils::random_string(8, id_char_set)
+    id = DateTime.now.strftime('%y%m%d%H%M%S%L')
     wss_global.vars[:load_timer_file_path] = File.join(wss_global.case_data_path, 'load_times_' + id + '.csv')
     # Write headers.
     CSV.open(wss_global.vars[:load_timer_file_path], 'a') do |csv|
