@@ -17,7 +17,7 @@ module NumberOfDescendants
         def annotate(bulk_annotater, metadata_key, timer, progress_dialog)
             timer.start('num_descendants_add_metadata')
 
-            num_items = @hash.values.sum(&:size)
+            num_items = @hash.values.inject(0){ |sum, value| sum + value.size }
             
             # Setup progress dialog
             progress_dialog.set_main_status_and_log_it('Adding number of descendants custom metadata...')
