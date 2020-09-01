@@ -61,10 +61,4 @@ module LoadTimer
       csv << [guid, seconds_since_prev || 'NIL', mime_type, parent_guid || 'NIL', evidence_guid, file_size || 'NIL', worker_item, path, time_stamp]
     end
   end
-  
-  def run_close(wss_global)
-    CSV.open(wss_global.vars[:load_timer_file_path], 'a') do |csv|
-      csv << []
-    end
-  end
 end
