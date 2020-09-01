@@ -8,7 +8,12 @@ module FixedWidthData
   class Entry
     attr_accessor :date, :id
 
-    # Initialize
+    # Initialize the Entry object.
+    # Params:
+    # +elements+:: The values in the entry's row as strings before formatting.
+    # +date_index+:: The index of the date value (see README for in-app script 'Setup Ingest Fixed Width as CSV').
+    # +id_indices+:: The indices of id values (see README for in-app script 'Setup Ingest Fixed Width as CSV').
+    # +sum_indices+:: The indices of sum values (see README for in-app script 'Setup Ingest Fixed Width as CSV').
     def initialize(elements, date_index, id_indices, sum_indices)
       @date = DateTime.parse(elements[date_index])
       @id = []
@@ -21,12 +26,19 @@ module FixedWidthData
       end
     end
 
+    # Adds the given entry's (given as an elements array) sum values to this entry's sum values.
+    # Params:
+    # +elements+:: The values of the given entry.
+    # +sum_indices+:: The indices of sum values (see README for in-app script 'Setup Ingest Fixed Width as CSV').
     def add(elements, sum_indices)
       for index in sum_indices
         @data[index] += elements[index]
       end
     end
 
+    # Converts the Entry to CSV.
+    # +csv+:: The CSV object used for the conversion.
+    # +input_indices+:: Which indices of the data to put into the CSV.
     def to_csv(csv, input_indices)
       output_data = []
       for index in input_indices
@@ -35,6 +47,9 @@ module FixedWidthData
       csv << output_data
     end
 
+    # Converts a number string to an integer.
+    # Params:
+    # +number_string+:: The number string to convert.
     def number_string_to_int(number_string)
       if number_string[-1] == 'M'
         (number_string[0..-3].to_f*1000000).to_i
@@ -144,14 +159,21 @@ module FixedWidthData
     end
   end
 
+  # Parses lines according to a specified line format.
   class LineParser
+    # Sets up the LineParser with the specified line format.
+    # Params:
+    # +line_format+:: An array of start indices for the columns.
     def initialize(line_format)
       @line_format = line_format
     end
 
+    # Parses the line into an array of string values.
+    # Params:
+    # +line+:: The line to parse.
     def parse(line)
       cur_pos = 0
-      @line_format.each_cons(2).map { |seg_start_pos, seg_end_pos| line[seg_start_pos..seg_end_pos - 1].strip }
+      (@line_format + [line.size]).each_cons(2).map { |seg_start_pos, seg_end_pos| line[seg_start_pos..seg_end_pos - 1].strip }
     end
   end
 end
