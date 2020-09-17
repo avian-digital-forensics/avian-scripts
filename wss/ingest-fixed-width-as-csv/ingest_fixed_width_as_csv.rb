@@ -11,6 +11,7 @@ module IngestFixedWidthAsCsv
     require File.join(wss_global.root_path, 'utils', 'timer')
     require File.join(wss_global.root_path, 'utils', 'custom_communication')
     require File.join(wss_global.root_path, 'utils', 'dates')
+    require File.join(wss_global.root_path, 'utils', 'utils')
 
     # Has the format { guid: format_info }.
     data_path = File.join(wss_global.case_data_path, 'ingest_fixed_width_as_csv_metadata.yml')
