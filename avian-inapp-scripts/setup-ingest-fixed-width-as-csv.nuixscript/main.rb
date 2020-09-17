@@ -64,12 +64,18 @@ script.run do |progress_dialog|
       column_format_hash[:column_types] = column_types.map { |column_type| possible_column_types[column_type] }
       unless column_format_hash[:column_types].include?(:date)
         script.show_error("The date column type must be included. Item: #{item.guid}")
+        error = true
+        break
       end
       unless column_format_hash[:column_types].include?(:from)
         script.show_error("The from column type must be included. Item: #{item.guid}")
+        error = true
+        break
       end
-      unless column_format_hash[:column_types].include?(:from)
+      unless column_format_hash[:column_types].include?(:to)
         script.show_error("The to column type must be included. Item: #{item.guid}")
+        error = true
+        break
       end
     end
 
@@ -94,8 +100,8 @@ script.run do |progress_dialog|
       break
     end
     line_format = custom_metadata['LineFormat'].split(',').map { |column_index| column_index.to_i }
-    unless line_format.size == column_types.size + 1
-      script.show_error("Invalid line format for item #{item.guid}. There must be a column position for every column type, plus one for the end of the line.")
+    unless line_format.size == column_types.size
+      script.show_error("Invalid line format for item #{item.guid}. There must be a column position for every column type.")
       error = true
       break
     end
