@@ -171,6 +171,7 @@ module Script
                         @current_case.delete_tag(tag)
                         @timer.stop('remove_temp_tag_' + tag)
                     end
+                    @timer.start('remove_temporary_tags')
 
                     @timer.stop('total')
         
