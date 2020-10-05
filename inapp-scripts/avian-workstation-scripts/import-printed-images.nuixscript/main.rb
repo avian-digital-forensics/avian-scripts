@@ -13,7 +13,7 @@ end
 # Main directory path can be found in script.main_directory.
 # Add requires here.
 # Main logic.
-require File.join(script.main_directory,'avian-inapp-scripts','import-printed-images.nuixscript','import_printed_images')
+require File.join(script.main_directory,'inapp-scripts','import-printed-images','import_printed_images')
 # Find case data.
 require File.join(script.main_directory,'utils','settings_utils')
 
