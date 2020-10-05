@@ -16,7 +16,7 @@ require File.join(main_directory,'utils','timer')
 # Progress messages.
 require File.join(main_directory,'utils','utils')
 # Actual script.
-require File.join(main_directory,'avian-inapp-scripts','number-of-descendants.nuixscript','number_of_descendants')
+require File.join(main_directory,'inapp-scripts','number-of-descendants','number_of_descendants')
 
 gui_title = "Number of Descendants"
 
