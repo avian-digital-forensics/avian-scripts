@@ -66,7 +66,7 @@ if dialog.getDialogResult == true
             Utils.print_progress(message)
         end
 
-        NumberOfDescendants::number_of_descendants(current_case, progress_dialog, timer, items, metadata_key)
+        NumberOfDescendants::number_of_descendants(current_case, progress_dialog, timer, items, metadata_key, utilities.bulk_annotater)
 
         timer.stop('total')
         
