@@ -3,7 +3,7 @@ module ImportPrintedImages
     
     def run(nuix_case, utilities, settings_hash, progress_handler)
         main_directory = settings_hash[:main_directory]
-        require File.join(main_directory, 'inapp-scripts', 'import-printed-images.nuixscript', 'import_printed_images')
+        require File.join(main_directory, 'inapp-scripts', 'import-printed-images', 'import_printed_images')
         require File.join(main_directory,'utils','timer')
 
         timer = Timing::Timer.new
