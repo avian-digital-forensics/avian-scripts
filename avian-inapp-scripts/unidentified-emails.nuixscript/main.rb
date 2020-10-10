@@ -27,7 +27,7 @@ script.dialog_append_text_field('find_tab', 'start_area_line_num', 'Start area s
 script.dialog_append_text_field('find_tab', 'email_tag', 'Email tag', 
         'The tag given to all found emails. "Avian|" will automatically be added as prefix.')
 
-script.dialog_append_check_box('find_tab', 'scoping_query', 'Scoping query', 
+script.dialog_append_text_field('find_tab', 'scoping_query', 'Scoping query', 
         'Run only on items matching this Nuix search query.')
 
 # Add fix tab.
