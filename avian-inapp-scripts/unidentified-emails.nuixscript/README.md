@@ -37,6 +37,10 @@ Now it is time to reload the data.
 Select all items with the tag given in the "Fixed email tag" settings (the tag will have been received a prefix starting with "Avian|") and bring up the reload items dialog.
 Follow steps 5-7 in the WSS guide in the [main readme](https://github.com/avian-digital-forensics/avian-scripts/blob/master/README.md) and reload the items.
 
+#### Note:
+Some addresses may be changed to lower case.
+It is not known why this happens, but the addresses given to Nuix have their cases preserved, so it must be some subtlety in Nuix.
+
 ### Third script
 After reload, the items should have the correct communication data and MIME-types.
 However, for many of them, it will no longer be possible to generate a printed image, and whatever printed image they had before will be lost.
