@@ -3,6 +3,7 @@
   allowed_start_offset: '10'
   start_area_line_num: '15'
   email_tag: UnidentifiedEmail
+  scoping_query: 'file-extension:txt AND file-extension:htm AND file-extension:html'
   fix_unselected_items: true
   fix_rfc_items: true
   export_printed_images: true

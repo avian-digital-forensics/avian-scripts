@@ -27,6 +27,9 @@ script.dialog_append_text_field('find_tab', 'start_area_line_num', 'Start area s
 script.dialog_append_text_field('find_tab', 'email_tag', 'Email tag', 
         'The tag given to all found emails. "Avian|" will automatically be added as prefix.')
 
+script.dialog_append_check_box('find_tab', 'scoping_query', 'Scoping query', 
+        'Run only on items matching this Nuix search query.')
+
 # Add fix tab.
 script.dialog_add_tab('fix_tab', 'Fix Unidentified Emails')
 
@@ -92,6 +95,7 @@ script.run do |progress_dialog|
     allowed_start_offset = Integer(script.settings['allowed_start_offset'])
     start_area_line_num = Integer(script.settings['start_area_line_num'])
     email_tag = script.settings['email_tag']
+    scoping_query = script.settings['scoping_query']
 
     fix_unselected_items = script.settings['fix_unselected_items']
     fix_rfc_items = script.settings['fix_rfc_items']
@@ -100,14 +104,14 @@ script.run do |progress_dialog|
     fixed_item_tag = script.to_script_tag(script.settings['fixed_item_tag'])
 
     bulk_annotater = utilities.get_bulk_annotater
-        
-    # Find which items to run on.
+    selected_items_tag = script.create_temporary_tag('SelectedItems', current_selected_items, 'selected items', progress_dialog)
+    # Find which items to run on and tags them.
     if find_unselected_items
         progress_dialog.set_main_status_and_log_it('Making preliminary search...')
-        items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer)
+        items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer, scoping_query)
     else
         progress_dialog.log_message('Using selection. Skipping preliminary search.')
-        items = current_selected_items
+        items = current_case.search("#{scoping_query} AND tag:#{selected_items_tag}")
     end
     
     num_emails = FindUnidentifiedEmails::find_unidentified_emails(current_case, items, progress_dialog, timer, allowed_start_offset, start_area_line_num, email_tag, bulk_annotater)
@@ -136,6 +140,7 @@ script.run do |progress_dialog|
     items = Set[]
     rfc_tag = script.to_script_tag('RFC822')
     if fix_unselected_items
+        # Add items tagged by find_unidentified_emails.
         items.merge(current_case.search("tag:\"Avian|#{email_tag}\""))
         if fix_rfc_items
             rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
@@ -143,7 +148,7 @@ script.run do |progress_dialog|
             items.merge(current_case.search('tag:"' + rfc_tag + '"'))
         end
     else
-        selected_items_tag = script.create_temporary_tag('SelectedItems', current_selected_items, 'selected items', progress_dialog)
+        # Add selected items tagged by find_unidentified_emails.
         items.merge(current_case.search("tag:\"Avian|#{email_tag}\" AND tag:\"#{selected_items_tag}\""))
         if fix_rfc_items
             rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
