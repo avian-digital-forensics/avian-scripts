@@ -50,6 +50,15 @@ Used by the WSS 'Fix From Addresses'.
 * [Tag Weird Characters](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/tag-weird-characters.nuixscript) - (NOT TESTED) tags all items with names that include characters not in standard 7-bit ascii and not specified.
 * [QC and Culling](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/qc-cull.nuixscript) - automatically runs many of the processes involved in quality control.
 
+## Automation Scripts
+These are the scripts runnable in [Avian Autoprocessing](https://github.com/avian-digital-forensics/auto-processing).
+Many of these scripts will have roughly equivalent in-app versions.
+To see full documentation for all automation scripts, see [here](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/automation-scripts).
+
+### Available automation scripts
+* Import Printed Images - imports printed images from directory.
+* Number of Descendants - gives every item a custom metadata value of how many descendants the item has.
+
 ## Worker Side Scripts (WSS's)
 WSS'es are run during loading of a case, and this allows them to do things regular scripts cannot.
 However, this also means that they are considerably more of a hassle to run.
