@@ -26,27 +26,29 @@ Run 'Setup' again to change anything.
 I'm afraid this means reinstalling everything.
 Delete the two directories you set up and go through Setup again.
 
-## In-app Scripts
-This is about the scripts that are run from within Nuix, usually with a case already open.
+## Workstation Scripts
+This is about the scripts that are run in Nuix Workstation, usually with a case already open.
 If you have followed Setup correctly, these can be run from the 'Scripts' dropdown menu in Nuix under 'Avian Developed Scripts'.
-Warning: For some reason NUIX always waits 10 seconds before running in-app scripts, so don't be alarmed when nothing happens.
+Warning: For some reason NUIX always waits something like 10 seconds before running in-app scripts, so don't be alarmed when nothing happens.
 
 For details on a specific script please read the pertaining readme.
 These can be found in the script directory by following the links.
 
 ### Available in-app scripts
-* [Setup](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/setup.nuixscript) - used to setup WSS's.
-* [Batched OCR](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/batched-ocr.nuixscript) - (NOT TESTED) performs batched OCR by breaking a collection of items into a series of smaller batches and performing OCR on each smaller batch in turn.
-* [Connected Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/connected-addresses.nuixscript) - (NOT TESTED) creates a csv file with information about what addresses a specific address has exchanged messages with.
-* [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-correct-addresses.nuixscript) - (WIP) identifies all addresses and identifiers that refer to the same person and create a file with that information.
+* [Setup](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/setup.nuixscript) - used to setup WSS's.
+* [Batched OCR](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/batched-ocr.nuixscript) - (NOT TESTED) performs batched OCR by breaking a collection of items into a series of smaller batches and performing OCR on each smaller batch in turn.
+* [Connected Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/connected-addresses.nuixscript) - (NOT TESTED) creates a csv file with information about what addresses a specific address has exchanged messages with.
+* [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/find-correct-addresses.nuixscript) - (WIP) identifies all addresses and identifiers that refer to the same person and create a file with that information.
 Used by the WSS 'Fix From Addresses'.
-* [Find Paragraphs](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-paragraphs.nuixscript) - (NOT TESTED) searches all items to look for references to paragraphs.
-* [Find and Fix Unidentified Emails](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/unidentified-emails.nuixscript) - tries to find items that should be emails but aren't identified as such by Nuix and the identify the correct communication data for them.
-* [Import Printed Images](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/import-printed-images.nuixscript) - imports printed images from directory.
-* [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-messages-to-self.nuixscript) - (NOT TESTED) tags all items sent to the sender of that item.
-* [Tag Exchange Emails with Duplicates](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-exchange-emails-with-duplicates.nuixscript) - tags exchange server emails with and without archived duplicates.
-* [Tag Weird Characters](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/tag-weird-characters.nuixscript) - (NOT TESTED) tags all items with names that include characters not in standard 7-bit ascii and not specified.
-* [Number of Descendants](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/number-of-descendants.nuixscript) - gives every selected item a custom metadata value of how many descendants the item has.
+* [Find Paragraphs](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/find-paragraphs.nuixscript) - (NOT TESTED) searches all items to look for references to paragraphs.
+* [Find and Fix Unidentified Emails](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/unidentified-emails.nuixscript) - tries to find items that should be emails but aren't identified as such by Nuix and the identify the correct communication data for them.
+* [Import Printed Images](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/import-printed-images.nuixscript) - imports printed images from directory.
+* [Number of Descendants](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/number-of-descendants.nuixscript) - gives every selected item a custom metadata value of how many descendants the item has.
+* [Store Custom Entities](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/store-custom-entities.nuixscript) - (NOT TESTED) stores information about specified custom entities to be used by other scripts.
+* [Tag Messages Sent to Sender](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/tag-messages-to-self.nuixscript) - (NOT TESTED) tags all items sent to the sender of that item.
+* [Tag Exchange Emails with Duplicates](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/tag-exchange-emails-with-duplicates.nuixscript) - tags exchange server emails with and without archived duplicates.
+* [Tag Weird Characters](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/tag-weird-characters.nuixscript) - (NOT TESTED) tags all items with names that include characters not in standard 7-bit ascii and not specified.
+* [QC and Culling](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/avian-workstation-scripts/qc-cull.nuixscript) - automatically runs many of the processes involved in quality control.
 
 ## Worker Side Scripts (WSS's)
 WSS'es are run during loading of a case, and this allows them to do things regular scripts cannot.
