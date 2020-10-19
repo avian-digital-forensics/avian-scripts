@@ -9,7 +9,9 @@ module NumberOfDescendants
         timer = Timing::Timer.new
         timer.start('total')
 
-        items = nuix_case.search(settings_hash[:scoping_query])
+        # If a scoping query is given, use that.
+        scoping_query = settings_hash.key?(:scoping_query) ? settings_hash[:scoping_query] : ''
+        items = nuix_case.search(scoping_query)
         metadata_key = settings_hash[:metadata_key]
         NumberOfDescendants::number_of_descendants(nuix_case, progress_handler, timer, items, metadata_key, utilities.bulk_annotater)
 
