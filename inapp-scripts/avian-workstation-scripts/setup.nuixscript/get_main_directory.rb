@@ -61,7 +61,7 @@ def get_main_directory(force_user_input)
     # Ensure that the main directory's inapp script directory also has a main_directory.txt file.
     if main_directory
         # The path to the main_directory.txt file in the main directory's inapp script directory.
-        main_directory_main_directory_file_path = File.join(main_directory, 'avian-inapp-scripts', 'setup.nuixscript', 'main_directory.txt')
+        main_directory_main_directory_file_path = File.join(main_directory, 'inapp-scripts', 'avian-workstation-scripts', 'setup.nuixscript', 'main_directory.txt')
         if File.file?(main_directory_main_directory_file_path)
             contents = File.read(main_directory_main_directory_file_path)
             unless contents == main_directory
