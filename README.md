@@ -53,7 +53,7 @@ Used by the WSS 'Fix From Addresses'.
 ## Automation Scripts
 These are the scripts runnable in [Avian Autoprocessing](https://github.com/avian-digital-forensics/auto-processing).
 Many of these scripts will have roughly equivalent in-app versions.
-To see full documentation for all automation scripts, see [here](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/automation-scripts).
+To see full documentation for all automation scripts, see [here](https://github.com/avian-digital-forensics/avian-scripts/tree/master/inapp-scripts/automation-scripts/script_descriptions.md).
 
 ### Available automation scripts
 * Import Printed Images - imports printed images from directory.
