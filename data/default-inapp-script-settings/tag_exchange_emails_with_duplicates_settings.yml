@@ -1,0 +1,7 @@
+---
+  archived_prefix: This message has been archived.
+  archived_tag: ArchivedEmail
+  archived_has_duplicate_tag: ArchivedHasDuplicate
+  archived_missing_duplicate_tag: ArchivedMissingDuplicate
+  has_missing_attachments_tag: HasMissingAttachments
+  exclude_archived_items_with_duplicates: true
