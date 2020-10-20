@@ -78,9 +78,13 @@ script.run do |progress_dialog|
 
     # Tell the user if emails without archived duplicates were found.
     if num_without_duplicate > 0
-        puts("Exchange server emails without an archived duplicate: " + num_without_duplicate.to_s)
-        puts("They have been given a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.")
-        CommonDialogs.show_information("A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found.")
+        progress_dialog.log_message("Archived emails without a duplicate: " + num_without_duplicate.to_s)
+        CommonDialogs.show_information("A total of " + num_without_duplicate.to_s + " archived emails without a duplicate were found.")
+    end
+    # Tell the user if missing attachments were detected.
+    if num_missing_attachments > 0
+        progress_dialog.log_message("Missing attachments: " + num_missing_attachments.to_s)
+        CommonDialogs.show_information("A total of " + num_missing_attachments.to_s + " missing attachments were detected.")
     end
 
     script.timer.stop('total')
