@@ -19,3 +19,28 @@ Settings in *italics* are optional.
 * :metadata_key - the key for the custom metadata.
 * *:scoping_query* - only runs for items matching this query. 
 If left out, script will run on all items.
+
+## Tag Exchange Emails with Duplicates
+Key: 'tag_exchange_emails_with_duplicates'
+
+<b>Background</b><br>
+Some organizations use archiving solutions to archive emails+attachments of some  emails in order to save live Exchange server storage.
+Therefore, only the emails and not the attachments are included when acquiring PSTs from Exchange.
+When you acquire the archive PSTs from the archiving solution and mix in with the PSTs from the Exchange Server you will get a lot of duplicates. 
+
+By assigning custom metadata to the emails from Exhange where a duplicate in the archive PST is found it's possible to exclude the duplicate emails from the dataset. 
+
+<b>How it works</b><br>
+Tags all emails starting with a specified text string as being exchange server emails.
+Then gives all these emails a custom metadata field saying whether there is another email with the same ID among the non-exchange server emails.
+
+The tags and custom metadata fields are customizable through the GUI.
+### Settings
+Settings in *italics* are optional.
+* :main_directory - the path to the Avian scripts main directory.
+* :archived_prefix - all emails containing this text will be treated as exchange server emails.
+* :archived_tag - all emails containing the above prefix will receive this tag.
+* :archived_has_duplicate_tag - all archived emails with duplicates will receive this tag.
+* :archived_missing_duplicate_tag - all archived emails without duplicates will receive this tag.
+* :has_missing_attachments_tag - all archived emails with children but no duplicate receive this tag.
+* :exclude_archived_items_with_duplicates - all archived emails with duplicates will be excluded if this is set to true.
