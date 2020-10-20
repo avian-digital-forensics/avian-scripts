@@ -16,6 +16,5 @@ module ImportPrintedImages
         ImportPrintedImages::import_printed_images(items, source_path, progress_handler, timer, utilities)
 
         timer.stop('total')
-        timer.print_timings
     end
 end

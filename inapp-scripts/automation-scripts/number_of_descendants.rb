@@ -16,6 +16,5 @@ module NumberOfDescendants
         NumberOfDescendants::number_of_descendants(nuix_case, progress_handler, timer, items, metadata_key, utilities.bulk_annotater)
 
         timer.stop('total')
-        timer.print_timings
     end
 end
