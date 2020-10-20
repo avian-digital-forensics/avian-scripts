@@ -62,8 +62,18 @@ script.run do |progress_dialog|
     has_missing_attachments_tag = script.settings['has_missing_attachments_tag']
     exclude_archived_items_with_duplicates = script.settings['exclude_archived_items_with_duplicates']
 
-    num_without_duplicate, num_missing_attachments = tag_exchange_emails_with_duplicates(current_case, progress_dialog, script.timer, utilities, archived_prefix, archived_tag, archived_has_duplicate_tag, 
-            archived_missing_duplicate_tag, has_missing_attachments_tag, exclude_archived_items_with_duplicates)
+    num_without_duplicate, num_missing_attachments = TagExchangeEmailsWithDuplicates::tag_exchange_emails_with_duplicates(
+            current_case, 
+            progress_dialog, 
+            script.timer, 
+            utilities, 
+            archived_prefix, 
+            archived_tag, 
+            archived_has_duplicate_tag, 
+            archived_missing_duplicate_tag, 
+            has_missing_attachments_tag, 
+            exclude_archived_items_with_duplicates
+    )
 
     
     # Tell the user if emails without archived duplicates were found.
