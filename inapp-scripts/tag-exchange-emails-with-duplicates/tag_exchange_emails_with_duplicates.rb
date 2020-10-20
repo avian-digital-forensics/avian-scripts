@@ -81,7 +81,7 @@ module TagExchangeEmailsWithDuplicates
 		bulk_annotater.add_tag(archived_has_duplicate_tag, items_with_duplicate) do | item_event_info |
 			items_processed += 1
 			progress_handler.increment_main_progress
-			progress_handler.set_sub_status('Archived emails with duplicates given metadata: ' + items_processed.to_s + '/' + items_with_duplicate.size.to_s)
+			progress_handler.set_sub_status('Archived emails with duplicates given tag: ' + items_processed.to_s + '/' + items_with_duplicate.size.to_s)
         end
         
         # Exclude items.
@@ -111,8 +111,6 @@ module TagExchangeEmailsWithDuplicates
         num_missing_attachments = items_without_duplicate_with_children.reduce(0) { |sum, email| sum + email.children.length }
         bulk_annotater.add_tag(has_missing_attachments_tag, items_without_duplicate_with_children)
         timer.stop("missing_attachments")
-
-        timer.stop("total")
 
         return num_without_duplicate, num_missing_attachments
     end
