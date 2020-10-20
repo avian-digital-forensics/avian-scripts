@@ -56,8 +56,9 @@ Many of these scripts will have roughly equivalent in-app versions.
 To see full documentation for all automation scripts, see [here](inapp-scripts/automation-scripts/script_descriptions.md).
 
 ### Available automation scripts
-* Import Printed Images - imports printed images from directory.
-* Number of Descendants - gives every item a custom metadata value of how many descendants the item has.
+* Import Printed Images - (NOT TESTED) imports printed images from directory.
+* Number of Descendants - (NOT TESTED) gives every item a custom metadata value of how many descendants the item has.
+* Tag Exchange Emails with Duplicates - (NOT TESTED) tags exchange server emails with and without archived duplicates.
 
 ## Worker Side Scripts (WSS's)
 WSS'es are run during loading of a case, and this allows them to do things regular scripts cannot.
