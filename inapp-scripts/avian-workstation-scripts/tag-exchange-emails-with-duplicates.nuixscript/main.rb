@@ -39,11 +39,11 @@ script.dialog_append_text_field('main_tab', 'archived_missing_duplicate_tag', 'T
         
 # Add text field for tag for archived emails missing a duplicate.
 script.dialog_append_text_field('main_tab', 'has_missing_attachments_tag', 'Tag for archived emails with missing attachments', 
-'All archived emails with children but no duplicate receive this tag.')
+        'All archived emails with children but no duplicate receive this tag.')
         
 # Add text field for tag for archived emails missing a duplicate.
 script.dialog_append_check_box('main_tab', 'exclude_archived_items_with_duplicates', 'Whether to exclude archived emails with duplicates', 
-'All archived emails with duplicates will be excluded if this is set to true.')
+        'All archived emails with duplicates will be excluded if this is set to true.')
 
 
 # Checks the input before closing the dialog.
@@ -62,6 +62,7 @@ script.run do |progress_dialog|
     has_missing_attachments_tag = script.settings['has_missing_attachments_tag']
     exclude_archived_items_with_duplicates = script.settings['exclude_archived_items_with_duplicates']
 
+    script.timer.start('total')
     num_without_duplicate, num_missing_attachments = TagExchangeEmailsWithDuplicates::tag_exchange_emails_with_duplicates(
             current_case, 
             progress_dialog, 
@@ -75,16 +76,12 @@ script.run do |progress_dialog|
             exclude_archived_items_with_duplicates
     )
 
-    
     # Tell the user if emails without archived duplicates were found.
     if num_without_duplicate > 0
         puts("Exchange server emails without an archived duplicate: " + num_without_duplicate.to_s)
         puts("They have been given a custom metadata field '" + has_archived_duplicate_metadata_name + "' with value FALSE.")
         CommonDialogs.show_information("A total of " + num_without_duplicate.to_s + " exchange server emails without an archived duplicate were found.")
     end
-    if num_missing_attachments > 0
-        puts("Missing attachments: " + num_missing_attachments.to_s)
-        puts("The emails they are attached to have been given a custom metadata field '" + has_missing_attachments_metadata_name + "' with value TRUE.")
-        CommonDialogs.show_information("A total of " + num_missing_attachments.to_s + " missing attachments were found.")
-    end
+
+    script.timer.stop('total')
 end
