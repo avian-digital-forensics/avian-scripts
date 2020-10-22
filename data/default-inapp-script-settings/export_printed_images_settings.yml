@@ -1,0 +1,3 @@
+---
+  restrict_to_selected_items: true
+  scoping_query: ''
