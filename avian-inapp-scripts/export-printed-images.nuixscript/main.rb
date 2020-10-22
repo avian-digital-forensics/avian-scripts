@@ -51,5 +51,5 @@ script.run do |progress_dialog|
 
   images_exported = ExportPrintedImages::export_printed_images(script.main_directory, progress_dialog, timer, utilities, current_case, scoping_query)''
 
-  next "Exported a total of #{images_exported.to_s} images."
+  next "Exported a total of #{images_exported.to_s} printed images."
 end
