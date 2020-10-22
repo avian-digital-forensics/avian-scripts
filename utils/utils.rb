@@ -101,7 +101,11 @@ module Utils
     # +utilities+:: A reference to the Nuix Utitilies class.
     # +progress_handler+:: Log messages will be given to this.
     def self.export_printed_images(items, directories, utilities, progress_handler)
-        FileUtils.mkdir_p(directory)
+        # Use splat operator to turn directories into an array if only one item was given.
+        directories_array = *directories
+        for directory in directories_array
+            FileUtils.mkdir_p(directory)
+        end
 		items_processed = 0
         
         progress_handler.set_main_status_and_log_it('Exporting printed images...')
@@ -116,8 +120,7 @@ module Utils
 			if item.is_kind?('no-data')
 				progress_handler.log_message("Unable to export printed image for item '#{item.name}'. Could not find data. GUID:#{item.guid}")
             else
-                # Use splat operator to turn directories into an array if only one item was given.
-                for dir in *directories
+                for directory in directories_array
                     exporter.export_item(item, "#{directory}/#{item.guid}.pdf")
                 end
                 images_exported += 1
