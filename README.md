@@ -38,6 +38,8 @@ These can be found in the script directory by following the links.
 * [Setup](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/setup.nuixscript) - used to setup WSS's.
 * [Batched OCR](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/batched-ocr.nuixscript) - (NOT TESTED) performs batched OCR by breaking a collection of items into a series of smaller batches and performing OCR on each smaller batch in turn.
 * [Connected Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/connected-addresses.nuixscript) - (NOT TESTED) creates a csv file with information about what addresses a specific address has exchanged messages with.
+* [Export Printed Images](avian-inapp-scripts/export_printed_images.nuixscript) - (NOT TESTED) # Export Printed Images
+Export printed images to the Avian scripts directory to be used by other scripts.
 * [Find Correct Addresses](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-correct-addresses.nuixscript) - (WIP) identifies all addresses and identifiers that refer to the same person and create a file with that information.
 Used by the WSS 'Fix From Addresses'.
 * [Find Paragraphs](https://github.com/avian-digital-forensics/avian-scripts/tree/master/avian-inapp-scripts/find-paragraphs.nuixscript) - (NOT TESTED) searches all items to look for references to paragraphs.
