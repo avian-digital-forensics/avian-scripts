@@ -38,7 +38,7 @@ script.run do |progress_dialog|
   timer = script.timer
   
   data_dir = SettingsUtils.case_data_dir(script.main_directory, current_case.name, current_case.guid)
-  printed_image_dir = File.join(data_dir, 'unidentified_emails_printed_images')
+  printed_image_dir = File.join(data_dir, 'printed_images')
 
   items = []
   if script.settings['run_on_unselected_items']
