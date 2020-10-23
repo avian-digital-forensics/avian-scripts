@@ -1,3 +1,5 @@
+require 'set'
+
 module NumberOfDescendants
   extend self
   
