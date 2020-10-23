@@ -17,7 +17,7 @@ module TagExchangeEmailsWithDuplicates
         exclude_archived_items_with_duplicates = settings_hash['exclude_archived_items_with_duplicates']
 
         num_without_duplicate, num_missing_attachments = TagExchangeEmailsWithDuplicates::tag_exchange_emails_with_duplicates(
-                current_case,
+                nuix_case,
                 progress_dialog,
                 script.timer,
                 utilities,
