@@ -14,6 +14,7 @@ module NumberOfDescendants
         items = nuix_case.search(scoping_query)
         metadata_key = settings_hash[:metadata_key]
         NumberOfDescendants::number_of_descendants(nuix_case, progress_handler, timer, items, metadata_key, utilities.bulk_annotater)
+        progress_handler.log_message('Script finished.')
 
         timer.stop('total')
     end
