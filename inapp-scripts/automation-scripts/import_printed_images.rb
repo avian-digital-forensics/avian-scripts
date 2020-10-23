@@ -14,7 +14,7 @@ module ImportPrintedImages
         items = nuix_case.search(scoping_query)
         source_path = settings_hash[:source_path]
         images_imported = ImportPrintedImages::import_printed_images(items, source_path, progress_handler, timer, utilities)
-        progress_handler.log_message("Imported a total of #{images_imported} printed images.")
+        progress_handler.log_message("Script finished. Imported a total of #{images_imported} printed images.")
 
         timer.stop('total')
     end
