@@ -23,8 +23,11 @@ module QCCull
     for field,value in result_hash
       report_text.gsub!(field,value)
     end
+    
     File.open(report_file_path, 'w') do |file|
-      file.write(report_text)
+      # Prepare special characters for ANSI.
+      # Taken from https://stackoverflow.com/a/263324.
+      file.write(report_text.unpack("U*").map{|c|c.chr}.join)
     end
   end
 
@@ -161,4 +164,3 @@ module QCCull
     QCCull::update_report(result_hash, report_destination)
   end
 end
-    
