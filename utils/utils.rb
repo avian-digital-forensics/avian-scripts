@@ -92,6 +92,11 @@ module Utils
             total = total | set
         end
     end
+    
+    def self.search_count_deduplicated(nuix_case, search, utilities)
+        item_utility = utilities.item_utility
+        item_utility.deduplicate(nuix_case.search_unsorted(search)).size.to_s
+    end
 
     # Exports the printed images of the given images to the specified directory.
     # Params:
@@ -121,5 +126,12 @@ module Utils
                 progress_dialog.set_sub_status("Printed images exported: " + (items_processed += 1).to_s)
             end
         end
+    end
+
+    # Combines all given search queries with ANDs.
+    # Params:
+    # +queries+:: Arbitrarily many queries or arrays of queries to be combined.
+    def self.join_queries(*queries)
+        queries.flatten.map { |query| query == '' ? nil : "(#{query})" }.reject(&:nil?).join(' AND ')
     end
 end

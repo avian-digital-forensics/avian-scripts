@@ -285,6 +285,9 @@ module Script
             value = @settings[identifier]
 
             tab = @settings_dialog.get_tab(tab_identifier)
+            unless tab
+                raise 'No such tab "' + tab_identifier + '"'
+            end
             if file_chosen_callback
                 tab.append_open_file_chooser(identifier, label, file_type_name, file_type_extension, file_chosen_callback)
             else
@@ -309,6 +312,9 @@ module Script
             value = @settings[identifier]
 
             tab = @settings_dialog.get_tab(tab_identifier)
+            unless tab
+                raise 'No such tab "' + tab_identifier + '"'
+            end
             tab.append_save_file_chooser(identifier, label, file_type_name, file_type_extension, value)
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
@@ -317,6 +323,7 @@ module Script
             @settings_inputs[identifier] = 'value'
         end
 
+<<<<<<< HEAD:inapp-scripts/avian-workstation-scripts/setup.nuixscript/inapp_script.rb
         # Appends a directory chooser to the specified tab.
         # Params:
         # +tab_identifier+:: The identifier for the tab in which to add the save file chooser.
@@ -336,6 +343,16 @@ module Script
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
             tab.set_text(identifier, value)
+=======
+        def dialog_append_date_picker(tab_identifier, identifier, label)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            unless tab
+                raise 'No such tab "' + tab_identifier + '"'
+            end
+            tab.dialog_append_date_picker(identifier, label)
+>>>>>>> qc-cull3:avian-inapp-scripts/setup.nuixscript/inapp_script.rb
 
             @settings_inputs[identifier] = 'value'
         end
