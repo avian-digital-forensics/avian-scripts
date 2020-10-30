@@ -9,17 +9,17 @@ module TagExchangeEmailsWithDuplicates
         timer = Timing::Timer.new
         timer.start('total')
 
-        archived_prefix = settings_hash['archived_prefix']
-        archived_tag = settings_hash['archived_tag']
-        archived_has_duplicate_tag = settings_hash['archived_has_duplicate_tag']
-        archived_missing_duplicate_tag = settings_hash['archived_missing_duplicate_tag']
-        has_missing_attachments_tag = settings_hash['has_missing_attachments_tag']
-        exclude_archived_items_with_duplicates = settings_hash['exclude_archived_items_with_duplicates']
+        archived_prefix = settings_hash[:archived_prefix]
+        archived_tag = settings_hash[:archived_tag]
+        archived_has_duplicate_tag = settings_hash[:archived_has_duplicate_tag]
+        archived_missing_duplicate_tag = settings_hash[:archived_missing_duplicate_tag]
+        has_missing_attachments_tag = settings_hash[:has_missing_attachments_tag]
+        exclude_archived_items_with_duplicates = settings_hash[:exclude_archived_items_with_duplicates]
 
         num_without_duplicate, num_missing_attachments = TagExchangeEmailsWithDuplicates::tag_exchange_emails_with_duplicates(
-                current_case,
-                progress_dialog,
-                script.timer,
+                nuix_case,
+                progress_handler,
+                timer,
                 utilities,
                 archived_prefix,
                 archived_tag,
