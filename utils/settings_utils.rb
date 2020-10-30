@@ -77,18 +77,14 @@ module SettingsUtils
 
     def load_script_settings(main_directory, script_name)
         settings_file = inapp_script_settings_path(main_directory, script_name)
-<<<<<<< HEAD
-        file_contents = File.read(settings_file)
-        settings = YAML.load(file_contents)
+        settings = YAML.load_file(settings_file)
         if settings
             return settings
         else
             return {}
         end
-=======
 
         settings = YAML.load_file(settings_file)
->>>>>>> qc-cull3
     end
 
     def save_script_settings(main_directory, script_name, yaml_hash)
