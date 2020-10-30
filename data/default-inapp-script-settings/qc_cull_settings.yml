@@ -1,4 +1,6 @@
 ---
+run_only_on_selected_items: false
+scoping_query: ''
 report_destination: 
 num_descendants_metadata_key: NumberOfDescendants
 qc_search_and_tag_file: 
