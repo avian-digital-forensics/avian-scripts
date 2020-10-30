@@ -130,4 +130,11 @@ module Utils
         end
         images_exported
     end
+
+    # Combines all given search queries with ANDs.
+    # Params:
+    # +queries+:: Arbitrarily many queries or arrays of queries to be combined.
+    def self.join_queries(*queries)
+        queries.flatten.map { |query| query == '' ? nil : "(#{query})" }.reject(&:nil?).join(' AND ')
+    end
 end

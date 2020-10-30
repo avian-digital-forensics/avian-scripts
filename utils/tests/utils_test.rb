@@ -21,4 +21,9 @@ class TestUtils < Test::Unit::TestCase
         array1 = [1,2,3,4]
         array2 = [5,6,7,8]
         assert(Utils::sets_disjoint?(array1, array2))
+    end
+
+    def test_join_queries
+        assert(Utils::join_queries(['a', 'b', '', 'c']) == '(a) AND (b) AND (c)')
+    end
 end
