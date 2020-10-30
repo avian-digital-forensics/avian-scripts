@@ -34,7 +34,6 @@ By assigning custom metadata to the emails from Exhange where a duplicate in the
 Tags all emails starting with a specified text string as being exchange server emails.
 Then gives all these emails a custom metadata field saying whether there is another email with the same ID among the non-exchange server emails.
 
-The tags and custom metadata fields are customizable through the GUI.
 ### Settings
 Settings in *italics* are optional.
 * :main_directory - the path to the Avian scripts main directory.
@@ -44,3 +43,22 @@ Settings in *italics* are optional.
 * :archived_missing_duplicate_tag - all archived emails without duplicates will receive this tag.
 * :has_missing_attachments_tag - all archived emails with children but no duplicate receive this tag.
 * :exclude_archived_items_with_duplicates - all archived emails with duplicates will be excluded if this is set to true.
+
+## QC and Culling
+key: 'qc_cull'
+
+Automatically performs many of the processes involved in quality control.
+
+1. Number of Descendants. Runs the script [NumberOfDescendants](#number-of-descendants) on the selected items.
+This gives items a custom metadata field telling how many the descendants it has.
+This information can be used in later steps.
+2. Search and Tag. Runs NUIX' in-built search and tag functionality.
+3. Culling. Excludes items with tags beginning with a specific prefixes.
+4. Report. Writes some of the results of the above steps to an .rtf file.
+
+### Settings
+Settings in *italics* are optional.
+* :main_directory - the path to the Avian scripts main directory.
+* :num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
+* :report_path - where to place the finished report.
+* *:scoping_query* - only runs for items matching this query.
