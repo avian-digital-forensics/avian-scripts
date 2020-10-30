@@ -20,14 +20,6 @@ require File.join(main_directory,'utils','timer')
 require File.join(main_directory,'utils','utils')
 # Save and load script settings.
 require File.join(main_directory,'utils','settings_utils')
-# Number of descendants.
-require File.join(main_directory,'avian-inapp-scripts','number-of-descendants.nuixscript','number_of_descendants')
-# Search and tag.
-require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','search_and_tag')
-# Report.
-require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','report')
-# Culling.
-require File.join(main_directory,'avian-inapp-scripts','qc-cull.nuixscript','culling')
 
 # Load saved settings.
 script_settings = SettingsUtils::load_script_settings(main_directory,'qc_cull')
@@ -59,16 +51,15 @@ script.dialog_append_open_file_chooser('main_tab', 'culling_search_and_tag_file'
 
 # Add information tab.
 script.dialog_add_tab('information', 'Info')
-script.dialog_append_text_field('information', 'project_name', 'Project name',
+script.dialog_append_text_field('information', 'info_project_name', 'Project name',
     'The name of the project. Used when generating the report.')
-script.dialog_append_text_field('information', 'collection_number', 'Collection number',
+script.dialog_append_text_field('information', 'info_collection_number', 'Collection number',
     'The collection number. Used when generating the report.')
-script.dialog_append_text_field('information', 'requested_by', 'Ingestion requested by',
+script.dialog_append_text_field('information', 'info_requested_by', 'Ingestion requested by',
     'Who requested the ingestion. Used when generating the report.')
-script.dialog_append_text_field('information', 'ingestion_performed_by', 'Ingestion performed by',
+script.dialog_append_text_field('information', 'info_ingestion_performed_by', 'Ingestion performed by',
     'Who performed the ingestion. Used when generating the report.')
-
-script.dialog_append_text_field('information', 'qc_performed_by', 'QC performed by',
+script.dialog_append_text_field('information', 'info_qc_performed_by', 'QC performed by',
     'Who performed the qc. Used when generating the report.')
 
 # Add exclusion tab.
@@ -112,14 +103,16 @@ end
 script.run do |progress_dialog|
   timer = script.timer
 
+  settings_hash = {}
   run_only_on_selected_items = script.settings['run_only_on_selected_items']
   scoping_query = script.settings['scoping_query']
 
-  report_path = script.settings['report_destination']
+  settings_hash[:report_path] = script.settings['report_destination']
 
   # This next part takes the information the user inputted and updates the stored settings so the input will be remembered.
-  num_descendants_metadata_key = script.settings['num_descendants_metadata_key']
+  settings_hash[:num_descendants_metadata_key] = script.settings['num_descendants_metadata_key']
 
+  # Create hash of exclusion tag prefixes and exclusion reasons.
   exclude_tag_prefixes = {}
   for k in 1..exclusion_prefix_num
     prefix = script.settings["exclusion_prefix_#{k}"]
@@ -131,7 +124,9 @@ script.run do |progress_dialog|
       exclude_tag_prefixes[prefix] = reason
     end
   end
+  settings_hash[:exclude_tag_prefixes] = exclude_tag_prefixes
 
+  # Find all search and tag file paths.
   search_and_tag_files = []
   if script.settings['qc_search_and_tag_file'] != ''
     search_and_tag_files << script.settings['qc_search_and_tag_file']
@@ -139,42 +134,24 @@ script.run do |progress_dialog|
   if script.settings['culling_search_and_tag_file'] != ''
     search_and_tag_files << script.settings['culling_search_and_tag_file']
   end
-
-  bulk_annotater = utilities.get_bulk_annotater
+  settings_hash[:search_and_tag_files] = search_and_tag_files
   
-  
+  # Add a selected items tag to the scoping query if appropriate.
   if run_only_on_selected_items
     selected_item_tag = script.create_temporary_tag('SELECTEDITEMS', current_selected_items, 'selected items', progress_dialog)
     scoping_query = Utils::join_queries(scoping_query, "tag:\"#{selected_item_tag}\"")
   end
   items = current_case.search(scoping_query)
 
-  # The actual QC process starts here.
-
-  # Number of Descendants.
-  NumberOfDescendants::number_of_descendants(current_case, progress_dialog, timer, items, num_descendants_metadata_key, bulk_annotater)
-
-  # Search and Tag. Both QC and culling.
-  # Skipped if no .json file is specified.
-  if search_and_tag_files.any?
-    QCCull::search_and_tag(current_case,progress_dialog,timer,search_and_tag_files, scoping_query)
-  else
-    progress_dialog.log_message('Skipping search and tag since no files were selected.')
+  # Create a hash with information for the report.
+  report_info_hash = {}
+  for key,value in script.settings
+    if key.start_with?('info_')
+      report_info_hash[key[5..-1]] = value
+    end
   end
-
-  # Culling.
-  if exclude_tag_prefixes.empty?
-    progress_dialog.log_message('Skipping exclude because no exclude tag prefixes were specified.')
-  else
-    QCCull::exclude_items(current_case, scoping_query, exclude_tag_prefixes, progress_dialog, timer, utilities)
-  end
-
-  # Report.
-  progress_dialog.set_main_status_and_log_it('Generating report...')
-  # Find report template.
-  report_template_path = File.join(main_directory,'data','templates','qc_report_template.rtf')
-  # Generate report.
-  QCCull::generate_report(current_case, report_template_path, report_path, script.settings, utilities)
+  QCCull::qc_cull(main_directory, current_case, utilities, progress_dialog, timer, scoping_query, settings_hash, report_info_hash)
+  
 
   # No script finished message.
   ''

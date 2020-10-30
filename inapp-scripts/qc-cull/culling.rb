@@ -44,4 +44,3 @@ module QCCull
     timer.stop('exclude_items')
   end
 end
-

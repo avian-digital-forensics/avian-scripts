@@ -23,8 +23,8 @@ exclusion_prefix_8: ''
 exclusion_reason_8: ''
 exclusion_prefix_9: ''
 exclusion_reason_9: ''
-project_name: 
-collection_number: 
-requested_by: 
-ingestion_performed_by: 
-qc_performed_by: 
+info_project_name: 
+info_collection_number: 
+info_requested_by: 
+info_ingestion_performed_by: 
+info_qc_performed_by: 
