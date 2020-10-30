@@ -96,4 +96,11 @@ module Utils
         item_utility = utilities.item_utility
         item_utility.deduplicate(nuix_case.search_unsorted(search)).size.to_s
     end
+
+    # Combines all given search queries with ANDs.
+    # Params:
+    # +queries+:: Arbitrarily many queries or arrays of queries to be combined.
+    def self.join_queries(*queries)
+        queries.flatten.map { |query| query == '' ? nil : "(#{query})" }.reject(&:nil?).join(' AND ')
+    end
 end
