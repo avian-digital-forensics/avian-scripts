@@ -21,7 +21,7 @@ module QCCull
   def update_report(result_hash, report_file_path)
     report_text = File.read(report_file_path)
     for field,value in result_hash
-      report_text.gsub!(field,value)
+      report_text.gsub!(field,value.to_s)
     end
     
     File.open(report_file_path, 'w') do |file|
