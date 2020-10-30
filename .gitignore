@@ -2,6 +2,7 @@ data/*
 !data/default_*
 !data/default-*
 !data/templates/
+!data/misc/
 
 # This file is generated for each user from a file in utils.
 wss_caller.rb
