@@ -1,0 +1,5 @@
+---
+  run_only_on_selected_items: false
+  scoping_query: ''
+  non_weird_character_codes: '195,196,216,229,230,248'
+  tag_name: NonASCIIName
