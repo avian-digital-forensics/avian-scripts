@@ -24,6 +24,6 @@ module TagWeirdCharacters
         timer.stop("tag_items")
         
         
-        "Script finished. Found #{tag_items.size.to_s} items with weird characters in name."
+        "Found #{tag_items.size.to_s} items with weird characters in name."
     end
 end
