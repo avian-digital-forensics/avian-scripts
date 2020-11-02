@@ -5,7 +5,7 @@ module ConnectedAddresses
         # Initializes the Recipient with an address and all counters set to 0.
         def initialize(address)
             @address = address
-            keys = ["receive_tos", "receive_ccs", "receive_bccs", "send_tos", "send_ccs", "send_bccs"]
+            keys = ['receive_tos', 'receive_ccs', 'receive_bccs', 'send_tos', 'send_ccs', 'send_bccs']
             @values = Hash[keys.collect{ |item| [item, 0] }]
         end
         
@@ -27,10 +27,10 @@ module ConnectedAddresses
         
         # Creates a string in human readable format with all information about this recipient.
         def to_s(delimiter)
-            return @address + delimiter + 
-                    @values["receive_tos"].to_s + delimiter + @values["receive_ccs"].to_s + delimiter + @values["receive_bccs"].to_s + delimiter + total_with_prefix("receive_").to_s + delimiter +
-                    @values["send_tos"].to_s + delimiter + @values["send_ccs"].to_s + delimiter + @values["send_bccs"].to_s + delimiter + total_with_prefix("send_").to_s + delimiter +
-                    total_with_prefix("").to_s
+            return [@address, 
+                    @values['receive_tos'].to_s, @values['receive_ccs'].to_s, @values['receive_bccs'].to_s, total_with_prefix('receive_').to_s,
+                    @values['send_tos'].to_s, @values['send_ccs'].to_s, @values['send_bccs'].to_s, total_with_prefix('send_').to_s,
+                    total_with_prefix('').to_s].join(delimiter)
         end
     end
 end

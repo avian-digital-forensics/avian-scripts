@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'recipient')
+require_relative 'recipient'
 
 module ConnectedAddresses
     # Represents all addresses that have communicated with the primary address.
