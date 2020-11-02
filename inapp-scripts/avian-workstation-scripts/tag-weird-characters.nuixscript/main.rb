@@ -60,7 +60,6 @@ script.run do |progress_dialog|
 
   # Get an array of the individual accepted characters.
   accepted_char_codes = script.settings['non_weird_character_codes'].split(',').map(&:to_i)
-  puts('torsk: ' + accepted_char_codes.to_s)
   # If the tag name doesn't already start with 'Avian|' prepend it.
   tag_name = script.settings['tag_name'].start_with?('Avian|') ? script.settings['tag_name'] : 'Avian|' + script.settings['tag_name']
   
