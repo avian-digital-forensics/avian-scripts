@@ -1,6 +1,8 @@
 require_relative 'connections'
 
 module ConnectedAddresses
+    extend self
+
     def connected_addresses(nuix_case, progress_handler, timer, primary_address, file_path, delimiter)
         # The output path.
         unless file_path.end_with?('.csv')
@@ -51,7 +53,7 @@ module ConnectedAddresses
       
         timer.start('write_results')
         progress_handler.set_main_status_and_log_it('Writing results to file...')
-        File.open(file_path, 'w') do |file
+        File.open(file_path, 'w') do |file|
           # Add header.
           headers = ['address', 'receive_to', 'receive_cc', 'receive_bcc', 'receive_total', 'send_to', 'send_cc', 'send_bcc', 'send_total', 'total']
           file.puts(headers.join(delimiter))
