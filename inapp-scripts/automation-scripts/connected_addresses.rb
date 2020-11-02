@@ -10,13 +10,13 @@ module ConnectedAddresses
         timer.start('total')
 
         # The address whose recipients are wanted.
-        address = settings_hash['primary_address']
+        address = settings_hash[:primary_address]
       
         # The output path.
-        file_path = settings_hash['output_path']
+        file_path = settings_hash[:output_path]
       
         # The delimiter used in the CSV.
-        delimiter = settings_hash['delimiter']
+        delimiter = settings_hash[:delimiter]
         
         ConnectedAddresses::connected_addresses(nuix_case, progress_handler, timer, file_path, delimiter)
 
