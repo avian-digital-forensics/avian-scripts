@@ -72,6 +72,5 @@ script.run do |progress_dialog|
       delimiter = script.settings['custom_delimiter']
   end
   
-  puts('delimiter: ' + delimiter)
   ConnectedAddresses::connected_addresses(current_case, progress_dialog, timer, address, file_path, delimiter)
 end

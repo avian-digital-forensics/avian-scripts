@@ -143,8 +143,6 @@ module Script
                     elsif type == 'radio_button'
                         # Radio buttons are returned by the dialog in a weird way, so they require special treatment.
                         options_hash = @radio_button_groups[key]
-                        puts(values)
-                        puts(options_hash)
                         @settings[key] = NXUtils::radio_group_value(values, options_hash)
                     end
                 end
@@ -372,7 +370,7 @@ module Script
                 raise 'No such tab "' + tab_identifier + '"'
             end
             tab.append_radio_button_group(label, identifier, options_hash)
-            puts('helleflynder: ' + value)
+            
             if options_hash.has_value?(value)
                 tab.set_checked(value, true) 
             end
