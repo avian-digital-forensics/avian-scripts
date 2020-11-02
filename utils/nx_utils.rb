@@ -35,12 +35,12 @@ module NXUtils
     # +dialog_values+:: The value hash returned by the dialog.
     # +radio_options+:: A list of the possible radio buttons.
     def radio_group_value(dialog_values, radio_options)
-        selected_value = radio_options.select{ |key,value| dialog_values[key] }.first
+        selected_value = radio_options.values.select{ |value| dialog_values[value] }.first
         if selected_value == nil
             return ''
         else
             # First returns a array [key, value]. Since we are interested in the value:
-            return selected_value[1]
+            return selected_value
         end
     end
 
