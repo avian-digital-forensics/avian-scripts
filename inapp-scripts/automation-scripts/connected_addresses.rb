@@ -16,11 +16,12 @@ module ConnectedAddresses
         file_path = settings_hash[:output_path]
       
         # The delimiter used in the CSV.
-        delimiter = settings_hash[:delimiter]
+        # Default to ','.
+        delimiter = settings_hash.key?(:delimiter) ? settings_hash[:delimiter] : ','
         
-        ConnectedAddresses::connected_addresses(nuix_case, progress_handler, timer, file_path, delimiter)
+        script_finished_message = ConnectedAddresses::connected_addresses(nuix_case, progress_handler, timer, file_path, delimiter)
 
-        progress_handler.log_message("Script finished.")
+        progress_handler.log_message("Script finished. #{script_finished_message}")
     
         timer.stop('total')
     end
