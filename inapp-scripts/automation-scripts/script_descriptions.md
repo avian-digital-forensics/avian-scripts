@@ -1,5 +1,5 @@
 ## Connected Addresses
-key: 'connected_addresses'
+Key: 'connected_addresses'
 
 The scripts creates a csv file with information about what addresses a specific address has sent messages to or received messages from.
 
@@ -80,8 +80,21 @@ Settings in *italics* are optional.
 * :has_missing_attachments_tag - all archived emails with children but no duplicate receive this tag.
 * :exclude_archived_items_with_duplicates - all archived emails with duplicates will be excluded if this is set to true.
 
+## Tag Weird Characters
+Key: 'tag_weird_characters'
+
+Tags all items with names that include characters not in standard 7-bit ascii and specifically accepted.
+
+### Settings
+Settings in *italics* are optional.
+* :main_directory - the path to the Avian scripts main directory.
+* :tag_name - the name of the tag given.
+* *:accepted_character_codes* - the unicode character codes of the accepted items, given as a comma seperated list of numbers.
+Defaults to not accepting any characters.
+* *:scoping_query* - only runs on items matching this query.
+
 ## QC and Culling
-key: 'qc_cull'
+Key: 'qc_cull'
 
 Automatically performs many of the processes involved in quality control.
 
