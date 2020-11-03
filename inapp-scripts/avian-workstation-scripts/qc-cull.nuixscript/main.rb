@@ -21,6 +21,8 @@ require File.join(main_directory,'utils','utils')
 # Save and load script settings.
 require File.join(main_directory,'utils','settings_utils')
 
+require File.join(main_directory,'inapp-scripts','qc-cull','main')
+
 # Load saved settings.
 script_settings = SettingsUtils::load_script_settings(main_directory,'qc_cull')
 
