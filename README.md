@@ -11,7 +11,7 @@ https://github.com/avian-digital-forensics/avian-scripts/releases/latest
 
 3. In Nuix, open the 'Scripts' menu and select 'Open Scripts Directory'.
 
-4. From the Avian Scripts directory you just unpacked, enter the 'inapp-scripts' subdirectory and copy the `avian-workstation-scripts` sub-directory into the directory Nuix just opened.
+4. From the Avian Scripts directory you just unpacked, enter the `inapp-scripts` subdirectory and copy the `avian-workstation-scripts` sub-directory into the directory Nuix just opened.
 Not the entire directory, just the one sub-directory.
 ![alt text](resources/readme-images/inapp_script_directory.png "Image showing inapp script directory")
 
