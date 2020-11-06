@@ -1,3 +1,4 @@
 ---
-  run_on_unselected_items: true
+  run_only_on_selected_items: true
+  scoping_query: ''
   

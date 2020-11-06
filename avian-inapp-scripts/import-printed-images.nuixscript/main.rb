@@ -22,8 +22,11 @@ require File.join(script.main_directory,'utils','settings_utils')
 # The settings_dialog can be set up manually, but the input to these fields will not be saved automatically.
 # To add default values, create a default settings file.
 script.dialog_add_tab('main_tab', 'Main')
-script.dialog_append_check_box('main_tab', 'run_on_unselected_items', 'Run on unselected items', 
-    'Whether to import printed images (if found) for all items or only those seleced.')
+script.dialog_append_check_box('main_tab', 'run_only_on_selected_items', 'Run only on selected items', 
+    'If this is checked, import images only for selected items.')
+
+script.dialog_append_text_field('main_tab', 'scoping_query', 'Scoping query',
+    'Only export the printed image of items matching this query.')
 
 # Checks the input before closing the dialog.
 script.dialog_validate_before_closing do |values|
@@ -40,12 +43,14 @@ script.run do |progress_dialog|
   data_dir = SettingsUtils.case_data_dir(script.main_directory, current_case.name, current_case.guid)
   printed_image_dir = File.join(data_dir, 'printed_images')
 
-  items = []
-  if script.settings['run_on_unselected_items']
-    items = current_case.search('')
-  else
-    items = current_selected_items
+  scoping_query = script.settings['scoping_query']
+  if script.settings['run_only_on_selected_items']
+    selected_item_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
+    scoping_query = Utils::join_queries(scoping_query, selected_items_tag)
   end
+
+  items = current_case.search(scoping_query)
+  
   num_imported_images = ImportPrintedImages::import_printed_images(items, printed_image_dir, progress_dialog, timer, utilities)
   
   "Imported a total of #{num_imported_images.to_s} printed images."
