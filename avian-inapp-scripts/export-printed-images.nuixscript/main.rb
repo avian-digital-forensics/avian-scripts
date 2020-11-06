@@ -19,8 +19,8 @@ require File.join(script.main_directory, 'avian-inapp-scripts', 'export-printed-
 # To add default values, create a default settings file.
 script.dialog_add_tab('main_tab', 'Main')
 
-script.dialog_append_check_box('main_tab', 'restrict_to_selected_items', 'Only run on selected items', 
-    'Whether to only export the printed images of the currently selected items.')
+script.dialog_append_check_box('main_tab', 'run_only_on_selected_items', 'Run only on selected items', 
+    'If this is checked, run the script only on selected items.')
 
 script.dialog_append_text_field('main_tab', 'scoping_query', 'Scoping query',
     'Only export the printed image of items matching this query.')
@@ -38,13 +38,13 @@ end
 # Display dialog. Receive input from user. Run script.
 script.run do |progress_dialog|
 
-  restrict_to_selected_items = script.settings['restrict_to_selected_items']
+  run_only_on_selected_items = script.settings['run_only_on_selected_items']
   scoping_query = script.settings['scoping_query']
 
   timer = script.timer
   
   scoping_query = scoping_query == '' ? 'has-printed-image:1' : "(#{scoping_query}) AND has-printed-image:1"
-  if restrict_to_selected_items
+  if run_only_on_selected_items
     selected_item_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
     scoping_query += " AND tag:\"#{selected_item_tag}\""
   end
