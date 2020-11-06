@@ -100,7 +100,7 @@ script.run do |progress_dialog|
 
     bulk_annotater = utilities.get_bulk_annotater
     if run_only_on_selected_items
-        selected_items_tag = script.create_temporary_tag('SelectedItems', current_selected_items, 'selected items', progress_dialog)
+        selected_items_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
         scoping_query = Utils::join_queries(scoping_query, selected_items_tag)
     end
 
