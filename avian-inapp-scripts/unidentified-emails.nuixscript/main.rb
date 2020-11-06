@@ -101,7 +101,7 @@ script.run do |progress_dialog|
     bulk_annotater = utilities.get_bulk_annotater
     if run_only_on_selected_items
         selected_items_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
-        scoping_query = Utils::join_queries(scoping_query, selected_items_tag)
+        scoping_query = Utils::join_queries(scoping_query, "tag:\"#{selected_items_tag}\"")
     end
 
     progress_dialog.set_main_status_and_log_it('Making preliminary search...')

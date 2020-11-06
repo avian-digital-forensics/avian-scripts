@@ -45,8 +45,8 @@ script.run do |progress_dialog|
   
   scoping_query = scoping_query == '' ? 'has-printed-image:1' : "(#{scoping_query}) AND has-printed-image:1"
   if run_only_on_selected_items
-    selected_item_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
-    scoping_query = Utils::join_queries(scoping_query, selected_items_tag)
+    selected_items_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
+    scoping_query = Utils::join_queries(scoping_query, "tag:\"#{selected_items_tag}\"")
   end
 
   images_exported = ExportPrintedImages::export_printed_images(script.main_directory, progress_dialog, timer, utilities, current_case, scoping_query)

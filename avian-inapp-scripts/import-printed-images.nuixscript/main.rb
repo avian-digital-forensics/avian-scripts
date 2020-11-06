@@ -45,12 +45,12 @@ script.run do |progress_dialog|
 
   scoping_query = script.settings['scoping_query']
   if script.settings['run_only_on_selected_items']
-    selected_item_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
-    scoping_query = Utils::join_queries(scoping_query, selected_items_tag)
+    selected_items_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
+    scoping_query = Utils::join_queries(scoping_query, "tag:\"#{selected_items_tag}\"")
   end
 
   items = current_case.search(scoping_query)
-  
+
   num_imported_images = ImportPrintedImages::import_printed_images(items, printed_image_dir, progress_dialog, timer, utilities)
   
   "Imported a total of #{num_imported_images.to_s} printed images."

@@ -166,7 +166,7 @@ module FixUnidentifiedEmails
     # +address_regexps+:: Regexps for possible address formats. First capture group should be the personal part and second is the address part. The address part should never be empty.
     # +email_mime_type+:: The MIME-type to give to those items that are not already of kind email.
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
-    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, email_mime_type, export_printed_images, fixed_item_tag, &address_splitter)
+    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, email_mime_type, fixed_item_tag, &address_splitter)
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         progress_dialog.set_main_progress(0,items.size)
         items_processed = 0
