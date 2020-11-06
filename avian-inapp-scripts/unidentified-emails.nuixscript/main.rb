@@ -18,6 +18,9 @@ script.dialog_add_tab('find_tab', 'Find Unidentified Emails')
 script.dialog_append_check_box('find_tab', 'find_unselected_items', 'Run on unselected items',
         'Whether to run the script only on selected items, or to run the script on the result of a preliminary search.')
 
+script.dialog_append_text_field('find_tab', 'scoping_query', 'Scoping query', 
+        'Run only on items matching this Nuix search query.')
+
 script.dialog_append_text_field('find_tab', 'allowed_start_offset', 'Allowed start offset', 
         'Number of non-whitespace characters allowed before "from".')
 
@@ -27,9 +30,6 @@ script.dialog_append_text_field('find_tab', 'start_area_line_num', 'Start area s
 script.dialog_append_text_field('find_tab', 'email_tag', 'Email tag', 
         'The tag given to all found emails. "Avian|" will automatically be added as prefix.')
 
-script.dialog_append_text_field('find_tab', 'scoping_query', 'Scoping query', 
-        'Run only on items matching this Nuix search query.')
-
 # Add fix tab.
 script.dialog_add_tab('fix_tab', 'Fix Unidentified Emails')
 
@@ -38,9 +38,6 @@ script.dialog_append_check_box('fix_tab', 'fix_unselected_items', 'Run on unsele
 
 script.dialog_append_check_box('fix_tab', 'fix_rfc_items', 'Run on RFC mails',
         'Whether to run the script on all (selected) RFC mails or only items identified by the Find Unidentified Emails script.')
-        
-script.dialog_append_check_box('fix_tab', 'export_printed_images', 'Export printed images',
-        'Whether to export printed images for items whose types change. This can then be used by a WSS to keep the images on reload.')
 
 script.dialog_append_text_field('fix_tab', 'fixed_item_tag', 'Fixed email tag', 
         'The tag given to all fixed emails. "Avian|" will automatically be added as prefix.')
@@ -100,7 +97,6 @@ script.run do |progress_dialog|
     fix_unselected_items = script.settings['fix_unselected_items']
     fix_rfc_items = script.settings['fix_rfc_items']
     email_mime_type = 'message/rfc822'
-    export_printed_images = script.settings['export_printed_images']
     fixed_item_tag = script.to_script_tag(script.settings['fixed_item_tag'])
 
     bulk_annotater = utilities.get_bulk_annotater
@@ -162,7 +158,7 @@ script.run do |progress_dialog|
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
     timer.start('fix_unidentified_emails')
-    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items.to_a, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, export_printed_images, fixed_item_tag) { |string| string.split(/[,;]\s/).map(&:strip) }
+    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items.to_a, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, fixed_item_tag) { |string| string.split(/[,;]\s/).map(&:strip) }
     timer.stop('fix_unidentified_emails')
 
     # No script finished message.

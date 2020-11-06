@@ -233,15 +233,6 @@ module FixUnidentifiedEmails
         File.open(data_path, 'w') { |file| file.write(item_communications.to_yaml) }
         timer.stop('save_communications')
 
-        # Export printed images.
-        timer.start('export_printed_images')
-        if export_printed_images
-            printed_image_dir = File.join(case_data_dir, 'unidentified_emails_printed_images')
-            items_for_export = items.select { |item| item_communications[item.guid][1] != item.type.name }
-            Utils::export_printed_images(items_for_export, printed_image_dir, utilities, progress_dialog)
-        end
-        timer.stop('export_printed_images')
-
         # Add tag to fixed items.
         timer.start('add_tag_to_fixed_items')
         progress_dialog.set_main_status_and_log_it('Adding tag to fixed items...')
