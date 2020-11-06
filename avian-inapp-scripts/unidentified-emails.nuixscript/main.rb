@@ -12,14 +12,16 @@ require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emai
 
 require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails.nuixscript','fix_unidentified_emails')
 
+require File.join(script.main_directory,'utils','utils')
+
 # Add find tab.
 script.dialog_add_tab('find_tab', 'Find Unidentified Emails')
 
-script.dialog_append_check_box('find_tab', 'find_unselected_items', 'Run on unselected items',
-        'Whether to run the script only on selected items, or to run the script on the result of a preliminary search.')
+script.dialog_append_check_box('find_tab', 'run_only_on_selected_items', 'Run only on selected items',
+        'If this is checked, run the script only on selected items. This affects both find and fix.')
 
 script.dialog_append_text_field('find_tab', 'scoping_query', 'Scoping query', 
-        'Run only on items matching this Nuix search query.')
+        'Run only on items matching this Nuix search query. Affects both find and fix.')
 
 script.dialog_append_text_field('find_tab', 'allowed_start_offset', 'Allowed start offset', 
         'Number of non-whitespace characters allowed before "from".')
@@ -32,9 +34,6 @@ script.dialog_append_text_field('find_tab', 'email_tag', 'Email tag',
 
 # Add fix tab.
 script.dialog_add_tab('fix_tab', 'Fix Unidentified Emails')
-
-script.dialog_append_check_box('fix_tab', 'fix_unselected_items', 'Run on unselected items',
-        'Whether to run the script only on selected items, or to ignore selection.')
 
 script.dialog_append_check_box('fix_tab', 'fix_rfc_items', 'Run on RFC mails',
         'Whether to run the script on all (selected) RFC mails or only items identified by the Find Unidentified Emails script.')
@@ -88,11 +87,11 @@ script.run do |progress_dialog|
 
     timer = script.timer
     
-    find_unselected_items = script.settings['find_unselected_items']
+    run_only_on_selected_items = script.settings['run_only_on_selected_items']
+    scoping_query = script.settings['scoping_query']
     allowed_start_offset = Integer(script.settings['allowed_start_offset'])
     start_area_line_num = Integer(script.settings['start_area_line_num'])
     email_tag = script.settings['email_tag']
-    scoping_query = script.settings['scoping_query']
 
     fix_unselected_items = script.settings['fix_unselected_items']
     fix_rfc_items = script.settings['fix_rfc_items']
@@ -100,15 +99,13 @@ script.run do |progress_dialog|
     fixed_item_tag = script.to_script_tag(script.settings['fixed_item_tag'])
 
     bulk_annotater = utilities.get_bulk_annotater
-    selected_items_tag = script.create_temporary_tag('SelectedItems', current_selected_items, 'selected items', progress_dialog)
-    # Find which items to run on and tags them.
-    if find_unselected_items
-        progress_dialog.set_main_status_and_log_it('Making preliminary search...')
-        items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer, scoping_query)
-    else
-        progress_dialog.log_message('Using selection. Skipping preliminary search.')
-        items = current_case.search("#{scoping_query} AND tag:#{selected_items_tag}")
+    if run_only_on_selected_items
+        selected_items_tag = script.create_temporary_tag('SelectedItems', current_selected_items, 'selected items', progress_dialog)
+        scoping_query = Utils::join_queries(scoping_query, selected_items_tag)
     end
+
+    progress_dialog.set_main_status_and_log_it('Making preliminary search...')
+    items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer, scoping_query)
     
     num_emails = FindUnidentifiedEmails::find_unidentified_emails(current_case, items, progress_dialog, timer, allowed_start_offset, start_area_line_num, email_tag, bulk_annotater)
     
@@ -135,22 +132,12 @@ script.run do |progress_dialog|
     # Create set of items to be processed.
     items = Set[]
     rfc_tag = script.to_script_tag('RFC822')
-    if fix_unselected_items
-        # Add items tagged by find_unidentified_emails.
-        items.merge(current_case.search("tag:\"Avian|#{email_tag}\""))
-        if fix_rfc_items
-            rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
-            script.create_temporary_tag(rfc_tag, rfc_items, 'RFC822 items', progress_dialog)
-            items.merge(current_case.search('tag:"' + rfc_tag + '"'))
-        end
-    else
-        # Add selected items tagged by find_unidentified_emails.
-        items.merge(current_case.search("tag:\"Avian|#{email_tag}\" AND tag:\"#{selected_items_tag}\""))
-        if fix_rfc_items
-            rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
-            script.create_temporary_tag(rfc_tag, rfc_items, 'RFC822 items', progress_dialog)
-            items.merge(current_case.search("tag:\"#{rfc_tag}\" AND tag:\"#{selected_items_tag}\""))
-        end
+    items.merge(current_case.search("tag:\"Avian|#{email_tag}\""))
+    if fix_rfc_items
+        # Find and tag rfc mails.
+        rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case, scoping_query)
+        script.create_temporary_tag(rfc_tag, rfc_items, 'RFC822 items', progress_dialog)
+        items.merge(rfc_items)
     end
 
     # Find the case data directory.

@@ -43,8 +43,9 @@ module FixUnidentifiedEmails
         end
     end
 
-    def find_rfc_mails(nuix_case)
-        return nuix_case.search('mime-type:message/rfc822')
+    def find_rfc_mails(nuix_case, scoping_query)
+        query = Utils::join_queries('mime-type:message/rfc822', scoping_query)
+        return nuix_case.search(query)
     end
 
     # Cleans up the field. Removes surrounding quotation marks and whitespace.
