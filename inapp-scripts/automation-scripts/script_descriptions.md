@@ -83,14 +83,15 @@ Settings in *italics* are optional.
 ## Tag Weird Characters
 Key: 'tag_weird_characters'
 
-Tags all items with names that include characters not in standard 7-bit ascii and specifically accepted.
+Tags all items with names that include 'weird' characters.
+A 'weird' character is any character that is not in standard 7-bit ascii and is not specifically accepted in the settings.
 
 ### Settings
 Settings in *italics* are optional.
 * :main_directory - the path to the Avian scripts main directory.
 * :tag_name - the name of the tag given.
 * *:accepted_character_codes* - the unicode character codes of the accepted items, given as a comma seperated list of numbers.
-Defaults to not accepting any characters.
+Defaults to not accepting any characters (other than standard 7-bit ascii).
 * *:scoping_query* - only runs on items matching this query.
 
 ## QC and Culling
