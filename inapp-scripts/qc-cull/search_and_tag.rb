@@ -1,7 +1,7 @@
 require 'java'
 
 # Allow catching this specific exception.
-include_class 'java.lang.IllegalStateException'
+java_import 'java.lang.IllegalStateException'
 
 module QCCull
     extend self
