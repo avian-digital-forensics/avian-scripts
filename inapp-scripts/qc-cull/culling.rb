@@ -1,3 +1,5 @@
+require_relative File.join('..', '..', 'utils', 'utils')
+
 module QCCull
   extend self
 
@@ -31,7 +33,7 @@ module QCCull
         timer.stop('find_exclude_items')
       else
         # Add a clause to ensure that only selected items will match the search.
-        exclude_search = "#{scoping_query} AND " + exclude_search 
+        exclude_search = Utils::join_queries(scoping_query, exclude_search)
         # Perform the search.
         exclude_items = nuix_case.search(exclude_search)
         timer.stop('find_exclude_items')
