@@ -1,6 +1,7 @@
-# This file is placed in the setup.nuixscript directory because it must be in the avian-inapp-scripts yet should show up in the script list.
+# This file is placed in the setup.nuixscript directory because it must be in the avian-inapp-scripts yet should not show up in the script list.
 
 require 'yaml'
+
 module Script
     extend self
 
@@ -344,15 +345,17 @@ module Script
             tab.set_text(identifier, value)
         end
         
-        def dialog_append_date_picker(tab_identifier, identifier, label)
+        def dialog_append_date_picker(tab_identifier, identifier, label, tooltip)
             value = @settings[identifier]
 
             tab = @settings_dialog.get_tab(tab_identifier)
             unless tab
                 raise 'No such tab "' + tab_identifier + '"'
             end
-            tab.dialog_append_date_picker(identifier, label)
+            tab.append_date_picker(identifier, label)
 
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
             @settings_inputs[identifier] = 'value'
         end
 
