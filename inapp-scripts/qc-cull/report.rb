@@ -38,27 +38,6 @@ module QCCull
     end
   end
 
-  # Adds to the result_hash the number of excluded items.
-  # Params:
-  # +nuix_case+:: The case in which to search.
-  # +result_hash+:: The hash to add the results to.
-  # +utilities+:: A reference to the Nuix utilities object.
-  def report_culling(nuix_case, result_hash, utilities)
-    result_hash['FIELD_num_excluded_items'] = nuix_case.count('has-exclusion:1').to_s
-    exclusions = nuix_case.all_exclusions
-
-    # Change newline settings.
-    text = '\pard\sa200\sl240\slmult1'
-    for exclusion in exclusions
-      text += "#{exclusion}: #{nuix_case.count("exclusion:\"#{exclusion}\"")}#{RTFUtils::newline}"
-    end
-
-    # Change newline settings back.
-    text += '\pard\sa200\sl276\slmult1'
-
-    result_hash['FIELD_exclusion_statistics'] = text
-  end
-
   # Converts a two layer hash to rtf.
   # The keys are the categories, the values are themselves hashes.
   # The subhashes contain fields and values.
@@ -95,7 +74,7 @@ module QCCull
   def report_item_types(nuix_case, result_hash, field_key, scoping_query='')
     type_hash = {}
     for type in nuix_case.item_types
-      query = scoping_query == '' ? "mime-type:#{type.name}" : "(#{scoping_query}) AND mime-type:#{type.name}"
+      query = Utils::join_query(scoping_query, "mime-type:#{type.name}")
       num_items = nuix_case.count(query)
       # Add line for this type if there are any items.
       if num_items > 0
@@ -121,21 +100,34 @@ module QCCull
   # +utilities+:: A reference to the Nuix utilities object.
   def create_result_hash(nuix_case, info_hash, utilities)
     result_hash = {}
-    # Add ingestion information to report.
+    # 1 Ingestion details.
     for key,info in info_hash
         result_hash["FIELD_#{key}"] = info
     end
     current_time = Time.now.strftime("%d/%m/%Y")
     result_hash['FIELD_qc_start_date'] = current_time
-    report_encrypted_items(nuix_case, result_hash, utilities)
 
+    # 2 Ingestion statistics.
+    report_item_types(nuix_case, result_hash, 'FIELD_ingestion_statistics')
+
+    # 3 Source validation.
+    report_item_types(nuix_case, result_hash, 'FIELD_source_file_statistics', 'flag:loose_file')
+
+    result_hash['FIELD_num_source_files_ingested'] = nuix_case.count('flag:loose_file')
+
+    # 4 Indexing issues.
+    ## 4.1 Encrypted files.
+    report_encrypted_items(nuix_case, result_hash, utilities)
+    ## 4.2 Items without text.
+    report_item_types(nuix_case, result_hash, 'FIELD_no_text_statistics', 'has-exclusion:0 AND tag:"Avian|QC|Unsupported|No text"')
+
+    # 5 OCR.
     result_hash['FIELD_num_ocr_items'] = nuix_case.count('tag:"Avian|QC|OCR"').to_s
 
-    report_culling(nuix_case, result_hash, utilities)
-
-    report_item_types(nuix_case, result_hash, 'FIELD_no_text', 'has-exclusion:0 AND tag:"Avian|QC|Unsupported|No text"')
-
-    report_item_types(nuix_case, result_hash, 'FIELD_ingestion_statistics')
+    # 6 Culling.
+    exclusion_reasons = nuix_case.all_exclusions
+    exclusion_hash = {'Excluded items' => Hash[exclusion_reasons.map { |reason| [reason, nuix_case.count("exclusion:\"#{reason}\"")] }]}
+    result_hash['FIELD_exclusion_statistics'] = report_two_layer_hash(exclusion_hash)
 
     return result_hash
   end
