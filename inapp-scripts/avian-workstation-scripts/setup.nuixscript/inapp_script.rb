@@ -343,6 +343,8 @@ module Script
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
             tab.set_text(identifier, value)
+            
+            @settings_inputs[identifier] = 'value'
         end
         
         # Appends a date picker to the specified tab.
@@ -363,6 +365,7 @@ module Script
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
             tab.set_text(identifier, value)
+            
             @settings_inputs[identifier] = 'value'
         end
 
