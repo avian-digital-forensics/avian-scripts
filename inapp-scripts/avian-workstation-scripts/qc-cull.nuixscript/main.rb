@@ -51,6 +51,10 @@ script.dialog_append_text_field('information', 'info_collection_number', 'Collec
     'The collection number. Used when generating the report.')
 script.dialog_append_text_field('information', 'info_requested_by', 'Ingestion requested by',
     'Who requested the ingestion. Used when generating the report.')
+script.dialog_append_text_field('information', 'info_ingestion_start_date', 'Ingestion started',
+    'When ingestion was started. Used when generating the report.')
+script.dialog_append_text_field('information', 'info_ingestion_end_date', 'Ingestion ended',
+    'When ingestion ended. Used when generating the report.')
 script.dialog_append_text_field('information', 'info_ingestion_performed_by', 'Ingestion performed by',
     'Who performed the ingestion. Used when generating the report.')
 script.dialog_append_text_field('information', 'info_qc_performed_by', 'QC performed by',
