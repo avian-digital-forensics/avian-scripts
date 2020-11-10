@@ -12,6 +12,7 @@ end
 main_directory = script.main_directory
 
 require 'fileutils'
+require 'json'
 # For GUI.
 require File.join(main_directory,'utils','nx_utils')
 # Timings.
@@ -51,9 +52,9 @@ script.dialog_append_text_field('information', 'info_collection_number', 'Collec
     'The collection number. Used when generating the report.')
 script.dialog_append_text_field('information', 'info_requested_by', 'Ingestion requested by',
     'Who requested the ingestion. Used when generating the report.')
-script.dialog_append_text_field('information', 'info_ingestion_start_date', 'Ingestion started',
-    'When ingestion was started. Used when generating the report.')
-script.dialog_append_text_field('information', 'info_ingestion_end_date', 'Ingestion ended',
+script.dialog_append_date_picker('information', 'info_ingestion_start_date', 'Ingestion started',
+    'When ingestion started. Used when generating the report.')
+script.dialog_append_date_picker('information', 'info_ingestion_end_date', 'Ingestion ended',
     'When ingestion ended. Used when generating the report.')
 script.dialog_append_text_field('information', 'info_ingestion_performed_by', 'Ingestion performed by',
     'Who performed the ingestion. Used when generating the report.')
@@ -86,13 +87,14 @@ script.run do |progress_dialog|
   settings_hash[:num_descendants_metadata_key] = script.settings['num_descendants_metadata_key']
 
   # Add search and tag file paths
-  qc_search_and_tag_path = File.join(main_directory, 'misc', 'qc', 'qc_search_and_tag.json')
-  culling_search_and_tag_path = File.join(main_directory, 'misc', 'qc', 'culling_search_and_tag.json')
+  qc_search_and_tag_path = File.join(main_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
+  culling_search_and_tag_path = File.join(main_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
   settings_hash[:search_and_tag_files] = [qc_search_and_tag_path, culling_search_and_tag_path]
 
   # Set up exclusion tag prefix hash.
-  exclusion_sets_path = File.join(main_directory, 'misc', 'qc', 'exclusion_sets.json')
-  settings_hash[:exclude_tag_prefixes] = JSON.parse(File.read(exclusion_sets_path))
+  exclusion_sets_path = File.join(main_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
+  exclusion_sets_file = File.read(exclusion_sets_path)
+  settings_hash[:exclude_tag_prefixes] = JSON.parse(exclusion_sets_file)
   
   # Add a selected items tag to the scoping query if appropriate.
   if run_only_on_selected_items
