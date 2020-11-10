@@ -345,6 +345,13 @@ module Script
             tab.set_text(identifier, value)
         end
         
+        # Appends a date picker to the specified tab.
+        # Settings given here will _not_ be saved to file.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the date picker.
+        # +identifier+:: The internal identifier for the date picker. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +tooltip+:: The tooltip that appears when the user hovers over the field with their mouse.
         def dialog_append_date_picker(tab_identifier, identifier, label, tooltip)
             value = @settings[identifier]
 
