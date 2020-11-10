@@ -367,7 +367,7 @@ module Script
                 raise 'No such tab "' + tab_identifier + '"'
             end
 
-            tab.append_date_picker(identifier, label, value.tr('/', ''))
+            tab.append_date_picker(identifier, label, value ? value.tr('/', '') : nil)
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
 
