@@ -11,6 +11,9 @@ module QCCull
   def update_report(result_hash, report_file_path)
     report_text = File.read(report_file_path)
     for field,value in result_hash
+      if !report_text.include?(field)
+        puts('Cannot find field ' + field)
+      end
       report_text.gsub!(field,value.to_s)
     end
     
