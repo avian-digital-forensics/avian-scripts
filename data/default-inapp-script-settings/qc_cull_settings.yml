@@ -28,3 +28,5 @@ info_collection_number:
 info_requested_by: 
 info_ingestion_performed_by: 
 info_qc_performed_by: 
+info_ingestion_start_date:
+info_ingestion_end_date:
