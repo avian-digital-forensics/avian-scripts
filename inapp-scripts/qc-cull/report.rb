@@ -107,7 +107,7 @@ module QCCull
     for key,info in info_hash
         result_hash["FIELD_#{key}"] = info
     end
-    current_time = Time.now.strftime("%d/%m/%Y")
+    current_time = Time.now.strftime("%Y/%m/%d")
     result_hash['FIELD_qc_start_date'] = current_time
 
     # 2 Ingestion statistics.
