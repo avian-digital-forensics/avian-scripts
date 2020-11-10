@@ -2,6 +2,8 @@
 
 require 'yaml'
 
+java_import 'java.text.SimpleDateFormat'
+
 module Script
     extend self
 
@@ -126,6 +128,8 @@ module Script
                         # Radio buttons are returned by the dialog in a weird way, so they require special treatment.
                         options_hash = @radio_button_groups[key]
                         settings[key] = NXUtils::radio_group_value(values, options_hash)
+                    elsif type == 'date'
+                        @settings[key] = java::text::SimpleDateFormat.new('yyyy/MM/dd').format(values[key])
                     end
                 end
                 result = @input_validater.call(settings)
@@ -145,6 +149,8 @@ module Script
                         # Radio buttons are returned by the dialog in a weird way, so they require special treatment.
                         options_hash = @radio_button_groups[key]
                         @settings[key] = NXUtils::radio_group_value(values, options_hash)
+                    elsif type == 'date'
+                        @settings[key] = java::text::SimpleDateFormat.new('yyyy/MM/dd').format(values[key])
                     end
                 end
                 # Save the inputted settings to file.
@@ -348,7 +354,6 @@ module Script
         end
         
         # Appends a date picker to the specified tab.
-        # Settings given here will _not_ be saved to file.
         # Params:
         # +tab_identifier+:: The identifier for the tab in which to add the date picker.
         # +identifier+:: The internal identifier for the date picker. This is the key to the setting.
@@ -361,12 +366,12 @@ module Script
             unless tab
                 raise 'No such tab "' + tab_identifier + '"'
             end
-            tab.append_date_picker(identifier, label)
+
+            tab.append_date_picker(identifier, label, value.tr('/', ''))
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
-            tab.set_text(identifier, value)
-            
-            @settings_inputs[identifier] = 'value'
+
+            @settings_inputs[identifier] = 'date'
         end
 
         # Appends a horizontal group of radio buttons to the specified tab.
