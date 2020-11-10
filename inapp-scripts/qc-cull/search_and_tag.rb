@@ -1,3 +1,8 @@
+require 'java'
+
+# Allow catching this specific exception.
+include_class 'java.lang.IllegalStateException'
+
 module QCCull
     extend self
 
@@ -20,9 +25,17 @@ module QCCull
         row_num = 0
         progress_dialog.set_main_progress(0, num_rows)
         # Perform search
-        bulk_searcher.run do |progress_info|
-            progress_dialog.increment_main_progress
-            progress_dialog.set_sub_status("#{row_num += 1}/#{num_rows}")
+        begin
+            bulk_searcher.run do |progress_info|
+                progress_dialog.increment_main_progress
+                progress_dialog.set_sub_status("#{row_num += 1}/#{num_rows}")
+            end
+        rescue IllegalStateException => cnfe
+            if cnfe.message.include?('Cannot find the file for digest list')
+                STDERR.puts('Missing a digest list!')
+                progress_dialog.log_message('ERROR: Missing a digest list!')
+            end
+            throw cnfe
         end
         timer.stop('search_and_tag')
     end
