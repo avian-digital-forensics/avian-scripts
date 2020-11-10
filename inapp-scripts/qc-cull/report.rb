@@ -74,7 +74,7 @@ module QCCull
   def report_item_types(nuix_case, result_hash, field_key, scoping_query='')
     type_hash = {}
     for type in nuix_case.item_types
-      query = Utils::join_query(scoping_query, "mime-type:#{type.name}")
+      query = Utils::join_queries(scoping_query, "mime-type:#{type.name}")
       num_items = nuix_case.count(query)
       # Add line for this type if there are any items.
       if num_items > 0
