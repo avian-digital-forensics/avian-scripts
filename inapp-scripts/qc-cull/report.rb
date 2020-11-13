@@ -1,16 +1,6 @@
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
+require_relative File.join('..', '..', 'utils', 'utils')
 
-main_directory = get_main_directory(false)
-
-unless main_directory
-    puts('Script cancelled because no main directory could be found.')
-    return
-end
-
-require File.join(main_directory, 'utils', 'utils')
-
-require File.join(main_directory, 'utils', 'rtf_utils')
+require_relative File.join('..', '..', 'utils', 'rtf_utils')
 
 module QCCull
   extend self

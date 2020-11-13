@@ -21,6 +21,8 @@ require File.join(main_directory,'utils','utils')
 # Save and load script settings.
 require File.join(main_directory,'utils','settings_utils')
 
+require File.join(main_directory,'inapp-scripts','qc-cull','main')
+
 # Load saved settings.
 script_settings = SettingsUtils::load_script_settings(main_directory,'qc_cull')
 
@@ -41,14 +43,6 @@ script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report
 script.dialog_append_text_field('main_tab', 'num_descendants_metadata_key', 'Number of descendants custom metadata name', 
     'All items will receive a custom metadata field with this key.')
 
-# Add file chooser for the QC search and tag.
-script.dialog_append_open_file_chooser('main_tab', 'qc_search_and_tag_file', 'QC Search and Tag file', 'JSON', 'json', 
-    'This file will be loaded into the search and tag.')
-
-# Add file chooser for the Culling search and tag.
-script.dialog_append_open_file_chooser('main_tab', 'culling_search_and_tag_file', 'Culling Search and Tag file', 'JSON', 'json', 
-    'This file will be loaded into the search and tag.')
-
 # Add information tab.
 script.dialog_add_tab('information', 'Info')
 script.dialog_append_text_field('information', 'info_project_name', 'Project name',
@@ -62,38 +56,13 @@ script.dialog_append_text_field('information', 'info_ingestion_performed_by', 'I
 script.dialog_append_text_field('information', 'info_qc_performed_by', 'QC performed by',
     'Who performed the qc. Used when generating the report.')
 
-# Add exclusion tab.
-script.dialog_add_tab('exclusion', 'Culling')
-# Add text fields for exclusion prefixes.
-# Any items with tags with a prefix, will be excluded with the specified reason.
-exclusion_prefix_num = 0
-while script_settings.key?("exclusion_prefix_#{exclusion_prefix_num + 1}")
-  exclusion_prefix_num += 1
-  script.dialog_append_text_field('exclusion', "exclusion_prefix_#{exclusion_prefix_num}", "Exclusion prefix #{exclusion_prefix_num}",
-      'Any items with a tag with this prefix will be excluded with the associated reason.')
-  script.dialog_append_text_field('exclusion', "exclusion_reason_#{exclusion_prefix_num}", "Exclusion reason #{exclusion_prefix_num}",
-      'Any items with a tag with the associated prefix will be excluded with this reason.')
-end
-
 
 
 # Checks the input before closing the dialog.
 script.dialog_validate_before_closing do |values|
-  if values['report_destination'].strip.empty?
-    CommonDialogs.show_warning('Please provide a destination for the generated report.', gui_title)
-    next false
-  end
-
   if values['num_descendants_metadata_key'].strip.empty?
     CommonDialogs.show_warning('Please provide a metadata key for the number of descendants of each item.', gui_title)
     next false
-  end
-
-  for k in 1..exclusion_prefix_num
-    if values["exclusion_prefix_#{k}"].strip.empty? != values["exclusion_reason_#{k}"].strip.empty?
-      CommonDialogs.show_warning('If an exclusion prefix or reason is given, the other must be non-empty.')
-      next false
-    end
   end
   
   # Everything is fine; close the dialog.
@@ -112,33 +81,18 @@ script.run do |progress_dialog|
   # This next part takes the information the user inputted and updates the stored settings so the input will be remembered.
   settings_hash[:num_descendants_metadata_key] = script.settings['num_descendants_metadata_key']
 
-  # Create hash of exclusion tag prefixes and exclusion reasons.
-  exclude_tag_prefixes = {}
-  for k in 1..exclusion_prefix_num
-    prefix = script.settings["exclusion_prefix_#{k}"]
-    reason = script.settings["exclusion_reason_#{k}"]
-    unless prefix.empty?
-      if reason.empty?
-        STDERR.puts('Sum ting wong! sdfgonvr')
-      end
-      exclude_tag_prefixes[prefix] = reason
-    end
-  end
-  settings_hash[:exclude_tag_prefixes] = exclude_tag_prefixes
+  # Add search and tag file paths
+  qc_search_and_tag_path = File.join(main_directory, 'misc', 'qc', 'qc_search_and_tag.json')
+  culling_search_and_tag_path = File.join(main_directory, 'misc', 'qc', 'culling_search_and_tag.json')
+  settings_hash[:search_and_tag_files] = [qc_search_and_tag_path, culling_search_and_tag_path]
 
-  # Find all search and tag file paths.
-  search_and_tag_files = []
-  if script.settings['qc_search_and_tag_file'] != ''
-    search_and_tag_files << script.settings['qc_search_and_tag_file']
-  end
-  if script.settings['culling_search_and_tag_file'] != ''
-    search_and_tag_files << script.settings['culling_search_and_tag_file']
-  end
-  settings_hash[:search_and_tag_files] = search_and_tag_files
+  # Set up exclusion tag prefix hash.
+  exclusion_sets_path = File.join(main_directory, 'misc', 'qc', 'exclusion_sets.json')
+  settings_hash[:exclude_tag_prefixes] = JSON.parse(File.read(exclusion_sets_path))
   
   # Add a selected items tag to the scoping query if appropriate.
   if run_only_on_selected_items
-    selected_item_tag = script.create_temporary_tag('SELECTEDITEMS', current_selected_items, 'selected items', progress_dialog)
+    selected_item_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
     scoping_query = Utils::join_queries(scoping_query, "tag:\"#{selected_item_tag}\"")
   end
   items = current_case.search(scoping_query)

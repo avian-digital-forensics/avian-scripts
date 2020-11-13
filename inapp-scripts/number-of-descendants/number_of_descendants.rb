@@ -37,11 +37,11 @@ module NumberOfDescendants
                     end
                 else
                     # Bulk annotate.
-                    bulk_annotater.put_custom_metadata(metadata_key, num_descendants, item_set) do |item_event_info| 
+                    bulk_annotater.put_custom_metadata(metadata_key, num_descendants, item_set.to_a) do |item_event_info| 
                         # Update progress dialog.
                         progress_dialog.set_main_progress(main_progress += 1)
                         progress_dialog.set_sub_status("#{main_progress.to_s}/#{num_items.to_s}")
-                    end
+                    end 
                 end
             end
 
