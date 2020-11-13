@@ -1,0 +1,25 @@
+{
+  "settings": {
+    "includeFamilies": false,
+    "deduplicateFamilies": false,
+    "omitExcludedItems": true,
+    "omitImmaterialFamilyItems": true,
+    "tagUniqueItems": false,
+    "countResponsiveItems": false,
+    "tagResponsiveItemsEnabled": false,
+    "createUnusedTags": false,
+    "removeEmptyTags": false,
+    "showTagColumns": true,
+    "allowDuplicateTags": true,
+    "allowDuplicateQueries": true,
+    "missingTagsAction": "fillWithQuery",
+    "matchingItemsAction": "addTags",
+    "expandTags": false
+  },
+  "tagAndQueries": [
+    {
+      "tag": "Avian|Exclude|NSLR",
+      "query": "digest-list:\"NSRL1\""
+    }
+  ]
+}
