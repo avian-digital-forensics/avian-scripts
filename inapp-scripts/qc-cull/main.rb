@@ -36,7 +36,11 @@ module QCCull
     progress_handler.set_main_status_and_log_it('Generating report...')
     # Find report template.
     report_template_path = File.join(main_directory,'data','misc','qc','qc_report_template.rtf')
+    report_settings = { 
+      :num_source_files_provided => settings_hash[:num_source_files_provided],
+      :scoping_query => scoping_query
+    }
     # Generate report.
-    QCCull::generate_report(nuix_case, report_template_path, report_path, report_info_hash, utilities)
+    QCCull::generate_report(nuix_case, report_template_path, report_path, report_info_hash, report_settings, utilities)
   end
 end

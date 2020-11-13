@@ -3,8 +3,7 @@ run_only_on_selected_items: false
 scoping_query: ''
 report_destination: 
 num_descendants_metadata_key: NumberOfDescendants
-qc_search_and_tag_file: 
-culling_search_and_tag_file: 
+num_source_files_provided: ''
 nsrl: false
 info_project_name: 
 info_collection_number: 

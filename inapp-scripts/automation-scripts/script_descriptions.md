@@ -110,6 +110,7 @@ Settings in *italics* are optional.
 * :main_directory - the path to the Avian scripts main directory.
 * :num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
 * :report_path - where to place the finished report.
+* :num_source_files_provided - the number of original source files provided for ingestion. This is checked against the number of loose files in Nuix.
 * *:nsrl* - whether to search for NSRL items. This may take a long time.
 * *:info_project_name* - the name of the project. Used when generating the report.
 * *:info_collection_number* - the collection number. Used when generating the report.

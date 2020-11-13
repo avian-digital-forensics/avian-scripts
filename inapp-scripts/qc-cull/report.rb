@@ -41,6 +41,22 @@ module QCCull
     end
   end
 
+  def report_source_files(nuix_case, result_hash, num_source_files_provided, scoping_query)
+    report_item_types(nuix_case, result_hash, 'FIELD_source_file_statistics', Utils.join_queries(scoping_query, 'flag:loose_file'))
+    num_loose_files_in_nuix = nuix_case.count(Utils.join_queries(scoping_query, 'flag:loose_file'))
+    
+    result_hash['FIELD_num_source_files_provided'] = num_source_files_provided
+    result_hash['FIELD_num_loose_files_in_nuix'] = num_loose_files_in_nuix
+    puts('torsk: ' + num_source_files_provided.to_s)
+    puts('sild: ' + num_loose_files_in_nuix.to_s)
+    puts('gedde: ' + (num_source_files_provided.to_i == num_loose_files_in_nuix.to_i).to_s)
+    if num_source_files_provided.to_i == num_loose_files_in_nuix.to_i
+      result_hash['FIELD_source_validation_text'] = 'These numbers match and so all source files were processed without error.'
+    else
+      result_hash['FIELD_source_validation_text'] = 'These numbers DO NOT MATCH and so some source files ARE MISSING from the case and an error has occurred.'
+    end
+  end
+
   # Converts a two layer hash to rtf.
   # The keys are the categories, the values are themselves hashes.
   # The subhashes contain fields and values.
@@ -100,8 +116,10 @@ module QCCull
   # Params:
   # +nuix_case+:: The case in which to search.
   # +info_hash+:: A hash with information about the ingestion.
+  # +report_settings+:: Settings used for more than simply inserting into the report.
   # +utilities+:: A reference to the Nuix utilities object.
-  def create_result_hash(nuix_case, info_hash, utilities)
+  def create_result_hash(nuix_case, info_hash, report_settings, utilities)
+    scoping_query = report_settings[:scoping_query]
     result_hash = {}
     # 1 Ingestion details.
     for key,info in info_hash
@@ -111,12 +129,10 @@ module QCCull
     result_hash['FIELD_qc_start_date'] = current_time
 
     # 2 Ingestion statistics.
-    report_item_types(nuix_case, result_hash, 'FIELD_ingestion_statistics')
+    report_item_types(nuix_case, result_hash, 'FIELD_ingestion_statistics', scoping_query)
 
     # 3 Source validation.
-    report_item_types(nuix_case, result_hash, 'FIELD_source_file_statistics', 'flag:loose_file')
-
-    result_hash['FIELD_num_source_files_ingested'] = nuix_case.count('flag:loose_file')
+    report_source_files(nuix_case, result_hash, report_settings[:num_source_files_provided], scoping_query)
 
     # 4 Indexing issues.
     ## 4.1 Encrypted files.
@@ -140,9 +156,11 @@ module QCCull
   # +template_path+:: The path to the report template.
   # +report_destination+:: The path in which to place the generated report.
   # +info_hash+:: A hash with information about the ingestion.
-  def generate_report(nuix_case, template_path, report_destination, info_hash, utilities)
+  # +report_settings+:: Settings used for more than simply inserting into the report.
+  # +utilities+:: Reference to the Nuix Utilities object.
+  def generate_report(nuix_case, template_path, report_destination, info_hash, report_settings, utilities)
     # Create hash.
-    result_hash = create_result_hash(nuix_case, info_hash, utilities)
+    result_hash = create_result_hash(nuix_case, info_hash, report_settings, utilities)
     # Copy report template.
     Utils::ensure_path_exists(File.expand_path(File.join(report_destination, '..')))
     FileUtils.cp(template_path, report_destination)

@@ -44,6 +44,9 @@ script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report
 script.dialog_append_text_field('main_tab', 'num_descendants_metadata_key', 'Number of descendants custom metadata name', 
     'All items will receive a custom metadata field with this key.')
 
+script.dialog_append_text_field('main_tab', 'num_source_files_provided', 'Number of source files',
+    'The number of original source files provided for ingestion. This is checked against the number of loose files in Nuix.')
+
 # Add check box for running NSRL.
 script.dialog_append_check_box('main_tab', 'nsrl', 'Run NSRL',
     'Whether to search for NSRL items. This may take a long time.')
@@ -87,8 +90,8 @@ script.run do |progress_dialog|
 
   settings_hash[:report_path] = script.settings['report_destination']
 
-  # This next part takes the information the user inputted and updates the stored settings so the input will be remembered.
   settings_hash[:num_descendants_metadata_key] = script.settings['num_descendants_metadata_key']
+  settings_hash[:num_source_files_provided] = script.settings['num_source_files_provided']
 
   # Add search and tag file paths
   qc_search_and_tag_path = File.join(main_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')

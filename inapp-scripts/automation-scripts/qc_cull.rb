@@ -16,6 +16,7 @@ module QCCull
     
     qc_settings = {}
     qc_settings[:num_descendants_metadata_key] = settings_hash[:num_descendants_metadata_key]
+    qc_settings[:num_source_files_provided] = settings_hash[:num_source_files_provided]
 
     # Set up search and tag file paths.
     qc_search_and_tag_path = File.join(main_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
