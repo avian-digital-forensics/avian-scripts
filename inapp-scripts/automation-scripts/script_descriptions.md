@@ -93,7 +93,7 @@ Settings in *italics* are optional.
 Defaults to not accepting any characters.
 * *:scoping_query* - only runs on items matching this query.
 
-## QC and Culling
+## QC and Culling (NOT TESTED)
 Key: 'qc_cull'
 
 Automatically performs many of the processes involved in quality control.
@@ -110,4 +110,5 @@ Settings in *italics* are optional.
 * :main_directory - the path to the Avian scripts main directory.
 * :num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
 * :report_path - where to place the finished report.
+* *:nsrl* - whether to search for NSRL items. This may take a long time.
 * *:scoping_query* - only runs for items matching this query.

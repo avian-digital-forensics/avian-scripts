@@ -44,6 +44,10 @@ script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report
 script.dialog_append_text_field('main_tab', 'num_descendants_metadata_key', 'Number of descendants custom metadata name', 
     'All items will receive a custom metadata field with this key.')
 
+# Add check box for running NSRL.
+script.dialog_append_check_box('main_tab', 'nsrl', 'Run NSRL',
+    'Whether to search for NSRL items. This may take a long time.')
+
 # Add information tab.
 script.dialog_add_tab('information', 'Info')
 script.dialog_append_text_field('information', 'info_project_name', 'Project name',
@@ -90,11 +94,16 @@ script.run do |progress_dialog|
   qc_search_and_tag_path = File.join(main_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
   culling_search_and_tag_path = File.join(main_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
   settings_hash[:search_and_tag_files] = [qc_search_and_tag_path, culling_search_and_tag_path]
+  # If NSRL is turned on, add the search and tag file.
+  if script.settings['nsrl']
+    settings_hash[:search_and_tag_files] << File.join(main_directory, 'data', 'misc', 'qc', 'nsrl_search_and_tag.json')
+  end
 
   # Set up exclusion tag prefix hash.
   exclusion_sets_path = File.join(main_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
   exclusion_sets_file = File.read(exclusion_sets_path)
   settings_hash[:exclude_tag_prefixes] = JSON.parse(exclusion_sets_file)
+
   
   # Add a selected items tag to the scoping query if appropriate.
   if run_only_on_selected_items

@@ -18,9 +18,13 @@ module QCCull
     qc_settings[:num_descendants_metadata_key] = settings_hash[:num_descendants_metadata_key]
 
     # Set up search and tag file paths.
-    qc_search_and_tag_path = File.join(main_directory, 'misc', 'qc', 'qc_search_and_tag.json')
-    culling_search_and_tag_path = File.join(main_directory, 'misc', 'qc', 'culling_search_and_tag.json')
+    qc_search_and_tag_path = File.join(main_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
+    culling_search_and_tag_path = File.join(main_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
     qc_settings[:search_and_tag_files] = [qc_search_and_tag_path, culling_search_and_tag_path]
+    # If NSRL is turned on, add the search and tag file.
+    if settings_hash.key(:nsrl) && settings_hash[:nsrl]
+      qc_settings[:search_and_tag_files] << File.join(main_directory, 'data', 'misc', 'qc', 'nsrl_search_and_tag.json')
+    end
 
     # Set up exclusion tag prefix hash.
     exclusion_sets_path = File.join(main_directory, 'misc', 'qc', 'exclusion_sets.json')
@@ -28,7 +32,7 @@ module QCCull
 
     qc_settings[:report_path] = settings_hash[:report_path]
 
-    QCCull::qc_cull(main_directory, nuix_case, utilities, progress_handler, timer, scoping_query, settings_hash, qc_settings)
+    QCCull::qc_cull(main_directory, nuix_case, utilities, progress_handler, timer, scoping_query, qc_settings, qc_report_info)
     progress_handler.log_message("Script finished.")
 
     timer.stop('total')
