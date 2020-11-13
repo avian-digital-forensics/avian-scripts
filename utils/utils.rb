@@ -132,7 +132,7 @@ module Utils
     # Params:
     # +queries+:: Arbitrarily many queries or arrays of queries to be combined.
     def self.join_queries(*queries)
-        queries.flatten.map { |query| query == '' ? nil : "(#{query})" }.reject(&:nil?).join(' AND ')
+        queries.flatten.reject(&:nil?).map(&:strip).reject(&:empty?).map { |query| "(#{query})" }.join(' AND ')
     end
 
     # Ensures that the given directory exists.
