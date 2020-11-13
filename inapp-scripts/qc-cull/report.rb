@@ -144,6 +144,7 @@ module QCCull
     # Create hash.
     result_hash = create_result_hash(nuix_case, info_hash, utilities)
     # Copy report template.
+    Utils::ensure_path_exists(File.expand_path(File.join(report_destination, '..')))
     FileUtils.cp(template_path, report_destination)
     # Update report with results.
     QCCull::update_report(result_hash, report_destination)
