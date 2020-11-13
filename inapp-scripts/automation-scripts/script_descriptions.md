@@ -111,4 +111,11 @@ Settings in *italics* are optional.
 * :num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
 * :report_path - where to place the finished report.
 * *:nsrl* - whether to search for NSRL items. This may take a long time.
+* *:info_project_name* - the name of the project. Used when generating the report.
+* *:info_collection_number* - the collection number. Used when generating the report.
+* *:info_requested_by* - who requested the ingestion. Used when generating the report.
+* *:info_ingestion_start_date* - when ingestion started. Used when generating the report.
+* *:info_ingestion_end_date* - when ingestion ended. Used when generating the report.
+* *:info_ingestion_performed_by* - who performed the ingestion. Used when generating the report.
+* *:info_qc_performed_by* - who performed the qc. Used when generating the report.
 * *:scoping_query* - only runs for items matching this query.
