@@ -18,7 +18,7 @@
   },
   "tagAndQueries": [
     {
-      "tag": "Avian|Exclude|NSLR",
+      "tag": "Avian|Exclude|NSRL",
       "query": "digest-list:\"NSRL1\""
     }
   ]
