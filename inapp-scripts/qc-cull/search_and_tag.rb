@@ -27,6 +27,7 @@ module QCCull
         # Perform search
         begin
             bulk_searcher.run do |progress_info|
+                
                 progress_dialog.increment_main_progress
                 progress_dialog.set_sub_status("#{row_num += 1}/#{num_rows}")
             end
@@ -34,9 +35,12 @@ module QCCull
             if cnfe.message.include?('Cannot find the file for digest list')
                 STDERR.puts('Missing a digest list!')
                 progress_dialog.log_message('ERROR: Missing a digest list!')
+            else
+                STDERR.puts('Found error in search and tag.')
             end
             throw cnfe
         end
         timer.stop('search_and_tag')
+        progress_dialog.log_message('Finished search and tag.')
     end
 end
