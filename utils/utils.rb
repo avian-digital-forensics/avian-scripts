@@ -134,4 +134,11 @@ module Utils
     def self.join_queries(*queries)
         queries.flatten.map { |query| query == '' ? nil : "(#{query})" }.reject(&:nil?).join(' AND ')
     end
+
+    # Ensures that the given directory exists.
+    # Params:
+    # +path+:: The path including the directory to ensure.
+    def self.ensure_path_exists(path)
+        FileUtils.mkpath(path) unless File.exists?(path)
+    end
 end
