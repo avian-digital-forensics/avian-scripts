@@ -47,9 +47,6 @@ module QCCull
     
     result_hash['FIELD_num_source_files_provided'] = num_source_files_provided
     result_hash['FIELD_num_loose_files_in_nuix'] = num_loose_files_in_nuix
-    puts('torsk: ' + num_source_files_provided.to_s)
-    puts('sild: ' + num_loose_files_in_nuix.to_s)
-    puts('gedde: ' + (num_source_files_provided.to_i == num_loose_files_in_nuix.to_i).to_s)
     if num_source_files_provided.to_i == num_loose_files_in_nuix.to_i
       result_hash['FIELD_source_validation_text'] = 'These numbers match and so all source files were processed without error.'
     else
