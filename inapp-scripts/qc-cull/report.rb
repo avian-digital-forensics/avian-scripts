@@ -41,6 +41,12 @@ module QCCull
     end
   end
 
+  # Adds source file validation information to the result_hash.
+  # Params:
+  # +nuix_case+:: The case in which to search.
+  # +result_hash+:: The hash to add the results to.
+  # +num_source_files_provided+:: The number of originally provided source files as given by the user.
+  # +scoping_query+:: Limit search for loose files.
   def report_source_files(nuix_case, result_hash, num_source_files_provided, scoping_query)
     report_item_types(nuix_case, result_hash, 'FIELD_source_file_statistics', Utils.join_queries(scoping_query, 'flag:loose_file'))
     num_loose_files_in_nuix = nuix_case.count(Utils.join_queries(scoping_query, 'flag:loose_file'))
