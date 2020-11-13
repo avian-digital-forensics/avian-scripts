@@ -76,9 +76,9 @@ module QCCull
     # Change newline settings.
     text = '\pard\sa200\sl240\slmult1'
     for category,sub_hash in hash.sort_by { |category,sub_hash| -category_values[category] }
-      text += "#{category}: #{category_values[category].to_s}#{RTFUtils::newline}"
+      text += RTFUtils.bold("#{category}: #{category_values[category].to_s}") + RTFUtils::newline
       for field,value in sub_hash.sort_by { |field, value| -value }
-        text += "#{RTFUtils::tab}#{field}: #{value}#{RTFUtils::newline}"
+        text += RTFUtils.italics("#{RTFUtils::tab}#{field}: #{value}") + RTFUtils::newline
       end
     end
 
