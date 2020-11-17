@@ -1,0 +1,7 @@
+---
+  output_path: ''
+  scoping_query: ''
+  export_text: true
+  export_natives: true
+  export_pdf: true
+  export_tiff: true
