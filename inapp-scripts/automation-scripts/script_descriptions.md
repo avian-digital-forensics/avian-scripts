@@ -1,4 +1,4 @@
-## Connected Addresses
+## Connected Addresses (NOT TESTED)
 Key: 'connected_addresses'
 
 The scripts creates a csv file with information about what addresses a specific address has sent messages to or received messages from.
@@ -56,7 +56,7 @@ Settings in *italics* are optional.
 * *:scoping_query* - only runs for items matching this query. 
 If left out, script will run on all items.
 
-## QC and Culling
+## QC and Culling (NOT TESTED)
 Key: 'qc_cull'
 
 Automatically performs many of the processes involved in quality control.
@@ -75,7 +75,7 @@ Settings in *italics* are optional.
 * :report_path - where to place the finished report.
 * *:scoping_query* - only runs for items matching this query.
 
-## Tag Exchange Emails with Duplicates
+## Tag Exchange Emails with Duplicates (NOT TESTED)
 Key: 'tag_exchange_emails_with_duplicates'
 
 <b>Background</b><br>
