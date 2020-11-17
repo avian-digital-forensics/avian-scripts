@@ -4,44 +4,44 @@ module ExportItems
   def export_items(nuix_case, progress_handler, timer, utilities, items, settings_hash)
     exporter = utilities.create_batch_exporter(settings_hash[:output_path])
 
-    # Configure to export text if settings specify this
+    # Configure to export text if settings specify this.
     if settings_hash[:export_text]
       progress_handler.set_main_status_and_log_it("Adding text...")
-      exporter.addProduct("text", {
+      exporter.add_product("text", {
         :naming => "guid",
         :path => "TEXT",
       })
     end
 
-    # Configure to export natives if settings specify this
+    # Configure to export natives if settings specify this.
     if settings_hash[:export_natives]
       progress_handler.set_main_status_and_log_it("Adding natives...")
-      exporter.addProduct("native", {
+      exporter.add_product("native", {
         :naming => "guid",
         :path => "NATIVE",
       })
     end
 
-    # Configure to export PDFs if settings specify this
+    # Configure to export PDFs if settings specify this.
     if settings_hash[:export_pdf]
       progress_handler.set_main_status_and_log_it("Adding PDFs...")
-      exporter.addProduct("pdf", {
+      exporter.add_product("pdf", {
         :naming => "guid",
         :path => "PDF",
       })
     end
 
-    # Configure to export TIFFs if settings specify this
+    # Configure to export TIFFs if settings specify this.
     if settings_hash[:export_tiff]
       progress_handler.set_main_status_and_log_it("Adding TIFFs...")
-      exporter.addProduct("tiff", {
+      exporter.add_product("tiff", {
         :naming => "guid",
         :path => "TIFF",
       })
     end
     
     # Get progress dialog ready and hookup export callback so that it will
-    # update the progress dialog
+    # update the progress dialog.
     progress_handler.set_main_progress(0,items.size)
     
     current_export_stage = nil
@@ -58,6 +58,6 @@ module ExportItems
     progress_handler.set_main_status_and_log_it("Exporting items...")
     exporter.export_items(items)
     
-    "Items has been exported to: #{settings_hash[:output_path].to_s}"
+    "Items have been exported to: #{settings_hash[:output_path].to_s}"
   end
 end
