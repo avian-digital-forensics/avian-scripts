@@ -342,6 +342,8 @@ module Script
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
             tab.set_text(identifier, value)
+            
+            @settings_inputs[identifier] = 'value'
         end
         
         def dialog_append_date_picker(tab_identifier, identifier, label)
