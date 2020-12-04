@@ -144,7 +144,7 @@ module QCCull
     report_item_types(nuix_case, result_hash, 'FIELD_no_text_statistics', 'has-exclusion:0 AND tag:"Avian|QC|Unsupported|No text"')
 
     # 5 OCR.
-    result_hash['FIELD_num_ocr_items'] = nuix_case.count('tag:"Avian|QC|OCR"').to_s
+    result_hash['FIELD_num_ocr_items'] = nuix_case.count('tag:"Avian|QC|OCR|Success" AND content').to_s
 
     # 6 Culling.
     exclusion_reasons = nuix_case.all_exclusions
