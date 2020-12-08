@@ -15,7 +15,7 @@ module QCCull
     timer.start('check_for_items_with_culling')
     progress_handler.set_main_status_and_log_it('Searching for already Culled items...')
     found_items = nuix_case.search(Utils::join_queries(scoping_query, culled_item_query))
-    timer.end('check_for_items_with_culling')
+    timer.stop('check_for_items_with_culling')
     return found_items
   end
 
