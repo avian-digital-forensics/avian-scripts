@@ -11,7 +11,7 @@ module QCCull
   # +scoping_query+:: Only include items matching this query.
   # +exclude_tag_prefixes+:: A hash of prefixes=>reasons.
   def find_culled_items(nuix_case, progress_handler, timer, scoping_query, exclude_tag_prefixes)
-    culled_item_query = exclude_tag_prefixes.keys.map { |reason| "exclusion:\"#{reason}\"" }.join(' OR ')
+    culled_item_query = exclude_tag_prefixes.values.map { |reason| "exclusion:\"#{reason}\"" }.join(' OR ')
     timer.start('check_for_items_with_culling')
     progress_handler.set_main_status_and_log_it('Searching for already Culled items...')
     found_items = nuix_case.search(Utils::join_queries(scoping_query, culled_item_query))
