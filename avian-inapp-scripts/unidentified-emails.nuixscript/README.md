@@ -24,7 +24,7 @@ If the latter, select these items and run the script [Find and fix unidentified 
 Otherwise, just run the script.
 
 You should see a dialog with two tabs and a number of options.
-If you selected items beforehand, make sure "Run on unselected items" is unticked in both tabs.
+If you selected items beforehand, make sure "Run only on selected items" is ticked in both tabs.
 All other options should have fine default values, but the tooltips describe what they do.
 
 When you are satisfied with the selected items, run the script by pressing the button in the lower right corner.
@@ -34,7 +34,7 @@ When it is done, close the progress dialog and move on to the next step.
 ### Generate printed images
 This part must be done manually, as doing through the API requires a special license.
 In order to export a printed item, it must first be generated, so do this for all items processed by the first script that don't already have a printed image.
-To find these items search for 'tag:"FixedEmail" AND has-printed-image:0' where FixedEmail is a standin for what ever tag you chose for fixed emails in the first script.
+To find these items search for 'tag:"FixedEmail" AND has-printed-image:0' where FixedEmail is a standin for whatever tag you chose for fixed emails in the first script.
 
 ### Second script
 After the printed images have been generated they need to be exported so they can be imported by the last script.
