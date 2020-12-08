@@ -1,7 +1,10 @@
 require_relative File.join('..', '..', 'utils', 'utils')
+require_relative File.join('..', ,"..",'resources','Nx.jar')
 
 module QCCull
   extend self
+
+  def find_culled_items()
 
   # Excludes items in items with tags with specific prefixes.
   # Params:

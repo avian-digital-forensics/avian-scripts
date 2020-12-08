@@ -1,3 +1,6 @@
+require_relative File.join('..', '..', 'utils', 'utils')
+require_relative File.join('..', ,"..",'resources','Nx.jar')
+
 require 'java'
 
 # Allow catching this specific exception.
@@ -5,6 +8,15 @@ java_import 'java.lang.IllegalStateException'
 
 module QCCull
     extend self
+
+    def check_for_items_with_qc_tags(nuix_case, progress_handler, timer, scoping_query)
+        qc_tag_query = 'tag:"Avian|QC*" OR tag:"Avian|Exclude*"'
+        timer.start('check_for_items_with_qc')
+        progress_handler.set_main_status_and_log_it('Searching for already QC\'ed items...')
+        found_items = nuix_case.search(Utils::join_queries(scoping_query, qc_tag_query))
+        timer.end('check_for_items_with_qc')
+        return found_items
+    end
 
     # Performs Search and Tag in the given case.
     # Progress is shown in the main progress bar of the given progress dialog.
