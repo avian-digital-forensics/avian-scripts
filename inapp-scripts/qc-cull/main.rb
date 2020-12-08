@@ -2,6 +2,7 @@ require_relative 'culling'
 require_relative 'report'
 require_relative 'search_and_tag'
 require_relative '../number-of-descendants/number_of_descendants'
+require_relative '../../utils/utils'
 
 module QCCull
   extend self
@@ -11,6 +12,30 @@ module QCCull
     search_and_tag_files = settings_hash[:search_and_tag_files]
     exclude_tag_prefixes = settings_hash[:exclude_tag_prefixes]
     report_path = settings_hash[:report_path]
+    existing_qc_handling = settings_hash[:existing_qc_handling]
+
+    prev_qc_items = QCCull::check_for_items_with_qc_tags(nuix_case, progress_handler, timer, scoping_query)
+    prev_culled_items = QCCull::find_culled_items(nuix_case, progress_handler, timer, scoping_query, exclude_tag_prefixes)
+
+    has_previous_metadata_tag = 'Avian|QC|HasPrevQCMetadata'
+    unless prev_qc_items.empty? && prev_culled_items.empty?
+      progress_handler.log_message('Items with previous QC metadata found.')
+      case existing_qc_handling
+      when :remove_metadata
+        progress_handler.set_main_status_and_log_it("Removing found QC metadata in accordance with chosen handling method '#{existing_qc_handling}'.")
+        QCCull::remove_qc_tags(nuix_case, utilities, progress_handler, timer, scoping_query)
+        Utils::bulk_include(utilities, progress_handler, prev_culled_items)
+      when :exclude_from_qc
+        progress_handler.set_main_status_and_log_it("Excluding items with QC metadata from further QC in accordance with chosen handling method '#{existing_qc_handling}'.")
+        Utils::bulk_add_tag(utilities, progress_handler, has_previous_metadata_tag, prev_qc_items | prev_culled_items)
+        scoping_query = Utils::join_queries(scoping_query, "NOT tag:\"#{has_previous_metadata_tag}\"")
+      when :tag_items_and_cancel_script
+        progress_handler.set_main_status_and_log_it("Tagging items with QC metadata and cancelling QC in accordance with chosen handling method '#{existing_qc_handling}'.")
+        Utils::bulk_add_tag(utilities, progress_handler, has_previous_metadata_tag, prev_qc_items | prev_culled_items)
+        return
+      when :ignore
+        progress_handler.set_main_status_and_log_it("Continuing as usual in accordance with chosen handling method '#{existing_qc_handling}'.")
+    end
   
     # Number of Descendants.
     items = nuix_case.search(scoping_query)
