@@ -15,7 +15,7 @@ module QCCull
   # +timer+:: The timer to record internal timings in.
   # +scoping_query+:: Only include items matching this query.
   def check_for_items_with_qc_tags(nuix_case, progress_handler, timer, scoping_query)
-    qc_tag_query = 'tag:"Avian|QC*" OR tag:"Avian|Exclude*"'
+    qc_tag_query = 'tag:"Avian|QC|*" OR tag:"Avian|Exclude|*"'
     timer.start('check_for_items_with_qc')
     progress_handler.set_main_status_and_log_it('Searching for already QC\'ed items...')
     found_items = nuix_case.search(Utils::join_queries(scoping_query, qc_tag_query))
@@ -32,7 +32,7 @@ module QCCull
   # +scoping_query+:: Only work on items matching this query.
   def remove_qc_tags(nuix_case, utilities, progress_handler, timer, scoping_query)
     timer.start('remove_qc_tags')
-    qc_tags = nuix_case.all_tags.select { |tag| tag.start_with?('Avian|QC') || tag.start_with?('Avian|Exclude') }
+    qc_tags = nuix_case.all_tags.select { |tag| tag.start_with?('Avian|QC|') || tag.start_with?('Avian|Exclude|') }
     for tag in qc_tags
       tag_query = Utils::join_queries(scoping_query, "tag:\"#{tag}\"")
       Utils::bulk_remove_tag(utilities, progress_handler, tag, nuix_case.search(tag_query))
