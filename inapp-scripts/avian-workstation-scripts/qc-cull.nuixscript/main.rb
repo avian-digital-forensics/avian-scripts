@@ -36,6 +36,15 @@ script.dialog_append_check_box('main_tab', 'run_only_on_selected_items', 'Run on
 script.dialog_append_text_field('main_tab', 'scoping_query', 'Scoping query',
     'QC and Culling will be run only on items matching this query.')
 
+existing_qc_handling_options = {
+  'Remove Metadata' => :remove_metadata, 
+  'Exclude Items from QC' => :exclude_from_qc, 
+  'Tag Items and Cancel QC' => :tag_items_and_cancel_script, 
+  'Ignore' => :ignore
+}
+script.dialog_append_combo_box('main_tab', 'existing_qc_handling', 'Handling of existing QC metadata', existing_qc_handling_options.keys, 
+    'Choose how the script will react if it finds items that already have QC and Culling related metadata.')
+
 # Add a file chooser for the report destination.
 script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report destination', 'Rich Text File (.rtf)', 'rtf',
     'The generated report will be placed here.')
@@ -87,6 +96,8 @@ script.run do |progress_dialog|
   settings_hash = {}
   run_only_on_selected_items = script.settings['run_only_on_selected_items']
   scoping_query = script.settings['scoping_query']
+
+  settings_hash[:existing_qc_handling] = existing_qc_handling_options[script.settings['existing_qc_handling']]
 
   settings_hash[:report_path] = script.settings['report_destination']
 
