@@ -89,14 +89,14 @@ module Utils
     # +progress_handler+:: An object that can work as a progress dialog.
     # +items+:: The items whose exclusions to remove.
     def self.bulk_include(utilities, progress_handler, items)
-        progress_dialog.set_sub_progress_visible(false)
-        progress_dialog.set_main_progress(0, items.size)
+        progress_handler.set_sub_progress_visible(false)
+        progress_handler.set_main_progress(0, items.size)
         bulk_annotater = utilities.get_bulk_annotater
         num_items = items.size
         item_num = 0
         bulk_annotater.include(items) do |event_info|
-            progress_dialog.increment_main_progress
-            progress_dialog.set_sub_status("#{item_num += 1}/#{num_items}")
+            progress_handler.increment_main_progress
+            progress_handler.set_sub_status("#{item_num += 1}/#{num_items}")
         end
     end
     
