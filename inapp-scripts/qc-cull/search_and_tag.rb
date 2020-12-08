@@ -1,5 +1,4 @@
 require_relative File.join('..', '..', 'utils', 'utils')
-require_relative File.join('..', ,"..",'resources','Nx.jar')
 
 require 'java'
 
