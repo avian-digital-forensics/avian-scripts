@@ -415,5 +415,26 @@ module Script
             @settings_inputs[identifier] = 'radio_button'
             @radio_button_groups[identifier] = options_hash
         end
+
+        # Appends a vertical group of radio buttons to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the radio buttons.
+        # +identifier+:: The internal identifier for the radio buttons. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +options_hash+:: A hash of options where keys are the text the user sees and values are the setting values they represent.
+        def dialog_append_combo_box(tab_identifier, identifier, label, options, tooltip)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            unless tab
+                raise 'No such tab "' + tab_identifier + '"'
+            end
+            tab.append_combo_box(identifier, label, options)
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
+
+            @settings_inputs[identifier] = 'value'
+        end
     end
 end
