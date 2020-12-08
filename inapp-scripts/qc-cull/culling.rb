@@ -4,7 +4,21 @@ require_relative File.join('..', ,"..",'resources','Nx.jar')
 module QCCull
   extend self
 
-  def find_culled_items()
+  # Find items with QC exclusions.
+  # Params:
+  # +nuix_case+:: The Nuix case in which to search.
+  # +progress_handler+:: An object that can work as a progress dialog.
+  # +timer+:: The timer to record internal timings in.
+  # +scoping_query+:: Only include items matching this query.
+  # +exclude_tag_prefixes+:: A hash of prefixes=>reasons.
+  def find_culled_items(nuix_case, progress_handler, timer, scoping_query, exclude_tag_prefixes)
+    culled_item_query = exclude_tag_prefixes.keys.map { |reason| "exclusion:\"#{reason}\"" }.join(' OR ')
+    timer.start('check_for_items_with_culling')
+    progress_handler.set_main_status_and_log_it('Searching for already Culled items...')
+    found_items = nuix_case.search(Utils::join_queries(scoping_query, culled_item_query))
+    timer.end('check_for_items_with_culling')
+    return found_items
+  end
 
   # Excludes items in items with tags with specific prefixes.
   # Params:
@@ -12,6 +26,7 @@ module QCCull
   # +scoping_query+:: Will only exclude items that respond to this query.
   # +exclude_tag_prefixes+:: A hash of prefixes=>reasons.
   # +progress_handler+:: An object that can work as a progress dialog.
+  # +timer+:: The timer to record internal timings in.
   # +utilities+:: A reference to the Nuix utilities object.
   def exclude_items(nuix_case, scoping_query, exclude_tag_prefixes, progress_handler, timer, utilities)
     timer.start('exclude_items')
