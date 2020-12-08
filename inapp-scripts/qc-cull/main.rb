@@ -35,6 +35,7 @@ module QCCull
         return
       when :ignore
         progress_handler.set_main_status_and_log_it("Continuing as usual in accordance with chosen handling method '#{existing_qc_handling}'.")
+      end
     end
   
     # Number of Descendants.
