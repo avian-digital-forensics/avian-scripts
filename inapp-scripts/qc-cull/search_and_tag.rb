@@ -9,6 +9,12 @@ java_import 'java.lang.IllegalStateException'
 module QCCull
     extend self
 
+    # Find items with QC or Culling tags.
+    # Params:
+    # +nuix_case+:: The Nuix case in which to search.
+    # +progress_handler+:: An object that can work as a progress dialog.
+    # +timer+:: The timer to record internal timings in.
+    # +scoping_query+:: Only include items matching this query.
     def check_for_items_with_qc_tags(nuix_case, progress_handler, timer, scoping_query)
         qc_tag_query = 'tag:"Avian|QC*" OR tag:"Avian|Exclude*"'
         timer.start('check_for_items_with_qc')
