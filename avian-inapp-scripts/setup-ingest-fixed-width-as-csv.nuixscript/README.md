@@ -1,5 +1,5 @@
 # Setup Ingest Fixed Width as CSV
-Performs the necessary setup for the WSS script 'Ingest Fixed Width as CSV'.
+Performs the necessary setup for the WSS script '[Ingest Fixed Width as CSV](../../wss/ingest-fixed-width-as-csv)'.
 Selected items should have custom metadata fields "ColumnTypes", "ColumnHeaders", "LineFormat", and "MaxDateDiff".
 The data type of the filed is written in square brackets after the name.
 * ColumnTypes \[Text\] - A comma seperated list of the types of each column (date/id/sum/discard). Column types in bold must be included
