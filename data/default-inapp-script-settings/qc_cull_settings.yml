@@ -1,6 +1,8 @@
 ---
+run_only_on_selected_items: false
+scoping_query: ''
 report_destination: 
-num_descendants_metadata_key: 
+num_descendants_metadata_key: NumberOfDescendants
 qc_search_and_tag_file: 
 culling_search_and_tag_file: 
 exclusion_prefix_1: ''
@@ -21,3 +23,8 @@ exclusion_prefix_8: ''
 exclusion_reason_8: ''
 exclusion_prefix_9: ''
 exclusion_reason_9: ''
+info_project_name: 
+info_collection_number: 
+info_requested_by: 
+info_ingestion_performed_by: 
+info_qc_performed_by: 

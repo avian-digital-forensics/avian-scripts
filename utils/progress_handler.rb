@@ -21,13 +21,13 @@ module ProgressHandler
     # Params:
     # +value+:: The initial value of the progress bar in the progress dialog. Unused here.
     # +max+:: The maximum value of the progress bar in the progress dialog. Unused here.
-    def set_main_progress(value, max)
+    def set_main_progress(value, max = nil)
     end
 
     # Does nothing.
     # Params:
-    # +status+:: The substatus set in the progress dialog. Unused here.
-    def set_substatus(status)
+    # +status+:: The sub status set in the progress dialog. Unused here.
+    def set_sub_status(status)
     end
 
     # Does nothing.
