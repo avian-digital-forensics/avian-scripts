@@ -54,7 +54,7 @@ module Timing
         private
             def ensure_stop_watch(stop_watch_name)
                 unless @timers.key?(stop_watch_name)
-                    @timers[stop_watch_name] = StopWatch.new
+                    @timers[stop_watch_name] = StopWatch.new(stop_watch_name)
                 end 
             end
             
@@ -69,17 +69,18 @@ module Timing
     # Provides a way of measuring time over multiple periods.
     class StopWatch
         # Initilizes a stop watch.
-        def initialize
+        def initialize(key)
             @total_time = 0
             @cur_start = 0
             @running = false
+            @key = key
         end
         
         # Starts the stop watch, but does not reset the time.
         # Will raise an exception if the stop watch is already running.
         def start
             if running?
-                raise "Timer already running."
+                raise "Timer already running. Key: '#{@key}"
             end
             @cur_start = Time.now
             @running = true
@@ -89,7 +90,7 @@ module Timing
         # Will raise an exception if the stop watch is not running.
         def stop
             unless running?
-                raise "Timer isn't running."
+                raise "Timer isn't running. Key: '#{@key}"
             end
             @total_time += Time.now - @cur_start
             @running = false

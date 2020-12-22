@@ -2,10 +2,11 @@ data/*
 !data/default_*
 !data/default-*
 !data/templates/
+!data/misc/
 
 # This file is generated for each user from a file in utils.
 wss_caller.rb
 
-avian-inapp-scripts/setup.nuixscript/main_directory.txt
+inapp-scripts/avian-workstation-scripts/setup.nuixscript/main_directory.txt
 
 .vscode/*
