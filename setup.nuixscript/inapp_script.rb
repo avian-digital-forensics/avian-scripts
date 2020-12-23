@@ -121,7 +121,7 @@ module Script
                         options_hash = @radio_button_groups[key]
                         settings[key] = NXUtils::radio_group_value(values, options_hash)
                     elsif type == 'date'
-                        @settings[key] = java::text::SimpleDateFormat.new('yyyy/MM/dd').format(values[key])
+                        @settings[key] = values[key] ? java::text::SimpleDateFormat.new('yyyy/MM/dd').format(values[key]) : nil
                     end
                 end
                 result = @input_validater.call(settings)
@@ -142,7 +142,7 @@ module Script
                         options_hash = @radio_button_groups[key]
                         @settings[key] = NXUtils::radio_group_value(values, options_hash)
                     elsif type == 'date'
-                        @settings[key] = java::text::SimpleDateFormat.new('yyyy/MM/dd').format(values[key])
+                        @settings[key] = values[key] ? java::text::SimpleDateFormat.new('yyyy/MM/dd').format(values[key]) : nil
                     end
                 end
                 # Save the inputted settings to file.
@@ -359,7 +359,7 @@ module Script
                 raise 'No such tab "' + tab_identifier + '"'
             end
 
-            tab.append_date_picker(identifier, label, value ? value.tr('/', '') : nil)
+            tab.append_date_picker(identifier, label, value && !value.empty? ? value.tr('/', '') : nil)
 
             tab.get_control(identifier).set_tool_tip_text(tooltip)
 
