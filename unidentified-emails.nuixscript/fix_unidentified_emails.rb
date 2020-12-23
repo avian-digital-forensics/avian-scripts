@@ -1,22 +1,14 @@
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
+root_directory = File.expand_path('../../_root', __FILE__)
 
-main_directory = get_main_directory(false)
+require File.join(root_directory, 'utils', 'utils')
 
-unless main_directory
-    puts('Script cancelled because no main directory could be found.')
-    return
-end
+require File.join(root_directory, 'utils', 'settings_utils')
 
-require File.join(main_directory, 'utils', 'utils')
+require File.join(root_directory, 'utils', 'custom_communication')
 
-require File.join(main_directory, 'utils', 'settings_utils')
+require File.join(root_directory, 'utils', 'dates')
 
-require File.join(main_directory, 'utils', 'custom_communication')
-
-require File.join(main_directory, 'utils', 'dates')
-
-require File.join(main_directory, 'avian-inapp-scripts', 'unidentified-emails.nuixscript', 'find_unidentified_emails')
+require_relative 'find_unidentified_emails'
 
 module FixUnidentifiedEmails
     extend self

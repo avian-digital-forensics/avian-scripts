@@ -4,29 +4,29 @@ module WSSSetup
   # Create a WSSSetup.
   # All scripts will be disabled to start.
   # Params:
-  # +main_directory+:: The main script directory where settings and WSSs are stored.
+  # +root_directory+:: The main script directory where settings and WSSs are stored.
   # +case_name+:: The name of the case.
   # +case_guid+:: The GUID of the case
-  def self.load(main_directory, case_name, case_guid)
-    WSSSetup.new(main_directory, case_name, case_guid)
+  def self.load(root_directory, case_name, case_guid)
+    WSSSetup.new(root_directory, case_name, case_guid)
   end
 
   class WSSSetup
     # Create a WSSSetup.
     # All scripts will be disabled to start.
     # Params:
-    # +main_directory+:: The main script directory where settings and WSSs are stored.
+    # +root_directory+:: The main script directory where settings and WSSs are stored.
     # +case_name+:: The name of the case.
     # +case_guid+:: The GUID of the case
-    def initialize(main_directory, case_name, case_guid)
-      require File.join(main_directory, 'utils', 'settings_utils')
+    def initialize(root_directory, case_name, case_guid)
+      require File.join(root_directory, 'utils', 'settings_utils')
       
-      @main_directory = main_directory
+      @root_directory = root_directory
 
-      @wss_settings_path = File.join(main_directory,'data','wss_settings.yml')
+      @wss_settings_path = File.join(root_directory,'data','wss_settings.yml')
       # If the settings file does not exist, create it from defaults.
       unless File.file?(@wss_settings_path)
-        FileUtils.cp(File.join(main_directory, 'data', 'default_wss_settings.yml'), @wss_settings_path)
+        FileUtils.cp(File.join(root_directory, 'data', 'default_wss_settings.yml'), @wss_settings_path)
       end
       @wss_settings = YAML.load(File.read(@wss_settings_path))
 
@@ -35,7 +35,7 @@ module WSSSetup
         script[:active] = false
       end
       
-      @wss_settings[:case] = SettingsUtils::CaseInformation.store_case_information(case_name, case_guid, main_directory).to_yaml_hash
+      @wss_settings[:case] = SettingsUtils::CaseInformation.store_case_information(case_name, case_guid, root_directory).to_yaml_hash
     end
 
     # Enables the specified script, so that it is run during loading.
@@ -90,11 +90,11 @@ module WSSSetup
     # Generates a wss_caller.
     def generate_wss_caller
       # Update wss_caller.rb with the new path.
-      default_wss_caller_path = File.join(@main_directory, 'data', 'templates', 'wss_caller_template.rb')
-      wss_caller_path = File.join(@main_directory, 'wss_caller.rb')
+      default_wss_caller_path = File.join(@root_directory, 'data', 'templates', 'wss_caller_template.rb')
+      wss_caller_path = File.join(@root_directory, 'wss_caller.rb')
       default_wss_caller = File.read(default_wss_caller_path)
-      main_directory_string = @main_directory.gsub(/\\/,'\\\\\\\\\\\\\\\\') # These are all necessary to make up for escaping.
-      wss_caller = default_wss_caller.gsub(/PATH = '.*'/, "PATH = '" + main_directory_string + "'")
+      root_directory_string = @root_directory.gsub(/\\/,'\\\\\\\\\\\\\\\\') # These are all necessary to make up for escaping.
+      wss_caller = default_wss_caller.gsub(/PATH = '.*'/, "PATH = '" + root_directory_string + "'")
       File.open(wss_caller_path, "w") { |file| file.write(wss_caller) }
       wss_caller
     end

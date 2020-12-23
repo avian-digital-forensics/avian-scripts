@@ -28,7 +28,7 @@ The scripts writes the result to a csv file with the following headers:
 
 ### Settings
 Settings in *italics* are optional.
-* :main_directory - the path to the Avian scripts main directory.
+* :root_directory - the path to the Avian scripts main directory.
 * :primary_address - the address to examine.
 * :output_path - the generated csv will be placed here.
 * *:delimiter* - used as delimiter in the produced CSV file.
@@ -40,7 +40,7 @@ Key: 'import_printed_images'
 For every pdf in the source directory, finds the item with the right GUID and gives it the printed image.
 ### Settings
 Settings in *italics* are optional.
-* :main_directory - the path to the Avian scripts main directory.
+* :root_directory - the path to the Avian scripts main directory.
 * :source_path - path to the directory where the images to be imported are located.
 * *:scoping_query* - only replaces the printed images for items matching this query, even if there are other pdf's in the source directory.
 If left out, all items will be checked for a printed image.
@@ -51,7 +51,7 @@ Key: 'number_of_descendants'
 Gives every item in the scoping query a custom metadata value of how many descendants the item has.
 ### Settings
 Settings in *italics* are optional.
-* :main_directory - the path to the Avian scripts main directory.
+* :root_directory - the path to the Avian scripts main directory.
 * :metadata_key - the key for the custom metadata.
 * *:scoping_query* - only runs for items matching this query. 
 If left out, script will run on all items.
@@ -70,7 +70,7 @@ This information can be used in later steps.
 
 ### Settings
 Settings in *italics* are optional.
-* :main_directory - the path to the Avian scripts main directory.
+* :root_directory - the path to the Avian scripts main directory.
 * :num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
 * :report_path - where to place the finished report.
 * *:scoping_query* - only runs for items matching this query.
@@ -91,7 +91,7 @@ Then gives all these emails a custom metadata field saying whether there is anot
 
 ### Settings
 Settings in *italics* are optional.
-* :main_directory - the path to the Avian scripts main directory.
+* :root_directory - the path to the Avian scripts main directory.
 * :archived_prefix - all emails containing this text will be treated as exchange server emails.
 * :archived_tag - all emails containing the above prefix will receive this tag.
 * :archived_has_duplicate_tag - all archived emails with duplicates will receive this tag.
@@ -107,7 +107,7 @@ A 'weird' character is any character that is not in standard 7-bit ascii and is 
 
 ### Settings
 Settings in *italics* are optional.
-* :main_directory - the path to the Avian scripts main directory.
+* :root_directory - the path to the Avian scripts main directory.
 * :tag_name - the name of the tag given.
 * *:accepted_character_codes* - the unicode character codes of the accepted items, given as a comma seperated list of numbers.
 Defaults to not accepting any characters (other than standard 7-bit ascii).

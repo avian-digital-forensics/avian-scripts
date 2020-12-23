@@ -1,27 +1,19 @@
 require 'csv'
 
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
-
-main_directory = get_main_directory(false)
-
-unless main_directory
-    puts('Script cancelled because no main directory could be found.')
-    return
-end
+root_directory = File.expand_path('../../_root', __FILE__)
 
 # For GUI.
-require File.join(main_directory,'utils','nx_utils')
+require File.join(root_directory,'utils','nx_utils')
 # Timings.
-require File.join(main_directory,'utils','timer')
+require File.join(root_directory,'utils','timer')
 # Progress messages.
-require File.join(main_directory,'utils','utils')
+require File.join(root_directory,'utils','utils')
 # Storing entity information.
-require File.join(main_directory,'utils','custom_entity')
+require File.join(root_directory,'utils','custom_entity')
 # Saving data.
-require File.join(main_directory,'utils','settings_utils')
+require File.join(root_directory,'utils','settings_utils')
 # Entities manager.
-require File.join(main_directory,'utils','custom_entity_manager')
+require File.join(root_directory,'utils','custom_entity_manager')
 
 gui_title = 'Store Custom Entities'
 
@@ -124,7 +116,7 @@ if dialog.dialog_result
 
         progress_dialog.set_main_status_and_log_it('Saving entities...')
         timer.start('save_entities')
-        output_dir = SettingsUtils::case_data_dir(main_directory, current_case)
+        output_dir = SettingsUtils::case_data_dir(root_directory, current_case)
         
         output_file_path = File.join(output_dir,'store_custom_entities_store.csv')
         CSV.open(output_file_path, 'wb') do |csv|

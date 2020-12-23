@@ -1,18 +1,16 @@
-script_directory = File.dirname(__FILE__)
-setup_directory = File.join(script_directory,'..','setup.nuixscript')
-require File.join(setup_directory,'inapp_script')
+require_relative File.join('..','setup.nuixscript','inapp_script')
 
 
 unless script = Script::create_inapp_script(setup_directory, 'Export Items', 'export_items', current_case, utilities)
-  STDERR.puts('Could not find main directory.')
+  STDERR.puts('Could not find root directory.')
   return
 end
 
-# requires
-require File.join(script.main_directory, 'inapp-scripts', 'export-items', 'export_items')
+# Requires.
+require File.join(script.root_directory, 'inapp-scripts', 'export-items', 'export_items')
 
 # Load saved settings.
-script_settings = SettingsUtils::load_script_settings(script.main_directory,'export_items')
+script_settings = SettingsUtils::load_script_settings(script.root_directory,'export_items')
 
 # Add main tab.
 script.dialog_add_tab('main_tab', 'Main')

@@ -1,22 +1,13 @@
-# Standard code for finding main directory.
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
-
-main_directory = get_main_directory(false)
-
-unless main_directory
-    puts("Script cancelled.")
-    return
-end
+root_directory = File.expand_path('../../_root', __FILE__)
 
 # For GUI.
-require File.join(main_directory,"utils","nx_utils")
+require File.join(root_directory,'utils','nx_utils')
 # Timings.
-require File.join(main_directory,'utils','timer')
+require File.join(root_directory,'utils','timer')
 # Progress messages.
-require File.join(main_directory,'utils','utils')
+require File.join(root_directory,'utils','utils')
 # Actual script.
-require File.join(main_directory,'inapp-scripts','number-of-descendants','number_of_descendants')
+require File.join(root_directory,'inapp-scripts','number-of-descendants','number_of_descendants')
 
 gui_title = "Number of Descendants"
 

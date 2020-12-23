@@ -5,26 +5,18 @@ module Script
     extend self
 
     
-    # Creates an instance of the InAppScript class for and finds the main_directory for it.
+    # Creates an instance of the InAppScript class for and finds the root_directory for it.
     # Params:
-    # +setup_directory+:: The directory of the setup script. The location where the main_directory utilities are located.
+    # +setup_directory+:: The directory of the setup script. The location where the root_directory utilities are located.
     # +gui_title+:: The title given to all GUI elements.
     # +script_name+:: The internal script identifier. Should be the same as used in the directory name but with _ instead of -.
     # +current_case+:: The case the script is being run on.
     # +utilites+:: The Utilities object provided by Nuix.
     def create_inapp_script(setup_directory, gui_title, script_name, current_case, utilities)
-        require File.join(setup_directory,'get_main_directory')
-        
-        main_directory = get_main_directory(false)
-        
-        # If the main_directory could not be found, few things will work.
-        unless main_directory
-            puts('Script cancelled because no main directory could be found.')
-            return nil
-        end
+        root_directory = File.expand_path('../../_root', __FILE__)
         
         # Create and return a new InAppScript.
-        return InAppScript.new(main_directory, gui_title, script_name, current_case, utilities)
+        return InAppScript.new(root_directory, gui_title, script_name, current_case, utilities)
     end
 
     # Used to store settings of an inapp script.
@@ -32,14 +24,14 @@ module Script
         # Initializes a new inapp script settings object and loads the script's settings from file.
         # Loads from default file if none other exists.
         # Params:
-        # +main_directory+:: The main directory. The one where the data directory is located.
+        # +root_directory+:: The main directory. The one where the data directory is located.
         # +script_name+:: The name of the script. Used to calculate the names of the settings files.
-        def initialize(main_directory, script_name)
+        def initialize(root_directory, script_name)
             # Settings files.
-            require File.join(main_directory,'utils','settings_utils')
-            @main_directory = main_directory
+            require File.join(root_directory,'utils','settings_utils')
+            @root_directory = root_directory
             @script_name = script_name
-            @settings = SettingsUtils::load_script_settings(main_directory, script_name)
+            @settings = SettingsUtils::load_script_settings(root_directory, script_name)
         end
 
         # Returns the setting with the given key or '' if no such setting exists.
@@ -54,7 +46,7 @@ module Script
 
         # Saves the settings to the script's settings file, overwriting any settings already stored.
         def save
-            SettingsUtils::save_script_settings(@main_directory, @script_name, @settings)
+            SettingsUtils::save_script_settings(@root_directory, @script_name, @settings)
         end
         
         def each &block
@@ -65,32 +57,32 @@ module Script
     # A class meant to abstract away as much boiler plate as possible from individual inapp scripts.
     class InAppScript
         # The settings_dialog can be set up manually, but the input to these fields will not be saved automatically.
-        attr_reader :settings, :timer, :main_directory, :settings_dialog, :current_case, :utilities
+        attr_reader :settings, :timer, :root_directory, :settings_dialog, :current_case, :utilities
 
         # Initializes the InAppScript. Inapp scripts should use create_inapp_script instead.
         # Params:
-        # +main_directory+:: The main directory. The one where the data directory is located.
+        # +root_directory+:: The main directory. The one where the data directory is located.
         # +gui_title+:: The title given to all GUI elements.
         # +script_name+:: The internal script identifier. Should be the same as used in the directory name but with _ instead of -.
         # +current_case+:: The case the script is being run on.
         # +utilites+:: The Utilities object provided by Nuix.
-        def initialize(main_directory, gui_title, script_name, current_case, utilities)
-            @main_directory = main_directory
+        def initialize(root_directory, gui_title, script_name, current_case, utilities)
+            @root_directory = root_directory
             @utilities = utilities
             @current_case = current_case
             @script_name = script_name
 
             # For GUI.
-            require File.join(main_directory,'utils','nx_utils')
+            require File.join(root_directory,'utils','nx_utils')
             # Timings.
-            require File.join(main_directory,'utils','timer')
+            require File.join(root_directory,'utils','timer')
             # Settings files.
-            require File.join(main_directory,'utils','settings_utils')
+            require File.join(root_directory,'utils','settings_utils')
             # Progress messages.
-            require File.join(main_directory,'utils','utils')
+            require File.join(root_directory,'utils','utils')
 
             @gui_title = gui_title
-            @settings = Settings.new(main_directory, script_name)
+            @settings = Settings.new(root_directory, script_name)
             @timer = Timing::Timer.new
 
             @settings_dialog = NXUtils.create_dialog(gui_title)

@@ -8,9 +8,8 @@ unless script = Script::create_inapp_script(setup_directory, gui_title, 'unident
     return
 end
 
-require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails.nuixscript','find_unidentified_emails')
-
-require File.join(script.main_directory,'avian-inapp-scripts','unidentified-emails.nuixscript','fix_unidentified_emails')
+require_relative 'find_unidentified_emails'
+require_relative 'fix_unidentified_emails'
 
 # Add find tab.
 script.dialog_add_tab('find_tab', 'Find Unidentified Emails')
@@ -153,7 +152,7 @@ script.run do |progress_dialog|
     end
 
     # Find the case data directory.
-    case_data_dir = SettingsUtils::case_data_dir(script.main_directory, current_case.name, current_case.guid)
+    case_data_dir = SettingsUtils::case_data_dir(script.root_directory, current_case.name, current_case.guid)
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
     timer.start('fix_unidentified_emails')

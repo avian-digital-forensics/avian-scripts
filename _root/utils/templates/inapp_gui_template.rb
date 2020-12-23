@@ -9,7 +9,7 @@ unless script = Script::create_inapp_script(setup_directory, GUI_TITLE, SCRIPT_N
   return
 end
 
-# Main directory path can be found in script.main_directory.
+# Main directory path can be found in script.root_directory.
 # Add requires here.
 
 # Setup GUI here.

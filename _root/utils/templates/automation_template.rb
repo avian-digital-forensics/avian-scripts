@@ -3,8 +3,8 @@ module AutomationTemplate
     extend self
 
     def run(nuix_case, utilities, settings_hash, progress_handler)
-        main_directory = settings_hash[:main_directory]
-        require File.join(main_directory,'utils','timer')
+        root_directory = settings_hash[:root_directory]
+        require File.join(root_directory,'utils','timer')
         # Require stuff here.
 
         timer = Timing::Timer.new

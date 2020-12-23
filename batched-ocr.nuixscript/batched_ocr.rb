@@ -1,22 +1,12 @@
 # This script was originally taken by the github repository https://github.com/Nuix/Batched-OCR by JuicyDragon.
-
-# Standard code for finding main directory.
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,"..","setup.nuixscript","get_main_directory")
-
-main_directory = get_main_directory(false)
-
-unless main_directory
-    puts("Script cancelled.")
-    return
-end
+root_directory = File.expand_path('../../_root', __FILE__)
 
 # Progress messages.
-require File.join(main_directory,"utils","utils")
+require File.join(root_directory,"utils","utils")
 # Timings.
-require File.join(main_directory,"utils","timer")
+require File.join(root_directory,"utils","timer")
 # For GUI messages.
-require File.join(main_directory,"utils","nx_utils")
+require File.join(root_directory,"utils","nx_utils")
 java_import "com.nuix.nx.NuixConnection"
 java_import "com.nuix.nx.LookAndFeelHelper"
 java_import "com.nuix.nx.dialogs.ChoiceDialog"

@@ -1,25 +1,17 @@
 require 'set'
 require 'csv'
 
-# Standard code for finding main directory.
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
-
-main_directory = get_main_directory(false)
-
-unless main_directory
-    puts('Script cancelled.')
-    return
-end
+script_directory = File.expand_path('..', __FILE__)
+root_directory = File.expand_path('../../_root', __FILE__)
 
 # For GUI messages.
-require File.join(main_directory,'utils','nx_utils')
-require File.join(main_directory,'utils','union_find')
+require File.join(root_directory,'utils','nx_utils')
+require File.join(root_directory,'utils','union_find')
 # For storing result.
-require File.join(main_directory,'utils','settings_utils')
-require File.join(main_directory,'utils','identifier_graph')
+require File.join(root_directory,'utils','settings_utils')
+require File.join(root_directory,'utils','identifier_graph')
 # Timings.
-require File.join(main_directory,'utils','timer')
+require File.join(root_directory,'utils','timer')
 # Graph correction heuristics.
 require File.join(script_directory,'identifier_graph_heuristics')
 # Person correction heuristics.
@@ -27,7 +19,7 @@ require File.join(script_directory,'person_heuristics')
 # Organize identifier in persons.
 require File.join(script_directory,'person')
 # Progress messages.
-require File.join(main_directory,'utils','utils')
+require File.join(root_directory,'utils','utils')
 
 # Returns a list of all the addresses in the communication of the item if such exists.
 def all_addresses_in_item(item)
@@ -105,7 +97,7 @@ if dialog.get_dialog_result == true
     heuristics_settings[:flag_persons_with_multiple_emails_with_domain] = values['flag_persons_with_multiple_emails_with_domain']
 
     # The output directory.
-    output_dir = SettingsUtils::case_data_dir(main_directory, current_case)
+    output_dir = SettingsUtils::case_data_dir(root_directory, current_case)
 
     ProgressDialog.for_block do |progress_dialog|
         # Setup progress dialog.

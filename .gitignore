@@ -1,0 +1,10 @@
+_root/data/*
+!_root/data/default_*
+!_root/data/default-*
+!_root/data/templates/
+!_root/data/misc/
+
+# This file is generated for each user from a file in utils.
+_root/wss_caller.rb
+
+.vscode/*

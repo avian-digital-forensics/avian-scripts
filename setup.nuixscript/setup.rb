@@ -1,28 +1,20 @@
 require 'yaml'
 require 'fileutils'
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,"get_main_directory")
+root_directory = File.expand_path('../../_root', __FILE__)
 
-main_directory = get_main_directory(false)
+require File.join(root_directory, 'utils', 'settings_utils')
+require File.join(root_directory, 'utils', 'wss_setup')
+require File.join(root_directory, 'utils', 'nx_utils')
 
-unless main_directory
-  puts("Script cancelled.")
-  return
-end
-
-require File.join(main_directory, 'utils', 'settings_utils')
-require File.join(main_directory, 'utils', 'wss_setup')
-require File.join(main_directory, 'utils', 'nx_utils')
-
-settings_file = File.join(main_directory, 'data', 'wss_settings.yml')
+settings_file = File.join(root_directory, 'data', 'wss_settings.yml')
 
 # If the settings file does not exist, create it from defaults.
 unless File.file?(settings_file)
-  FileUtils.cp(File.join(main_directory, 'data', 'default_wss_settings.yml'), settings_file)
+  FileUtils.cp(File.join(root_directory, 'data', 'default_wss_settings.yml'), settings_file)
 end
 
 # Load current settings.
-wss_setup = WSSSetup.load(main_directory, current_case.name, current_case.guid)
+wss_setup = WSSSetup.load(root_directory, current_case.name, current_case.guid)
 
 ## Create GUI.
 dialog = TabbedCustomDialog.new("Avian Scripts Setup")

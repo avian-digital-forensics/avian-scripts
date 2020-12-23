@@ -9,9 +9,9 @@ unless script = Script::create_inapp_script(setup_directory, 'Tag Weird Characte
   return
 end
 
-# Main directory path can be found in script.main_directory.
+# Main directory path can be found in script.root_directory.
 # Add requires here.
-require File.join(script.main_directory, 'inapp-scripts', 'tag-weird-characters', 'tag_weird_characters')
+require File.join(script.root_directory, 'inapp-scripts', 'tag-weird-characters', 'tag_weird_characters')
 
 # Setup GUI here.
 # Fields added using InAppScript methods are saved automatically.

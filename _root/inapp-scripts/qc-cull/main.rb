@@ -6,7 +6,7 @@ require_relative '../number-of-descendants/number_of_descendants'
 module QCCull
   extend self
 
-  def qc_cull(main_directory, nuix_case, utilities, progress_handler, timer, scoping_query, settings_hash, report_info_hash)
+  def qc_cull(root_directory, nuix_case, utilities, progress_handler, timer, scoping_query, settings_hash, report_info_hash)
     num_descendants_metadata_key = settings_hash[:num_descendants_metadata_key]
     search_and_tag_files = settings_hash[:search_and_tag_files]
     exclude_tag_prefixes = settings_hash[:exclude_tag_prefixes]
@@ -35,7 +35,7 @@ module QCCull
     # Report.
     progress_handler.set_main_status_and_log_it('Generating report...')
     # Find report template.
-    report_template_path = File.join(main_directory,'data','misc','qc','qc_report_template.rtf')
+    report_template_path = File.join(root_directory,'data','misc','qc','qc_report_template.rtf')
     # Generate report.
     QCCull::generate_report(nuix_case, report_template_path, report_path, report_info_hash, utilities)
   end

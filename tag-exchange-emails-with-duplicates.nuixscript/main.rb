@@ -10,10 +10,10 @@ unless script = Script::create_inapp_script(setup_directory, gui_title, 'tag_exc
     return
 end
 
-# Main directory path can be found in script.main_directory.
+# Main directory path can be found in script.root_directory.
 # Add requires here.
 # Main logic.
-require File.join(script.main_directory,'inapp-scripts','tag-exchange-emails-with-duplicates','tag_exchange_emails_with_duplicates')
+require File.join(script.root_directory,'inapp-scripts','tag-exchange-emails-with-duplicates','tag_exchange_emails_with_duplicates')
 
 # Setup GUI here.
 # Fields added using InAppScript methods are saved automatically.
@@ -62,7 +62,6 @@ script.run do |progress_dialog|
     has_missing_attachments_tag = script.settings['has_missing_attachments_tag']
     exclude_archived_items_with_duplicates = script.settings['exclude_archived_items_with_duplicates']
 
-    script.timer.start('total')
     num_without_duplicate, num_missing_attachments = TagExchangeEmailsWithDuplicates::tag_exchange_emails_with_duplicates(
             current_case, 
             progress_dialog, 
@@ -87,5 +86,4 @@ script.run do |progress_dialog|
         CommonDialogs.show_information("A total of " + num_missing_attachments.to_s + " missing attachments were detected.")
     end
 
-    script.timer.stop('total')
 end

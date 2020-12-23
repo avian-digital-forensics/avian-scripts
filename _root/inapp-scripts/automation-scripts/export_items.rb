@@ -2,9 +2,9 @@ module ExportItems
   extend self
 
   def run(nuix_case, utilities, settings_hash, progress_handler)
-    main_directory = settings_hash[:main_directory]
-    require File.join(main_directory,'utils','timer')
-    require File.join(main_directory,'inapp-scripts', 'export-items', 'export_items')
+    root_directory = settings_hash[:root_directory]
+    require File.join(root_directory,'utils','timer')
+    require File.join(root_directory,'inapp-scripts', 'export-items', 'export_items')
 
     timer = Timing::Timer.new
     timer.start('total')

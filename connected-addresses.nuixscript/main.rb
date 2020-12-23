@@ -1,17 +1,15 @@
-script_directory = File.dirname(__FILE__)
-setup_directory = File.join(script_directory,'..','setup.nuixscript')
-require File.join(setup_directory,'inapp_script')
+require_relative File.join('..','setup.nuixscript','inapp_script')
 
 # GUI_TITLE is the name given to all GUI elements created by the InAppScript.
 # SCRIPT_NAME should be of the form inapp_gui_template2.
 unless script = Script::create_inapp_script(setup_directory, 'Connected Addresses', 'connected_addresses', current_case, utilities)
-  STDERR.puts('Could not find main directory.')
+  STDERR.puts('Could not find root directory.')
   return
 end
 
-# Main directory path can be found in script.main_directory.
+# Root directory path can be found in script.root_directory.
 # Add requires here.
-require File.join(script.main_directory, 'inapp-scripts', 'connected-addresses', 'connected_addresses')
+require File.join(script.root_directory, 'inapp-scripts', 'connected-addresses', 'connected_addresses')
 
 # Setup GUI here.
 # Fields added using InAppScript methods are saved automatically.

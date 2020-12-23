@@ -1,3 +1,5 @@
+require 'json'
+
 script_directory = File.dirname(__FILE__)
 setup_directory = File.join(script_directory,'..','setup.nuixscript')
 require File.join(setup_directory,'inapp_script')
@@ -9,22 +11,22 @@ unless script = Script::create_inapp_script(setup_directory, gui_title, 'qc_cull
   return
 end
 
-main_directory = script.main_directory
+root_directory = script.root_directory
 
 require 'fileutils'
 # For GUI.
-require File.join(main_directory,'utils','nx_utils')
+require File.join(root_directory,'utils','nx_utils')
 # Timings.
-require File.join(main_directory,'utils','timer')
+require File.join(root_directory,'utils','timer')
 # Progress messages.
-require File.join(main_directory,'utils','utils')
+require File.join(root_directory,'utils','utils')
 # Save and load script settings.
-require File.join(main_directory,'utils','settings_utils')
+require File.join(root_directory,'utils','settings_utils')
 
-require File.join(main_directory,'inapp-scripts','qc-cull','main')
+require File.join(root_directory,'inapp-scripts','qc-cull','main')
 
 # Load saved settings.
-script_settings = SettingsUtils::load_script_settings(main_directory,'qc_cull')
+script_settings = SettingsUtils::load_script_settings(root_directory,'qc_cull')
 
 # Add main tab.
 script.dialog_add_tab('main_tab', 'Main')
@@ -82,12 +84,12 @@ script.run do |progress_dialog|
   settings_hash[:num_descendants_metadata_key] = script.settings['num_descendants_metadata_key']
 
   # Add search and tag file paths
-  qc_search_and_tag_path = File.join(main_directory, 'misc', 'qc', 'qc_search_and_tag.json')
-  culling_search_and_tag_path = File.join(main_directory, 'misc', 'qc', 'culling_search_and_tag.json')
+  qc_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
+  culling_search_and_tag_path = File.join(root_directory, 'misc', 'qc', 'culling_search_and_tag.json')
   settings_hash[:search_and_tag_files] = [qc_search_and_tag_path, culling_search_and_tag_path]
 
   # Set up exclusion tag prefix hash.
-  exclusion_sets_path = File.join(main_directory, 'misc', 'qc', 'exclusion_sets.json')
+  exclusion_sets_path = File.join(root_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
   settings_hash[:exclude_tag_prefixes] = JSON.parse(File.read(exclusion_sets_path))
   
   # Add a selected items tag to the scoping query if appropriate.
@@ -104,7 +106,7 @@ script.run do |progress_dialog|
       report_info_hash[key[5..-1]] = value
     end
   end
-  QCCull::qc_cull(main_directory, current_case, utilities, progress_dialog, timer, scoping_query, settings_hash, report_info_hash)
+  QCCull::qc_cull(root_directory, current_case, utilities, progress_dialog, timer, scoping_query, settings_hash, report_info_hash)
   
 
   # No script finished message.

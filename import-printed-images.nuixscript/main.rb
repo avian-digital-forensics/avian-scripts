@@ -10,12 +10,12 @@ unless script = Script::create_inapp_script(setup_directory, gui_title, 'import_
   return
 end
 
-# Main directory path can be found in script.main_directory.
+# Main directory path can be found in script.root_directory.
 # Add requires here.
 # Main logic.
-require File.join(script.main_directory,'inapp-scripts','import-printed-images','import_printed_images')
+require File.join(script.root_directory,'inapp-scripts','import-printed-images','import_printed_images')
 # Find case data.
-require File.join(script.main_directory,'utils','settings_utils')
+require File.join(script.root_directory,'utils','settings_utils')
 
 # Setup GUI here.
 # Fields added using InAppScript methods are saved automatically.
@@ -37,7 +37,7 @@ script.run do |progress_dialog|
 
   timer = script.timer
   
-  data_dir = SettingsUtils.case_data_dir(script.main_directory, current_case.name, current_case.guid)
+  data_dir = SettingsUtils.case_data_dir(script.root_directory, current_case.name, current_case.guid)
   printed_image_dir = File.join(data_dir, 'unidentified_emails_printed_images')
 
   items = []

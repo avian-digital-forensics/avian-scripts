@@ -1,20 +1,13 @@
 # Standard code for finding main directory.
 script_directory = File.dirname(__FILE__)
-require_relative File.join("..","setup.nuixscript","get_main_directory")
-
-main_directory = get_main_directory(false)
-
-unless main_directory
-    puts("Script cancelled because no main directory could be found.")
-    return
-end
+root_directory = File.expand_path('../../_root', __FILE__)
 
 # For GUI.
-require File.join(main_directory,"utils","nx_utils")
+require File.join(root_directory,'utils','nx_utils')
 # Timings.
-require File.join(main_directory,"utils","timer")
+require File.join(root_directory,'utils','timer')
 # Progress messages.
-require File.join(main_directory,"utils","utils")
+require File.join(root_directory,'utils','utils')
 
 
 gui_title = 'Tag Messages Sent to Sender'
@@ -22,7 +15,7 @@ gui_title = 'Tag Messages Sent to Sender'
 dialog = NXUtils.create_dialog(gui_title)
 
 # Add main tab.
-main_tab = dialog.add_tab("main_tab", "Main")
+main_tab = dialog.add_tab('main_tab', 'Main')
 
 dialog.validate_before_closing do |values|
     # Everything is fine; close the dialog.
@@ -53,15 +46,15 @@ if dialog.dialog_result
 
         timer.start('find_items_with_communication')
         # Find all items in case with a Communication.
-        items = currentCase.search("has-communication:1")
+        items = currentCase.search('has-communication:1')
         timer.stop('find_items_with_communication')
 
-        progress_dialog.log_message("Found: " + items.length.to_s + " items with communication.")
+        progress_dialog.log_message("Found: #{items.length.to_s} items with communication.")
 
-        base_tag = "SentToSender"
-        to_suffix = "To"
-        cc_suffix = "Cc"
-        bcc_suffix = "Bcc"
+        base_tag = 'SentToSender'
+        to_suffix = 'To'
+        cc_suffix = 'Cc'
+        bcc_suffix = 'Bcc'
 
         numTo = 0
         numCc = 0
@@ -95,15 +88,15 @@ if dialog.dialog_result
         timer.stop('process_items')
 
         # Write result to console.
-        progress_dialog.log_message("Found " + numTo.to_s + " items with from in to.")
-        progress_dialog.log_message("Found " + numCc.to_s + " items with from in cc.")
-        progress_dialog.log_message("Found " + numBcc.to_s + " items with from in bcc.")
+        progress_dialog.log_message("Found #{numTo.to_s} items with from in to.")
+        progress_dialog.log_message("Found #{numCc.to_s} items with from in cc.")
+        progress_dialog.log_message("Found #{numBcc.to_s} items with from in bcc.")
 
         timer.stop('total')
 
         timer.print_timings()
 
-        script_finished_message = "Script finished. Found " + numTo.to_s + " items with from in to. Found " + numCc.to_s + " items with from in cc. Found " + numBcc.to_s + ' items with from in bcc.'
+        script_finished_message = "Script finished. Found #{numTo.to_s}} items with from in to. Found #{numCc.to_s} items with from in cc. Found #{numBcc.to_s} items with from in bcc."
         # Write result to GUI.
         progress_dialog.log_message(script_finished_message)
         CommonDialogs.show_information(script_finished_message, 'Tag Messages to Self')

@@ -13,11 +13,11 @@ module SettingsUtils
         end
         
         # Creates a new CaseInformation about the given case.
-        def self.store_case_information(case_name, case_guid, main_directory)
+        def self.store_case_information(case_name, case_guid, root_directory)
             case_information = new
             case_information.guid = case_guid
             case_information.name = case_name
-            case_information.data_path = SettingsUtils::case_data_dir(main_directory, case_name, case_guid)
+            case_information.data_path = SettingsUtils::case_data_dir(root_directory, case_name, case_guid)
             return case_information
         end
         
@@ -37,15 +37,15 @@ module SettingsUtils
     end
 
     # Gets the data directory for the specified case.
-    def case_data_dir(main_directory, case_name, case_guid)
-        dir_name = File.join(main_directory, "data", "cases", case_name)
+    def case_data_dir(root_directory, case_name, case_guid)
+        dir_name = File.join(root_directory, "data", "cases", case_name)
         
         # If the directory already exists, check if it is the same case.
         if File.directory?(dir_name)
             dir_guid = File.read(File.join(dir_name, "guid.txt")).strip
             # If not, use a different directory.
             if dir_guid != case_guid
-                dir_name = File.join(main_directory, "data", "cases", case_guid)
+                dir_name = File.join(root_directory, "data", "cases", case_guid)
             end
         end
         # If the directory does not exist, create it and place the guid information inside.
@@ -58,9 +58,9 @@ module SettingsUtils
         return dir_name
     end
 
-    def inapp_script_settings_path(main_directory, script_name)
-        default_settings_file = File.join(main_directory,'data','default-inapp-script-settings',"#{script_name}_settings.yml")
-        settings_file = File.join(main_directory,'data','inapp-script-settings',"#{script_name}_settings.yml")
+    def inapp_script_settings_path(root_directory, script_name)
+        default_settings_file = File.join(root_directory,'data','default-inapp-script-settings',"#{script_name}_settings.yml")
+        settings_file = File.join(root_directory,'data','inapp-script-settings',"#{script_name}_settings.yml")
 
         unless File.file?(default_settings_file)
             raise 'No default settings file for script ' + script_name
@@ -75,8 +75,8 @@ module SettingsUtils
         return settings_file
     end
 
-    def load_script_settings(main_directory, script_name)
-        settings_file = inapp_script_settings_path(main_directory, script_name)
+    def load_script_settings(root_directory, script_name)
+        settings_file = inapp_script_settings_path(root_directory, script_name)
         settings = YAML.load_file(settings_file)
         if settings
             return settings
@@ -87,8 +87,8 @@ module SettingsUtils
         settings = YAML.load_file(settings_file)
     end
 
-    def save_script_settings(main_directory, script_name, yaml_hash)
-        settings_file = inapp_script_settings_path(main_directory, script_name)
+    def save_script_settings(root_directory, script_name, yaml_hash)
+        settings_file = inapp_script_settings_path(root_directory, script_name)
 
         # Write the settings.
         File.open(settings_file, "w") { |file| file.write(yaml_hash.to_yaml) }

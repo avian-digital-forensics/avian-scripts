@@ -1,23 +1,15 @@
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
-
-main_directory = get_main_directory(false)
-
-unless main_directory
-    puts('Script cancelled.')
-    return
-end
+root_directory = File.expand_path('../../_root', __FILE__)
 
 # Regex scanner.
-require File.join(main_directory,'resources','SuperUtilities.jar')
+require File.join(root_directory,'resources','SuperUtilities.jar')
 java_import 'com.nuix.superutilities.SuperUtilities'
 $su = SuperUtilities.init($utilities, NUIX_VERSION)
 # GUI.
-require File.join(main_directory,'utils','nx_utils')
+require File.join(root_directory,'utils','nx_utils')
 # Timings.
-require File.join(main_directory,"utils","timer")
+require File.join(root_directory,'utils','timer')
 # Progress messages.
-require File.join(main_directory,'utils','utils')
+require File.join(root_directory,'utils','utils')
 # Tag groups.
 require 'set'
 
