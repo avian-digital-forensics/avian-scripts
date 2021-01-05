@@ -60,6 +60,25 @@ module QCCull
     end
   end
 
+  # Adds ocr information to the result_hash.
+  # Params:
+  # +nuix_case+:: The case to provide information about.
+  # +result_hash+:: The hash to add the results to.
+  # +scoping_query+:: Limit search to this query.
+  def report_ocr(nuix_case, result_hash, scoping_query)
+    num_ocr = nuix_case.count(Utils::join_queries('(flag:ocr_succ* OR flag:ocr_failed) AND content:*', scoping_query))
+    num_embedded = nuix_case.count(Utils::join_queries('tag:"Avian|QC|OCR|OCR Embedded"', scoping_query))
+    num_not_embedded = nuix_case.count(Utils::join_queries('tag:"Avian|QC|OCR|OCR Not embedded"', scoping_query))
+    num_success_and_content = nuix_case.count(Utils::join_queries('tag:"Avian|QC|OCR|Succes and content"', scoping_query))
+    result_hash['FIELD_num_ocr_items'] = num_ocr.to_s
+    result_hash['FIELD_num_with_content_ocr'] = num_success_and_content.to_s
+    result_hash['FIELD_percent_with_content_ocr'] = num_ocr == 0 ? '0' : (num_success_and_content.to_f/num_ocr * 100).round(0).to_s
+    result_hash['FIELD_num_embedded_ocr'] = num_embedded.to_s
+    result_hash['FIELD_percent_embedded_ocr'] = num_ocr == 0 ? '0' : (num_embedded.to_f/num_ocr * 100).round(0).to_s
+    result_hash['FIELD_num_not_embedded_ocr'] = num_not_embedded.to_s
+    result_hash['FIELD_percent_not_embedded_ocr'] = num_ocr == 0 ? '0' : (num_not_embedded.to_f/num_ocr * 100).round(0).to_s
+  end
+  
   # Converts a two layer hash to rtf.
   # The keys are the categories, the values are themselves hashes.
   # The subhashes contain fields and values.
@@ -144,7 +163,7 @@ module QCCull
     report_item_types(nuix_case, result_hash, 'FIELD_no_text_statistics', 'has-exclusion:0 AND tag:"Avian|QC|Unsupported|No text"')
 
     # 5 OCR.
-    result_hash['FIELD_num_ocr_items'] = nuix_case.count('tag:"Avian|QC|OCR|Success" AND content').to_s
+    report_ocr(nuix_case, result_hash, scoping_query)
 
     # 6 Culling.
     exclusion_reasons = nuix_case.all_exclusions
