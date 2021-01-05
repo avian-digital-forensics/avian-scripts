@@ -19,33 +19,33 @@ module LoadCallRecordAsCommunication
 
     if source_item.getType.getName == 'application/x-database-table-row'
       begin
-      properties = source_item.properties
-    
-      date_string = properties['Time'].to_s
-      date_time = DateTime.parse(date_string, '%Y-%m-%d %H:%M:%S')
-      joda_date_time = Dates::date_time_to_joda_time(date_time)
+        properties = source_item.properties
+        
+        date_string = properties['Time'].to_s
+        date_time = DateTime.parse(date_string, '%Y-%m-%d %H:%M:%S')
+        joda_date_time = Dates::date_time_to_joda_time(date_time)
 
-      from_address_personal = properties['From name']
-      if from_address_personal == 'NOT FOUND'
-        from_address_personal = ''
-      end
-      from_address_address = properties['From no']
-      from_address = Custom::CustomAddress::new(from_address_personal, from_address_address, 'telephone-number')
+        from_address_personal = properties['From name']
+        if from_address_personal == 'NOT FOUND'
+            from_address_personal = ''
+        end
+        from_address_address = properties['From no']
+        from_address = Custom::CustomAddress::new(from_address_personal, from_address_address, 'telephone-number')
 
-      to_address_personal = properties['To name']
-      if to_address_personal == 'NOT FOUND'
-        to_address_personal = ''
-      end
-      to_address_address = properties['To no']
-      to_address = Custom::CustomAddress::new(to_address_personal, to_address_address, 'telephone-number')
+        to_address_personal = properties['To name']
+        if to_address_personal == 'NOT FOUND'
+            to_address_personal = ''
+        end
+        to_address_address = properties['To no']
+        to_address = Custom::CustomAddress::new(to_address_personal, to_address_address, 'telephone-number')
 
-      communication = Custom::CustomCommunication(joda_date_time, '', [from_address], [to_address])
+        communication = Custom::CustomCommunication(joda_date_time, '', [from_address], [to_address])
 
-      worker_item.set_item_communication(communication)
-    
+        worker_item.set_item_communication(communication)
+        
       rescue Exception => ex
-      worker_item.addTag('Avian|WSS Error')
-      worker_item.addCustomMetadata('Processing Error',ex.inspect.to_s,'text','user')
+        worker_item.addTag('Avian|WSS Error')
+        worker_item.addCustomMetadata('Processing Error',ex.inspect.to_s,'text','user')
       end
     end
   end
@@ -53,5 +53,5 @@ module LoadCallRecordAsCommunication
   def run_close(wss_global)
     # Will be run after loading all items.
   end
-  end
+end
   
