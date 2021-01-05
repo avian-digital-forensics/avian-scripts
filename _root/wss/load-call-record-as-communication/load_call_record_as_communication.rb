@@ -18,7 +18,6 @@ module LoadCallRecordAsCommunication
     source_item = worker_item.getSourceItem
 
     if source_item.getType.getName == 'application/x-database-table-row'
-      puts("helleflynder")
       begin
         properties = source_item.properties
         
@@ -26,18 +25,18 @@ module LoadCallRecordAsCommunication
         date_time = DateTime.parse(date_string, '%Y-%m-%d %H:%M:%S')
         joda_date_time = Dates::date_time_to_joda_time(date_time)
 
-        from_address_personal = properties['From name']
+        from_address_personal = properties['From name'].to_s
         if from_address_personal == 'NOT FOUND'
             from_address_personal = ''
         end
-        from_address_address = properties['From no']
+        from_address_address = properties['From no'].to_s
         from_address = Custom::CustomAddress::new(from_address_personal, from_address_address, 'telephone-number')
 
-        to_address_personal = properties['To name']
+        to_address_personal = properties['To name'].to_s
         if to_address_personal == 'NOT FOUND'
             to_address_personal = ''
         end
-        to_address_address = properties['To no']
+        to_address_address = properties['To no'].to_s
         to_address = Custom::CustomAddress::new(to_address_personal, to_address_address, 'telephone-number')
 
         communication = Custom::CustomCommunication::new(joda_date_time, '', [from_address], [to_address])
