@@ -6,18 +6,19 @@ module Custom
     class CustomAddress
 		include Address
         
-        attr_accessor :personal, :address
+        attr_accessor :personal, :address, :type
 
 		def self.from_address(address)
 			return CustomAddress.new(address.personal, address.address)
 		end
 
-		def initialize(personal, address)
+		def initialize(personal, address, type = 'internet-mail')
 			@personal = personal
 			if address == ''
 				raise ArgumentError, 'Address must not be empty.'
 			end
 			@address = address
+			@type = type
 		end
 
 		def getPersonal
@@ -33,7 +34,7 @@ module Custom
 		end
 
 		def getType
-			"internet-mail"
+			@type
 		end
 
 		def toRfc822String
@@ -68,7 +69,7 @@ module Custom
 			to_addresses = if communication.to then communication.to else [] end
 			cc_addresses = if communication.cc then communication.cc else [] end
 			bcc_addresses = if communication.bcc then communication.bcc else [] end
-			return CustomCommunication.new(joda_time, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
+			return CustomCommunication.new(joda_time, subject, from_addresses, to_addresses, cc_addresses = [], bcc_addresses = [])
 		end
 
 		# joda_time should always be a Joda DateTime
