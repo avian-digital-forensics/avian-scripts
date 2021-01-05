@@ -69,11 +69,11 @@ module Custom
 			to_addresses = if communication.to then communication.to else [] end
 			cc_addresses = if communication.cc then communication.cc else [] end
 			bcc_addresses = if communication.bcc then communication.bcc else [] end
-			return CustomCommunication.new(joda_time, subject, from_addresses, to_addresses, cc_addresses = [], bcc_addresses = [])
+			return CustomCommunication.new(joda_time, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
 		end
 
 		# joda_time should always be a Joda DateTime
-		def initialize(joda_time, subject, from_addresses, to_addresses, cc_addresses, bcc_addresses)
+		def initialize(joda_time, subject, from_addresses, to_addresses, cc_addresses = [], bcc_addresses = [])
 			unless joda_time.is_a?(JodaTime::DateTime) || !joda_time
 				raise ArgumentError, 'joda_time must be a Joda DateTime.'
 			end
