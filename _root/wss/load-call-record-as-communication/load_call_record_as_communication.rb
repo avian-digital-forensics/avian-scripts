@@ -47,6 +47,7 @@ module LoadCallRecordAsCommunication
       rescue Exception => ex
         worker_item.addTag('Avian|WSS Error')
         worker_item.addCustomMetadata('Processing Error',ex.inspect.to_s,'text','user')
+        STDERR::puts("Processing error for item #{worker_item.item_guid}")
       end
     end
   end
