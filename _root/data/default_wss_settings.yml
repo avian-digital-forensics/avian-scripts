@@ -24,3 +24,7 @@
   :label: Add Communication to Unidentified Emails
   :path: wss/add-communication-to-unidentified-emails/add_communication_to_unidentified_emails.rb
   :active: false
+- :identifier: load_call_record_as_communication
+  :label: Load Call Record as Communication
+  :path: wss/load-call-record-as-communication/load_call_record_as_communication.rb
+  :active: false
