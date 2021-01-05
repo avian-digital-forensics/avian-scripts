@@ -3,7 +3,7 @@ require 'date'
 require_relative File.join('..','..','utils','custom_communication')
 require_relative File.join('..','..','utils','dates')
 
-module WSSTemplate
+module LoadCallRecordAsCommunication
   extend self
 
 
