@@ -44,7 +44,7 @@ module LoadCallRecordAsCommunication
         worker_item.set_item_communication(communication)
         worker_item.set_item_type('application/x-call-record')
 
-        item_name = "#{from_address_address}->#{to_address_address}"
+        item_name = "#{from_address_address} -> #{to_address_address}"
         worker_item.set_item_name(item_name)
         
       rescue Exception => ex
