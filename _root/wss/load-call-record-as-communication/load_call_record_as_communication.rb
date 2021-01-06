@@ -42,6 +42,7 @@ module LoadCallRecordAsCommunication
         communication = Custom::CustomCommunication::new(joda_date_time, '', [from_address], [to_address])
 
         worker_item.set_item_communication(communication)
+        worker_item.set_item_type('application/x-call-record')
         
       rescue Exception => ex
         worker_item.addTag('Avian|WSS Error')
