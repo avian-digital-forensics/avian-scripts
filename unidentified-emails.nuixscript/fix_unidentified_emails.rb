@@ -10,6 +10,8 @@ require File.join(root_directory, 'utils', 'dates')
 
 require_relative 'find_unidentified_emails'
 
+require 'set'
+
 module FixUnidentifiedEmails
   extend self
 
@@ -131,16 +133,20 @@ module FixUnidentifiedEmails
       return nil
     end
     english_date_string = Dates::danish_date_string_to_english(date_string)
-    ruby_date_time = DateTime.parse(english_date_string)
-    # Subtract 1/24th of a day=one hour to correct for danish timezone or an extra if summertime.
-    # This may cause weird problems with leap seconds and the like, but these hopefully won't be a problem.
-    if Dates::is_eu_daylight_savings(ruby_date_time)
-      ruby_date_time -= 2.0/24
-    else
-      ruby_date_time -= 1.0/24
+    begin
+      ruby_date_time = DateTime.parse(english_date_string)
+      # Subtract 1/24th of a day=one hour to correct for danish timezone or an extra if summertime.
+      # This may cause weird problems with leap seconds and the like, but these hopefully won't be a problem.
+      if Dates::is_eu_daylight_savings(ruby_date_time)
+        ruby_date_time -= 2.0/24
+      else
+        ruby_date_time -= 1.0/24
+      end
+      joda_time = Dates::date_time_to_joda_time(ruby_date_time)
+      return joda_time
+    rescue => ArgumentError
+        return nil
     end
-    joda_time = Dates::date_time_to_joda_time(ruby_date_time)
-    return joda_time
   end
 
   # The body of the FixUnidentifiedEmails script.
@@ -163,6 +169,9 @@ module FixUnidentifiedEmails
     progress_dialog.set_main_progress(0,items.size)
     items_processed = 0
     item_communications = {}
+
+    failed_date_items = Set[]
+
     timer.start('find_communication_fields')
     for item in items
       progress_dialog.set_sub_status("Items processed: " + items_processed.to_s)
@@ -192,6 +201,9 @@ module FixUnidentifiedEmails
       # Find date.
       timer.start('find_date')
       date = parse_date(fields[:date])
+      unless date
+        failed_date_items.add(item)
+      end
       timer.stop('find_date')
 
       # Find subject.
@@ -216,6 +228,15 @@ module FixUnidentifiedEmails
       end
     end
     timer.stop('find_communication_fields')
+
+    # Add tag to items with no date
+    unless failed_date_items.empty?
+        timer.start('add_tag_failed_date_tag')
+        progress_dialog.set_main_status_and_log_it('Adding failed date tag...')
+        progress_dialog.log_message("Failed to find the date for #{failed_date_items.size} items.")
+        Utils.bulk_add_tag(utilities, progress_dialog, 'FailedDate', failed_date_items)
+        timer.stop('add_tag_failed_date_tag')
+    end
 
     # Finds the data file path.
     data_path = File.join(case_data_dir, 'unidentified_emails_data.yml')
