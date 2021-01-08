@@ -11,7 +11,7 @@ end
 require_relative 'find_unidentified_emails'
 require_relative 'fix_unidentified_emails'
 
-require File.join(script.main_directory,'utils','utils')
+require File.join(script.root_directory,'utils','utils')
 
 # Add find tab.
 script.dialog_add_tab('find_tab', 'Find Unidentified Emails')
