@@ -15,6 +15,10 @@ module ImportPrintedImages
 
     # Find the names of alle pdf's in the source directory
     progress_handler.set_main_status_and_log_it('Finding files to import from...')
+    if !Dir.exist?(source_path)
+      progress_handler.log_message('Source directory not found. Perhaps you forgot to run Export Printed Images?')
+      return 0
+    end
     files = Dir.entries(source_path).select { |file| file.end_with?('.pdf') }.to_set
     importer = utilities.pdf_print_importer
 

@@ -35,8 +35,23 @@ module FixUnidentifiedEmails
         end
     end
 
-    def find_rfc_mails(nuix_case)
-        return nuix_case.search('mime-type:message/rfc822')
+    def find_rfc_mails(nuix_case, scoping_query)
+        query = Utils::join_queries('mime-type:message/rfc822', scoping_query)
+        return nuix_case.search(query)
+    end
+
+    # Cleans up the field. Removes surrounding quotation marks and whitespace.
+    # Params:
+    # +field+:: The string to cleanup.
+    def clean_field(field)
+        field.strip!
+        # Remove a weird whitespace character found in the emails.
+        field.gsub!(/ /, '')
+        if field.start_with?('"') && field.end_with?('"')
+            field[1..-2]
+        else
+            field
+        end
     end
 
     # Return a hash of possible fields and their values.
@@ -52,8 +67,18 @@ module FixUnidentifiedEmails
 			for field_key, aliases in communication_field_aliases
 				contained_alias = aliases.find { |field_alias| lines.any? { |line| line.start_with?(field_alias + ':') } }
 				if contained_alias
-					# If at least one alias is found in the text, store the first value.
-                    fields[field_key] = lines.find { |line| line.start_with?(contained_alias + ':') }[contained_alias.size+1..-1].strip
+                    # If at least one alias is found in the text, store the first value.
+                    # Get all lines that store the value of the field.
+                    # If a line ends with , or ; it probably continues on the next line.
+                    line_index_start = lines.find_index { |line| line.start_with?(contained_alias + ':') }
+                    line_index_end = line_index_start
+                    while lines[line_index_end].end_with?(',', ';')
+                        line_index_end += 1
+                    end
+
+                    first_line = lines[line_index_start][contained_alias.size+1..-1].strip
+
+                    fields[field_key] = first_line + lines[line_index_start+1..line_index_end].map { |line| ' ' + line.strip }.join('')
                 else
                     fields[field_key] = ''
 				end
@@ -76,6 +101,8 @@ module FixUnidentifiedEmails
             end
         end
 
+        # Clean up fields.
+        fields.each { |key,field| fields[key] = clean_field(field) }
         return fields
     end
 
@@ -105,6 +132,13 @@ module FixUnidentifiedEmails
         end
         english_date_string = Dates::danish_date_string_to_english(date_string)
         ruby_date_time = DateTime.parse(english_date_string)
+        # Subtract 1/24th of a day=one hour to correct for danish timezone or an extra if summertime.
+        # This may cause weird problems with leap seconds and the like, but these hopefully won't be a problem.
+        if Dates::is_eu_daylight_savings(ruby_date_time)
+            ruby_date_time -= 2.0/24
+        else
+            ruby_date_time -= 1.0/24
+        end
         joda_time = Dates::date_time_to_joda_time(ruby_date_time)
         return joda_time
     end
@@ -124,7 +158,7 @@ module FixUnidentifiedEmails
     # +address_regexps+:: Regexps for possible address formats. First capture group should be the personal part and second is the address part. The address part should never be empty.
     # +email_mime_type+:: The MIME-type to give to those items that are not already of kind email.
     # +address_splitter+:: A block that takes a string and splits it into individual address strings that are then matched to the above regexps.
-    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, email_mime_type, export_printed_images, fixed_item_tag, &address_splitter)
+    def fix_unidentified_emails(case_data_dir, current_case, items, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, no_text_search_tag, address_regexps, email_mime_type, fixed_item_tag, &address_splitter)
         progress_dialog.set_main_status_and_log_it('Finding communication fields for items...')
         progress_dialog.set_main_progress(0,items.size)
         items_processed = 0
@@ -191,15 +225,6 @@ module FixUnidentifiedEmails
         timer.start('save_communications')
         File.open(data_path, 'w') { |file| file.write(item_communications.to_yaml) }
         timer.stop('save_communications')
-
-        # Export printed images.
-        timer.start('export_printed_images')
-        if export_printed_images
-            printed_image_dir = File.join(case_data_dir, 'unidentified_emails_printed_images')
-            items_for_export = items.select { |item| item_communications[item.guid][1] != item.type.name }
-            Utils::export_printed_images(items_for_export, printed_image_dir, utilities, progress_dialog)
-        end
-        timer.stop('export_printed_images')
 
         # Add tag to fixed items.
         timer.start('add_tag_to_fixed_items')

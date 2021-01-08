@@ -120,7 +120,7 @@ module Custom
 		def to_yaml_hash()
 			yaml_hash = {}
 			yaml_hash[:joda_time] = @joda_time.to_s
-			yaml_hash[:subject] = @subjecta
+			yaml_hash[:subject] = @subject
 			yaml_hash[:from] = @from_addresses.map(&:to_yaml_hash)
 			yaml_hash[:to] = @to_addresses.map(&:to_yaml_hash)
 			yaml_hash[:cc] = @cc_addresses.map(&:to_yaml_hash)
