@@ -1,0 +1,61 @@
+{
+  "settings": {
+    "includeFamilies": false,
+    "deduplicateFamilies": false,
+    "omitExcludedItems": true,
+    "omitImmaterialFamilyItems": true,
+    "tagUniqueItems": false,
+    "countResponsiveItems": false,
+    "tagResponsiveItemsEnabled": false,
+    "createUnusedTags": false,
+    "removeEmptyTags": false,
+    "showTagColumns": true,
+    "allowDuplicateTags": true,
+    "allowDuplicateQueries": true,
+    "missingTagsAction": "fillWithQuery",
+    "matchingItemsAction": "addTags",
+    "expandTags": false
+  },
+  "tagAndQueries": [
+    {
+      "tag": "Avian|Exclude|Mime-Type|Folders and containers",
+      "query": "mime-type:application/vnd.ms-outlook-folder OR mime-type:filesystem/directory OR mime-type:application/vnd.ms-ole2-package OR mime-type:application/x-zip-compressed OR mime-type:application/vnd.ms-photo-editor OR mime-type:application/x-zlib-stream OR mime-type:application/vnd.ms-mso OR mime-type:application/x-7z-compressed"
+    },
+    {
+      "tag": "Avian|Exclude|Mime-Type|VML",
+      "query": "mime-type:application/vnd.openxmlformats-officedocument.vmlDrawing"
+    },
+    {
+      "tag": "Avian|Exclude|Technical files|Extracted PDF files",
+      "query": "mime-type:application/octet-stream path-kind:document path-name:PDF NOT flag:top_level"
+    },
+    {
+      "tag": "Avian|Exclude|Technical files|Fonts",
+      "query": "mime-type:application/octet-stream AND ( \"\\*.odttf\" OR \"\\*.fntdata\" )"
+    },
+    {
+      "tag": "Avian|Exclude|Technical files|attachedtoolbar.bin",
+      "query": "name:attachedToolbars.bin"
+    },
+    {
+      "tag": "Avian|Exclude|Technical files|Outook Property block",
+      "query": "mime-type:application/vnd.ms-outlook-property-block"
+    },
+    {
+      "tag": "Avian|Exclude|Technical files|Ole objects",
+      "query": "mime-type:application/vnd.ms-ole2"
+    },
+    {
+      "tag": "Avian|Exclude|Technical files|OST Integrity Check",
+      "query": "\"Subject:OST Integrity Check\""
+    },
+    {
+      "tag": "Avian|Exclude|Technical files|Att files not content",
+      "query": "att0000?.htm AND mime-type:text/html AND NOT content:*"
+    },
+    {
+      "tag": "Avian|Exclude|NSLR",
+      "query": "digest-list:\"NSRL1\""
+    }
+  ]
+}

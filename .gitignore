@@ -1,11 +1,10 @@
-data/*
-!data/default_*
-!data/default-*
-!data/templates/
+_root/data/*
+!_root/data/default_*
+!_root/data/default-*
+!_root/data/templates/
+!_root/data/misc/
 
 # This file is generated for each user from a file in utils.
-wss_caller.rb
-
-avian-inapp-scripts/setup.nuixscript/main_directory.txt
+_root/wss_caller.rb
 
 .vscode/*
