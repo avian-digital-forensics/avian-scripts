@@ -133,21 +133,16 @@ module FixUnidentifiedEmails
       return nil
     end
     english_date_string = Dates::danish_date_string_to_english(date_string)
-    begin
-      ruby_date_time = DateTime.parse(english_date_string)
-      # Subtract 1/24th of a day=one hour to correct for danish timezone or an extra if summertime.
-      # This may cause weird problems with leap seconds and the like, but these hopefully won't be a problem.
-      if Dates::is_eu_daylight_savings(ruby_date_time)
-        ruby_date_time -= 2.0/24
-      else
-        ruby_date_time -= 1.0/24
-      end
-      joda_time = Dates::date_time_to_joda_time(ruby_date_time)
-      return joda_time
-    rescue ArgumentError
-        puts("Failed date: " + english_date_string.to_s)
-        return nil
+    ruby_date_time = DateTime.parse(english_date_string)
+    # Subtract 1/24th of a day=one hour to correct for danish timezone or an extra if summertime.
+    # This may cause weird problems with leap seconds and the like, but these hopefully won't be a problem.
+    if Dates::is_eu_daylight_savings(ruby_date_time)
+      ruby_date_time -= 2.0/24
+    else
+      ruby_date_time -= 1.0/24
     end
+    joda_time = Dates::date_time_to_joda_time(ruby_date_time)
+    return joda_time
   end
 
   # The body of the FixUnidentifiedEmails script.
@@ -201,9 +196,9 @@ module FixUnidentifiedEmails
 
       # Find date.
       timer.start('find_date')
-      date = parse_date(fields[:date])
-      unless date
-        puts('torsk: ' + date)
+      begin
+        date = parse_date(fields[:date])
+      rescue ArgumentError
         failed_date_items.add(item)
       end
       timer.stop('find_date')
