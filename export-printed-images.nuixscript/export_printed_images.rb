@@ -1,7 +1,4 @@
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,'..','setup.nuixscript','get_main_directory')
-
-main_directory = get_main_directory(false)
+root_directory = File.expand_path('../../_root', __FILE__)
 
 unless main_directory
     puts('Script cancelled because no main directory could be found.')
