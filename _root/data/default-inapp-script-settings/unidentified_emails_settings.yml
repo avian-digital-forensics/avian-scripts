@@ -3,7 +3,7 @@
   scoping_query: 'file-extension:txt AND file-extension:htm AND file-extension:html'
   allowed_start_offset: '10'
   start_area_line_num: '15'
-  email_tag: UnidentifiedEmail
+  email_tag: UnidentifiedEmails
   fix_rfc_items: true
   export_printed_images: true
   fixed_item_tag: FixedEmail
