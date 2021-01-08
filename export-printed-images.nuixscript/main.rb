@@ -11,7 +11,7 @@ end
 
 # Main directory path can be found in script.main_directory.
 # Add requires here.
-require File.join(script.root_directory, 'avian-inapp-scripts', 'export-printed-images.nuixscript', 'export_printed_images')
+require_relative 'export_printed_images'
 
 # Setup GUI here.
 # Fields added using InAppScript methods are saved automatically.
