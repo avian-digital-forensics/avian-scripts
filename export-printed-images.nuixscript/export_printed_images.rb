@@ -1,8 +1,8 @@
 root_directory = File.expand_path('../../_root', __FILE__)
 
-require File.join(main_directory, 'utils', 'utils')
+require File.join(root_directory, 'utils', 'utils')
 
-require File.join(main_directory, 'utils', 'settings_utils')
+require File.join(root_directory, 'utils', 'settings_utils')
 
 module ExportPrintedImages
     extend self
