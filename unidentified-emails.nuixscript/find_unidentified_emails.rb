@@ -44,7 +44,6 @@ module FindUnidentifiedEmails
     # +timer+:: a Timer object used to measure running time of parts of the method.
     # +scoping_query+:: Only run on items matching this query.
     def preliminary_search(current_case, progress_dialog, timer, scoping_query)
-        progress_dialog.log_message('No selection. Performing preliminary search...')
         timer.start('preliminary_search')
         # Finds all items that have text containing 'From:' or 'Fra:' and aren't Outlook files.
         non_mail_mime_types = ['application/vnd.ms-outlook-*', 'application/pdf-mail', 'application/x-mime-html', 'image/vnd.ms-emf']
