@@ -236,7 +236,7 @@ module FixUnidentifiedEmails
         timer.start('add_tag_failed_date_tag')
         progress_dialog.set_main_status_and_log_it('Adding failed date tag...')
         progress_dialog.log_message("Failed to find the date for #{failed_date_items.size} items.")
-        Utils.bulk_add_tag(utilities, progress_dialog, "UnidentifiedEmails|FailedDate", failed_date_items)
+        Utils.bulk_add_tag(utilities, progress_dialog, "Avian|UnidentifiedEmails|FailedDate", failed_date_items)
         timer.stop('add_tag_failed_date_tag')
     end
 
