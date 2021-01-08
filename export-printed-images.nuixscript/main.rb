@@ -11,7 +11,7 @@ end
 
 # Main directory path can be found in script.main_directory.
 # Add requires here.
-require File.join(script.main_directory, 'avian-inapp-scripts', 'export-printed-images.nuixscript', 'export_printed_images')
+require File.join(script.root_directory, 'avian-inapp-scripts', 'export-printed-images.nuixscript', 'export_printed_images')
 
 # Setup GUI here.
 # Fields added using InAppScript methods are saved automatically.
@@ -49,7 +49,7 @@ script.run do |progress_dialog|
     scoping_query = Utils::join_queries(scoping_query, "tag:\"#{selected_items_tag}\"")
   end
 
-  images_exported = ExportPrintedImages::export_printed_images(script.main_directory, progress_dialog, timer, utilities, current_case, scoping_query)
+  images_exported = ExportPrintedImages::export_printed_images(script.root_directory, progress_dialog, timer, utilities, current_case, scoping_query)
 
   next "Exported a total of #{images_exported.to_s} printed images."
 end
