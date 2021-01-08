@@ -145,7 +145,7 @@ module FixUnidentifiedEmails
       joda_time = Dates::date_time_to_joda_time(ruby_date_time)
       return joda_time
     rescue ArgumentError
-        puts("Failed date: " + english_date_string)
+        puts("Failed date: " + english_date_string.to_s)
         return nil
     end
   end
