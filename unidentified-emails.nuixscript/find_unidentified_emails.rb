@@ -50,7 +50,7 @@ module FindUnidentifiedEmails
         # non_mail_mime_types.push('image/png')
         non_mail_mime_types_search = '(' + non_mail_mime_types.map{ |s| '(NOT mime-type:' + s + ')'}.join(' AND ') + ' AND (NOT kind:calendar))'
         search_term = non_mail_mime_types_search + ' AND content:((from AND \to AND subject) OR (fra AND til AND emne))'
-        items = current_case.search(search_term)
+        items = current_case.search(Utils::join_queries(scoping_query, search_term))
         timer.stop('preliminary_search')
         progress_dialog.log_message('Preliminary search found ' + items.length.to_s + ' possible emails.')
         return items
