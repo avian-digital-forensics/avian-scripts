@@ -203,6 +203,7 @@ module FixUnidentifiedEmails
       timer.start('find_date')
       date = parse_date(fields[:date])
       unless date
+        puts('torsk: ' + date)
         failed_date_items.add(item)
       end
       timer.stop('find_date')
