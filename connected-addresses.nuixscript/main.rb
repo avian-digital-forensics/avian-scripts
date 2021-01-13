@@ -1,4 +1,6 @@
-require_relative File.join('..','setup.nuixscript','inapp_script')
+script_directory = File.dirname(__FILE__)
+setup_directory = File.join(script_directory,'..','setup.nuixscript')
+require File.join(setup_directory,'inapp_script')
 
 # GUI_TITLE is the name given to all GUI elements created by the InAppScript.
 # SCRIPT_NAME should be of the form inapp_gui_template2.
