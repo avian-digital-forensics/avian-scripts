@@ -40,8 +40,16 @@ This part must be done manually, as doing it through the API requires a special 
 In order to export a printed item, it must first be generated, so do this for all items processed by the first script that don't already have a printed image.
 To find these items search for 'tag:"Avian|UnidentifiedEmails|FixedEmail" AND has-printed-image:0' where FixedEmail is a standin for whatever tag you chose for fixed emails in the first script.
 
+Query:
+
 ![alt text](readme-images/printed-images-query.png "Printed images query")
+
+Context menu:
+
 ![alt text](readme-images/printed-images-selection.png "Printed images selection")
+
+Printed images dialog:
+
 ![alt text](readme-images/printed-images-dialog.png "Printed images dialog")
 
 ### Second script
