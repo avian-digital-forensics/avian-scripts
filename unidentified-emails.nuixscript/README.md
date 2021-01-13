@@ -22,11 +22,13 @@ The third of these is a WSS while the other three are in-app scripts.
 The first step is to decide whether you wish to run the script on all items or only a selection.
 If the latter, select these items and run the script [Find and fix unidentified emails](../unidentified-emails.nuixscript).
 Otherwise, just run the script.
+
 ![alt text](readme-images/script1-selection.png "Script 1 selection")
 
 You should see a dialog with two tabs and a number of options.
 If you selected items beforehand, make sure "Run only on selected items" is ticked in both tabs.
 All other options should have fine default values, but the tooltips describe what they do.
+
 ![alt text](readme-images/script1-dialog.png "Script 1 dialog")
 
 When you are satisfied with the selected items, run the script by pressing the button in the lower right corner.
@@ -37,6 +39,7 @@ When it is done, close the progress dialog and move on to the next step.
 This part must be done manually, as doing it through the API requires a special license.
 In order to export a printed item, it must first be generated, so do this for all items processed by the first script that don't already have a printed image.
 To find these items search for 'tag:"Avian|UnidentifiedEmails|FixedEmail" AND has-printed-image:0' where FixedEmail is a standin for whatever tag you chose for fixed emails in the first script.
+
 ![alt text](readme-images/printed-images-query.png "Printed images query")
 ![alt text](readme-images/printed-images-selection.png "Printed images selection")
 ![alt text](readme-images/printed-images-dialog.png "Printed images dialog")
@@ -45,6 +48,7 @@ To find these items search for 'tag:"Avian|UnidentifiedEmails|FixedEmail" AND ha
 After the printed images have been generated they need to be exported so they can be imported by the last script.
 This is done by the script [Export printed images](../export-printed-images.nuixscript).
 Only run it on the items with the tag "Avian|UnidentifiedEmails|FixedEmail" in order to save time.
+
 ![alt text](readme-images/script2-selection.png "Script 2 selection")
 ![alt text](readme-images/script2-dialog-query.png "Script 2 dialog query")
 
