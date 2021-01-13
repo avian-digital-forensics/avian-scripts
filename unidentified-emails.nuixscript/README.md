@@ -42,7 +42,7 @@ To find these items search for 'tag:"Avian|UnidentifiedEmails|FixedEmail" AND ha
 
 Query:
 
-![alt text](readme-images/printed-images-query.png "Printed images query")
+![alt text](readme-images/printed-images-query.png "Printed images query ")
 
 Context menu:
 
