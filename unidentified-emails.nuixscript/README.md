@@ -64,6 +64,11 @@ Only run it on the items with the tag "Avian|UnidentifiedEmails|FixedEmail" in o
 If the first script has run successfully, it will have stored a file with communication information for all unidentified emails.
 To use this information, we must run the WSS [Add communication to unidentified emails](../_root/wss/add-communication-to-unidentified-emails).
 To do this, run the in-app script [Setup](../setup.nuixscript) and make sure the WSS is selected.
+
+![alt text](readme-images/setup-selection.png "Setup script selection")
+
+![alt text](readme-images/setup-dialog.png "Setup script dialog")
+
 Now it is time to reload the data.
 Select all items with the tag given in the "Fixed email tag" settings (the tag will have been received a prefix starting with "Avian|") and bring up the reload items dialog.
 Follow steps 5-7 in the WSS guide in the [main readme](../README.md) and reload the items.
