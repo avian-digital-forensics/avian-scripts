@@ -85,3 +85,7 @@ Importing them is the purpose of the fourth script.
 Run the script [Import printed images](../import-printed-images.nuixscript).
 An empty dialog will come up, but just press the button in the lower right corner to run the script.
 This will take a while, but once it is done, the selected items should have received the printed images from before the reload.
+
+![alt text](readme-images/script4-selection.png "Script 4 selection")
+
+![alt text](readme-images/script4-dialog.png "Script 4 dialog")
