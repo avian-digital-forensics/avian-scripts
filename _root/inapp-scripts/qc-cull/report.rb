@@ -73,10 +73,6 @@ module QCCull
     result_hash['FIELD_num_ocr_items'] = num_ocr.to_s
     result_hash['FIELD_num_with_content_ocr'] = num_success_and_content.to_s
     result_hash['FIELD_percent_with_content_ocr'] = num_ocr == 0 ? '0' : (num_success_and_content.to_f/num_ocr * 100).round(0).to_s
-    result_hash['FIELD_num_embedded_ocr'] = num_embedded.to_s
-    result_hash['FIELD_percent_embedded_ocr'] = num_ocr == 0 ? '0' : (num_embedded.to_f/num_ocr * 100).round(0).to_s
-    result_hash['FIELD_num_not_embedded_ocr'] = num_not_embedded.to_s
-    result_hash['FIELD_percent_not_embedded_ocr'] = num_ocr == 0 ? '0' : (num_not_embedded.to_f/num_ocr * 100).round(0).to_s
   end
   
   # Converts a two layer hash to rtf.
