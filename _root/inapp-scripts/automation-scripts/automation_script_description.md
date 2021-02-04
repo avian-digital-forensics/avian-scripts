@@ -1,4 +1,4 @@
-# Automation script.
+# Automation script
 Avian auto-processing can run arbitrary Ruby scripts, but to be able to do so, the scripts must be of a specific format.
 
 For a script called 'Example Script', the code looks as follows:

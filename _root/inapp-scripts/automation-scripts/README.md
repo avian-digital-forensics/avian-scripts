@@ -1,4 +1,4 @@
-# Automation scripts.
+# Automation scripts
 Scripts in this directory are meant for use in Avian Auto-processing.
 
 For information on how to do that, see the documentation for Auto-processing.
