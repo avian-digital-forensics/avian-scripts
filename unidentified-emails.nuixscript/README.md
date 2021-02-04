@@ -32,7 +32,8 @@ All other options should have fine default values, but the tooltips describe wha
 ![alt text](readme-images/script1-dialog.png "Script 1 dialog")
 
 When you are satisfied with the selected items, run the script by pressing the button in the lower right corner.
-This may take a while, as much as 10 minutes per 1000 items.
+This may take a while.
+In a test it took roughly 10 minutes per 1000 items, though this will vary wildly.
 When it is done, close the progress dialog and move on to the next step.
 
 ### Generate printed images
