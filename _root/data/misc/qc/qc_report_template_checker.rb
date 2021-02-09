@@ -23,10 +23,6 @@ keys = [
 	'FIELD_num_ocr_items',
 	'FIELD_num_with_content_ocr',
 	'FIELD_percent_with_content_ocr',
-	'FIELD_num_embedded_ocr',
-	'FIELD_percent_embedded_ocr',
-	'FIELD_num_not_embedded_ocr',
-	'FIELD_percent_not_embedded_ocr',
 	'FIELD_exclusion_statistics',
 ]
 
