@@ -7,24 +7,14 @@ A collection of all scripts for Nuix created by Avian.
 1. Download the newest version of the repository here:
 https://github.com/avian-digital-forensics/avian-scripts/releases/latest
 
-2. Unpack the contents to an empty directory _not_ related to NUIX.
+2. Open a Nuix scripts directory.
+There are several of these, but the easiest is to open the Nuix Workstation and choose 'Scripts/Open Script Directory'.
 
-3. In Nuix, open the 'Scripts' menu and select 'Open Scripts Directory'.
-
-4. From the Avian Scripts directory you just unpacked, enter the `inapp-scripts` subdirectory and copy the `avian-workstation-scripts` sub-directory into the directory Nuix just opened.
-Not the entire directory, just the one sub-directory.
-![alt text](resources/readme-images/inapp_script_directory.png "Image showing inapp script directory")
-
-5. Run the script 'Setup' from inside NUIX.
-The first time, it will ask you for the 'Avian main script directory'. 
-This is the one you unpacked in step 2.
-
-6. And that's it.
-Run 'Setup' again to change anything.
+3. Unpack the contents of the downloaded zip into this directory.
 
 ## Updating
 I'm afraid this means reinstalling everything.
-Delete the two directories you set up and go through Setup again.
+Delete the directory you set up and go through Setup again.
 
 ## Workstation Scripts
 This is about the scripts that are run in Nuix Workstation, usually with a case already open.
@@ -35,25 +25,25 @@ For details on a specific script please read the pertaining readme.
 These can be found in the script directory by following the links.
 
 ### Available in-app scripts
-* [Setup](inapp-scripts/avian-workstation-scripts/setup.nuixscript) - used to setup WSS's.
-* [Batched OCR](inapp-scripts/avian-workstation-scripts/batched-ocr.nuixscript) - (NOT TESTED) performs batched OCR by breaking a collection of items into a series of smaller batches and performing OCR on each smaller batch in turn.
-* [Connected Addresses](inapp-scripts/avian-workstation-scripts/connected-addresses.nuixscript) - (NOT TESTED) creates a csv file with information about what addresses a specific address has exchanged messages with.
-* [Find Correct Addresses](inapp-scripts/avian-workstation-scripts/find-correct-addresses.nuixscript) - (WIP) identifies all addresses and identifiers that refer to the same person and create a file with that information.
+* [Setup](setup.nuixscript) - used to setup WSS's.
+* [Batched OCR](batched-ocr.nuixscript) - (NOT TESTED) performs batched OCR by breaking a collection of items into a series of smaller batches and performing OCR on each smaller batch in turn.
+* [Connected Addresses](connected-addresses.nuixscript) - (NOT TESTED) creates a csv file with information about what addresses a specific address has exchanged messages with.
+* [Find Correct Addresses](find-correct-addresses.nuixscript) - (WIP) identifies all addresses and identifiers that refer to the same person and create a file with that information.
 Used by the WSS 'Fix From Addresses'.
-* [Find Paragraphs](inapp-scripts/avian-workstation-scripts/find-paragraphs.nuixscript) - (NOT TESTED) searches all items to look for references to paragraphs.
-* [Find and Fix Unidentified Emails](inapp-scripts/avian-workstation-scripts/unidentified-emails.nuixscript) - tries to find items that should be emails but aren't identified as such by Nuix and the identify the correct communication data for them.
-* [Import Printed Images](inapp-scripts/avian-workstation-scripts/import-printed-images.nuixscript) - imports printed images from directory.
-* [Number of Descendants](inapp-scripts/avian-workstation-scripts/number-of-descendants.nuixscript) - gives every selected item a custom metadata value of how many descendants the item has.
-* [Store Custom Entities](inapp-scripts/avian-workstation-scripts/store-custom-entities.nuixscript) - (NOT TESTED) stores information about specified custom entities to be used by other scripts.
-* [Tag Messages Sent to Sender](inapp-scripts/avian-workstation-scripts/tag-messages-to-self.nuixscript) - (NOT TESTED) tags all items sent to the sender of that item.
-* [Tag Exchange Emails with Duplicates](inapp-scripts/avian-workstation-scripts/tag-exchange-emails-with-duplicates.nuixscript) - tags exchange server emails with and without archived duplicates.
-* [Tag Weird Characters](inapp-scripts/avian-workstation-scripts/tag-weird-characters.nuixscript) - (NOT TESTED) tags all items with names that include characters not in standard 7-bit ascii and not specified.
-* [QC and Culling](inapp-scripts/avian-workstation-scripts/qc-cull.nuixscript) - automatically runs many of the processes involved in quality control.
+* [Find Paragraphs](find-paragraphs.nuixscript) - (NOT TESTED) searches all items to look for references to paragraphs.
+* [Find and Fix Unidentified Emails](unidentified-emails.nuixscript) - tries to find items that should be emails but aren't identified as such by Nuix and the identify the correct communication data for them.
+* [Import Printed Images](import-printed-images.nuixscript) - imports printed images from directory.
+* [Number of Descendants](number-of-descendants.nuixscript) - gives every selected item a custom metadata value of how many descendants the item has.
+* [Store Custom Entities](store-custom-entities.nuixscript) - (NOT TESTED) stores information about specified custom entities to be used by other scripts.
+* [Tag Messages Sent to Sender](tag-messages-to-self.nuixscript) - (NOT TESTED) tags all items sent to the sender of that item.
+* [Tag Exchange Emails with Duplicates](tag-exchange-emails-with-duplicates.nuixscript) - tags exchange server emails with and without archived duplicates.
+* [Tag Weird Characters](tag-weird-characters.nuixscript) - (NOT TESTED) tags all items with names that include characters not in standard 7-bit ascii and not specified.
+* [QC and Culling](qc-cull.nuixscript) - automatically runs many of the processes involved in quality control.
 
 ## Automation Scripts
 These are the scripts runnable in [Avian Autoprocessing](https://github.com/avian-digital-forensics/auto-processing).
 Many of these scripts will have roughly equivalent in-app versions.
-To see full documentation for all automation scripts, see [here](inapp-scripts/automation-scripts/script_descriptions.md).
+To see full documentation for all automation scripts, see [here](_root/inapp-scripts/automation-scripts/script_descriptions.md).
 
 ### Available automation scripts
 * Import Printed Images - (NOT TESTED) imports printed images from directory.
@@ -90,9 +80,9 @@ It may sometimes work without, but not reliably.
 For details on a specific WSS please read the pertaining readme.
 
 ### Available WSS's
-* [Load Timer](wss/load-timer) - adds information about load times to each item as custom metadata.
-* [Add Communication to Unidentified Emails](wss/add-communication-to-unidentified-emails) - gives incorrectly loaded emails Communication metadata based on information generated by the in-app script 'Fix Unidentified Emails'.
-The in-app script '[Fix Unidentified Emails](inapp-scripts/avian-workstation-scripts/unidentified-emails.nuixscript)' must be run first.
-* [Fix From Addresses](wss/fix-from-addresses) - (WIP) replaces mangled addresses in the from field with correct email addresses using information generated by the in-app script 'Find Correct Addresses'.
-The in-app script '[Find Correct Addresses](inapp-scripts/avian-workstation-scripts/find-correct-addresses.nuixscript)' must be run first.
-* [Entities From Lists](wss/entities-from-lists) - (WIP) allows the creation of custom entities.
+* [Load Timer](_root/wss/load-timer) - adds information about load times to each item as custom metadata.
+* [Add Communication to Unidentified Emails](_root/wss/add-communication-to-unidentified-emails) - gives incorrectly loaded emails Communication metadata based on information generated by the in-app script 'Fix Unidentified Emails'.
+The in-app script '[Fix Unidentified Emails](unidentified-emails.nuixscript)' must be run first.
+* [Fix From Addresses](_root/wss/fix-from-addresses) - (WIP) replaces mangled addresses in the from field with correct email addresses using information generated by the in-app script 'Find Correct Addresses'.
+The in-app script '[Find Correct Addresses](find-correct-addresses.nuixscript)' must be run first.
+* [Entities From Lists](_root/wss/entities-from-lists) - (WIP) allows the creation of custom entities.

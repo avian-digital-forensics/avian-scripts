@@ -1,0 +1,14 @@
+---
+run_only_on_selected_items: false
+scoping_query: ''
+report_destination: 
+num_descendants_metadata_key: NumberOfDescendants
+num_source_files_provided: ''
+nsrl: false
+info_project_name: 
+info_collection_number: 
+info_requested_by: 
+info_ingestion_performed_by: 
+info_qc_performed_by: 
+info_ingestion_start_date:
+info_ingestion_end_date:
