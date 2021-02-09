@@ -1,6 +1,9 @@
-# This file is placed in the setup.nuixscript directory because it must be in the avian-inapp-scripts yet should show up in the script list.
+# This file is placed in the setup.nuixscript directory because it must be in the avian-inapp-scripts yet should not show up in the script list.
 
 require 'yaml'
+
+java_import 'java.text.SimpleDateFormat'
+
 module Script
     extend self
 
@@ -117,6 +120,8 @@ module Script
                         # Radio buttons are returned by the dialog in a weird way, so they require special treatment.
                         options_hash = @radio_button_groups[key]
                         settings[key] = NXUtils::radio_group_value(values, options_hash)
+                    elsif type == 'date'
+                        @settings[key] = values[key] ? java::text::SimpleDateFormat.new('yyyy/MM/dd').format(values[key]) : nil
                     end
                 end
                 result = @input_validater.call(settings)
@@ -136,6 +141,8 @@ module Script
                         # Radio buttons are returned by the dialog in a weird way, so they require special treatment.
                         options_hash = @radio_button_groups[key]
                         @settings[key] = NXUtils::radio_group_value(values, options_hash)
+                    elsif type == 'date'
+                        @settings[key] = values[key] ? java::text::SimpleDateFormat.new('yyyy/MM/dd').format(values[key]) : nil
                     end
                 end
                 # Save the inputted settings to file.
@@ -338,16 +345,25 @@ module Script
             @settings_inputs[identifier] = 'value'
         end
         
-        def dialog_append_date_picker(tab_identifier, identifier, label)
+        # Appends a date picker to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the date picker.
+        # +identifier+:: The internal identifier for the date picker. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +tooltip+:: The tooltip that appears when the user hovers over the field with their mouse.
+        def dialog_append_date_picker(tab_identifier, identifier, label, tooltip)
             value = @settings[identifier]
 
             tab = @settings_dialog.get_tab(tab_identifier)
             unless tab
                 raise 'No such tab "' + tab_identifier + '"'
             end
-            tab.dialog_append_date_picker(identifier, label)
 
-            @settings_inputs[identifier] = 'value'
+            tab.append_date_picker(identifier, label, value && !value.empty? ? value.tr('/', '') : nil)
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+
+            @settings_inputs[identifier] = 'date'
         end
 
         # Appends a horizontal group of radio buttons to the specified tab.
@@ -390,6 +406,27 @@ module Script
 
             @settings_inputs[identifier] = 'radio_button'
             @radio_button_groups[identifier] = options_hash
+        end
+
+        # Appends a vertical group of radio buttons to the specified tab.
+        # Params:
+        # +tab_identifier+:: The identifier for the tab in which to add the radio buttons.
+        # +identifier+:: The internal identifier for the radio buttons. This is the key to the setting.
+        # +label+:: The text the user sees.
+        # +options_hash+:: A hash of options where keys are the text the user sees and values are the setting values they represent.
+        def dialog_append_combo_box(tab_identifier, identifier, label, options, tooltip)
+            value = @settings[identifier]
+
+            tab = @settings_dialog.get_tab(tab_identifier)
+            unless tab
+                raise 'No such tab "' + tab_identifier + '"'
+            end
+            tab.append_combo_box(identifier, label, options)
+
+            tab.get_control(identifier).set_tool_tip_text(tooltip)
+            tab.set_text(identifier, value)
+
+            @settings_inputs[identifier] = 'value'
         end
     end
 end

@@ -112,3 +112,31 @@ Settings in *italics* are optional.
 * *:accepted_character_codes* - the unicode character codes of the accepted items, given as a comma seperated list of numbers.
 Defaults to not accepting any characters (other than standard 7-bit ascii).
 * *:scoping_query* - only runs on items matching this query.
+
+## QC and Culling (NOT TESTED)
+Key: 'qc_cull'
+
+Automatically performs many of the processes involved in quality control.
+
+1. Number of Descendants. Runs the script [NumberOfDescendants](#number-of-descendants) on the selected items.
+This gives items a custom metadata field telling how many the descendants it has.
+This information can be used in later steps.
+2. Search and Tag. Runs NUIX' in-built search and tag functionality.
+3. Culling. Excludes items with tags beginning with a specific prefixes.
+4. Report. Writes some of the results of the above steps to an .rtf file.
+
+### Settings
+Settings in *italics* are optional.
+* :main_directory - the path to the Avian scripts main directory.
+* :num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
+* :report_path - where to place the finished report.
+* :num_source_files_provided - the number of original source files provided for ingestion. This is checked against the number of loose files in Nuix.
+* *:nsrl* - whether to search for NSRL items. This may take a long time.
+* *:info_project_name* - the name of the project. Used when generating the report.
+* *:info_collection_number* - the collection number. Used when generating the report.
+* *:info_requested_by* - who requested the ingestion. Used when generating the report.
+* *:info_ingestion_start_date* - when ingestion started. Used when generating the report.
+* *:info_ingestion_end_date* - when ingestion ended. Used when generating the report.
+* *:info_ingestion_performed_by* - who performed the ingestion. Used when generating the report.
+* *:info_qc_performed_by* - who performed the qc. Used when generating the report.
+* *:scoping_query* - only runs for items matching this query.

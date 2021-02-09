@@ -81,6 +81,24 @@ module Utils
             progress_dialog.set_sub_status("#{item_num += 1}/#{num_items}")
         end
     end
+
+    # Includes the specified items.
+    # The given progress_handler is updated with progress.
+    # Params:
+    # +utilities+:: A reference to the Nuix Utilities object.
+    # +progress_handler+:: An object that can work as a progress dialog.
+    # +items+:: The items whose exclusions to remove.
+    def self.bulk_include(utilities, progress_handler, items)
+        progress_handler.set_sub_progress_visible(false)
+        progress_handler.set_main_progress(0, items.size)
+        bulk_annotater = utilities.get_bulk_annotater
+        num_items = items.size
+        item_num = 0
+        bulk_annotater.include(items) do |event_info|
+            progress_handler.increment_main_progress
+            progress_handler.set_sub_status("#{item_num += 1}/#{num_items}")
+        end
+    end
     
     # Returns true if all the given sets are disjoint.
     def self.sets_disjoint?(*sets)
@@ -132,6 +150,13 @@ module Utils
     # Params:
     # +queries+:: Arbitrarily many queries or arrays of queries to be combined.
     def self.join_queries(*queries)
-        queries.flatten.map { |query| query == '' ? nil : "(#{query})" }.reject(&:nil?).join(' AND ')
+        queries.flatten.reject(&:nil?).map(&:strip).reject(&:empty?).map { |query| "(#{query})" }.join(' AND ')
+    end
+
+    # Ensures that the given directory exists.
+    # Params:
+    # +path+:: The path including the directory to ensure.
+    def self.ensure_path_exists(path)
+        FileUtils.mkpath(path) unless File.exists?(path)
     end
 end

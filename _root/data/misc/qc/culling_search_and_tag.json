@@ -52,10 +52,6 @@
     {
       "tag": "Avian|Exclude|Technical files|Att files not content",
       "query": "att0000?.htm AND mime-type:text/html AND NOT content:*"
-    },
-    {
-      "tag": "Avian|Exclude|NSLR",
-      "query": "digest-list:\"NSRL1\""
     }
   ]
 }

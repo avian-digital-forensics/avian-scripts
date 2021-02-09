@@ -78,10 +78,6 @@
       "query": "properties:\"Could not populate calendar properties*\""
     },
     {
-      "tag": "Avian|QC|OCR|PDF|Not Searchable (No error)",
-      "query": "( ( flag:ocr_fail* and mime-type:application/pdf ) OR ( mime-type:application/pdf AND NOT content:* ) ) NOT tag:QC\\|PDF\\|IOException NOT flag:encrypted NOT content:*"
-    },
-    {
       "tag": "Avian|QC|Not indexed|Partly|Java PDF",
       "query": "PDF contains un-executed Javascript code that may generate text."
     },
@@ -146,10 +142,6 @@
       "query": "kind:email and flag:text_not_indexed"
     },
     {
-      "tag": "Avian|QC|OCR|PDF|Exeptions",
-      "query": "\"The PDF reader threw a RuntimeException\" OR \"The PDF reader threw an IOException\""
-    },
-    {
       "tag": "Avian|QC|Poisoned|Known filetypes",
       "query": "\"Poisoned item could not be processed\" NOT mime-type:filesystem/inaccessible"
     },
@@ -164,6 +156,70 @@
     {
       "tag": "Avian|QC|Containers|Supicous containers",
       "query": "kind:container NOT ( mime-type:filesystem/directory OR text/calendar OR text/calendar-entry OR mime-type:application/java-archive OR mime-type:application/macbinary OR mime-type:application/vnd.ms-cab-compressed OR mime-type:application/vnd.ms-installer OR mime-type:application/vnd.ms-mso OR mime-type:application/vnd.ms-ole10native-wrapper OR mime-type:application/vnd.ms-ole2-attachment OR mime-type:application/vnd.ms-ole2-clipboard OR mime-type:application/vnd.ms-onenote-toc OR mime-type:application/vnd.ms-outlook-folder OR mime-type:application/vnd.ms-photo-editor OR mime-type:application/vnd.ms-shell-scrap OR mime-type:application/x-self-extracting-archive OR mime-type:application/vnd.symantec-vault-stream-data OR mime-type:application/x-thumbs-db OR mime-type:application/vnd.ms-clipart-gallery ) custom-metadata:\"NumberOfDescendants\":1"
+    },
+    {
+      "tag": "Avian|QC|Languages|Danish",
+      "query": "lang:dan"
+    },
+    {
+      "tag": "Avian|QC|Languages|English",
+      "query": "lang:eng"
+    },
+    {
+      "tag": "Avian|QC|Languages|Swedish",
+      "query": "lang:swe"
+    },
+    {
+      "tag": "Avian|QC|Languages|No language",
+      "query": "not lang:*"
+    },
+    {
+      "tag": "Avian|QC|OCR|Succes and content",
+      "query": "flag:ocr_succ* AND content:*"
+    },
+    {
+      "tag": "Avian|QC|OCR|Failed and content",
+      "query": "flag:ocr_failed AND content:*"
+    },
+    {
+      "tag": "Avian|QC|OCR|Succes no content",
+      "query": "flag:ocr_succ* NOT content:*"
+    },
+    {
+      "tag": "Avian|QC|OCR|OCR Not embedded",
+      "query": "(flag:ocr_succ* AND content:* or flag:ocr_failed AND content:*) and flag:inline"
+    },
+    {
+      "tag": "Avian|QC|OCR|OCR Embedded",
+      "query": "( ( flag:ocr_succ* AND content:* ) OR ( flag:ocr_failed AND content:* ) ) NOT \"tag:Avian|QC|OCR|OCR Not embedded\""
+    },
+    {
+      "tag": "Avian|QC|OCR|Check|Failed and no content",
+      "query": "flag:ocr_failed NOT content:*"
+    },
+    {
+      "tag": "Avian|QC|OCR|Check|PDF|Exeptions",
+      "query": "\"The PDF reader threw a RuntimeException\" OR \"The PDF reader threw an IOException\""
+    },
+    {
+      "tag": "Avian|QC|OCR|Check|PDF|Failed to Export Native",
+      "query": "\"Failed to export native\""
+    },
+    {
+      "tag": "Avian|QC|OCR|Check|PDF|Not Searchable (No error)",
+      "query": "( ( flag:ocr_fail* and mime-type:application/pdf ) OR ( mime-type:application/pdf AND NOT content:* ) ) NOT tag:QC\\|PDF\\|IOException NOT flag:encrypted NOT content:*"
+    },
+    {
+      "tag": "Avian|QC|OCR|Check|Succes no content",
+      "query": "flag:ocr_succ* NOT content:* NOT kind:image NOT kind:drawing"
+    },
+    {
+      "tag": "Avian|QC|OCR|Check|Failed",
+      "query": "flag:ocr_failed AND file-size:[1000 TO *] NOT lang:*"
+    },
+    {
+      "tag": "Avian|QC|Attachments|Zero byte",
+      "query": "( mime-type:application/x-empty AND path-name:pst ) NOT name:oleobject* NOT name:att000* NOT name:*xml NOT name:unnamed*"
     }
   ]
 }

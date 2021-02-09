@@ -11,6 +11,9 @@ module QCCull
   def update_report(result_hash, report_file_path)
     report_text = File.read(report_file_path)
     for field,value in result_hash
+      if !report_text.include?(field)
+        puts('Cannot find field ' + field)
+      end
       report_text.gsub!(field,value.to_s)
     end
     
@@ -38,27 +41,40 @@ module QCCull
     end
   end
 
-  # Adds to the result_hash the number of excluded items.
+  # Adds source file validation information to the result_hash.
   # Params:
   # +nuix_case+:: The case in which to search.
   # +result_hash+:: The hash to add the results to.
-  # +utilities+:: A reference to the Nuix utilities object.
-  def report_culling(nuix_case, result_hash, utilities)
-    result_hash['FIELD_num_excluded_items'] = nuix_case.count('has-exclusion:1').to_s
-    exclusions = nuix_case.all_exclusions
-
-    # Change newline settings.
-    text = '\pard\sa200\sl240\slmult1'
-    for exclusion in exclusions
-      text += "#{exclusion}: #{nuix_case.count("exclusion:\"#{exclusion}\"")}#{RTFUtils::newline}"
+  # +num_source_files_provided+:: The number of originally provided source files as given by the user.
+  # +scoping_query+:: Limit search for loose files.
+  def report_source_files(nuix_case, result_hash, num_source_files_provided, scoping_query)
+    report_item_types(nuix_case, result_hash, 'FIELD_source_file_statistics', Utils.join_queries(scoping_query, 'flag:loose_file'))
+    num_loose_files_in_nuix = nuix_case.count(Utils.join_queries(scoping_query, 'flag:loose_file'))
+    
+    result_hash['FIELD_num_source_files_provided'] = num_source_files_provided
+    result_hash['FIELD_num_loose_files_in_nuix'] = num_loose_files_in_nuix
+    if num_source_files_provided.to_i == num_loose_files_in_nuix.to_i
+      result_hash['FIELD_source_validation_text'] = 'These numbers match and so all source files were processed without error.'
+    else
+      result_hash['FIELD_source_validation_text'] = 'These numbers DO NOT MATCH and so some source files ARE MISSING from the case and an error has occurred.'
     end
-
-    # Change newline settings back.
-    text += '\pard\sa200\sl276\slmult1'
-
-    result_hash['FIELD_exclusion_statistics'] = text
   end
 
+  # Adds ocr information to the result_hash.
+  # Params:
+  # +nuix_case+:: The case to provide information about.
+  # +result_hash+:: The hash to add the results to.
+  # +scoping_query+:: Limit search to this query.
+  def report_ocr(nuix_case, result_hash, scoping_query)
+    num_ocr = nuix_case.count(Utils::join_queries('(flag:ocr_succ* OR flag:ocr_failed) AND content:*', scoping_query))
+    num_embedded = nuix_case.count(Utils::join_queries('tag:"Avian|QC|OCR|OCR Embedded"', scoping_query))
+    num_not_embedded = nuix_case.count(Utils::join_queries('tag:"Avian|QC|OCR|OCR Not embedded"', scoping_query))
+    num_success_and_content = nuix_case.count(Utils::join_queries('tag:"Avian|QC|OCR|Succes and content"', scoping_query))
+    result_hash['FIELD_num_ocr_items'] = num_ocr.to_s
+    result_hash['FIELD_num_with_content_ocr'] = num_success_and_content.to_s
+    result_hash['FIELD_percent_with_content_ocr'] = num_ocr == 0 ? '0' : (num_success_and_content.to_f/num_ocr * 100).round(0).to_s
+  end
+  
   # Converts a two layer hash to rtf.
   # The keys are the categories, the values are themselves hashes.
   # The subhashes contain fields and values.
@@ -74,10 +90,15 @@ module QCCull
     
     # Change newline settings.
     text = '\pard\sa200\sl240\slmult1'
-    for category,sub_hash in hash.sort_by { |category,sub_hash| -category_values[category] }
-      text += "#{category}: #{category_values[category].to_s}#{RTFUtils::newline}"
-      for field,value in sub_hash.sort_by { |field, value| -value }
-        text += "#{RTFUtils::tab}#{field}: #{value}#{RTFUtils::newline}"
+
+    if hash.empty?
+      text += RTFUtils.bold('No such items in case') + RTFUtils::newline
+    else
+      for category,sub_hash in hash.sort_by { |category,sub_hash| -category_values[category] }
+        text += RTFUtils.bold("#{category}: #{category_values[category].to_s}") + RTFUtils::newline
+        for field,value in sub_hash.sort_by { |field, value| -value }
+          text += RTFUtils.italics("#{RTFUtils::tab}#{field}: #{value}") + RTFUtils::newline
+        end
       end
     end
 
@@ -95,7 +116,7 @@ module QCCull
   def report_item_types(nuix_case, result_hash, field_key, scoping_query='')
     type_hash = {}
     for type in nuix_case.item_types
-      query = scoping_query == '' ? "mime-type:#{type.name}" : "(#{scoping_query}) AND mime-type:#{type.name}"
+      query = Utils::join_queries(scoping_query, "mime-type:#{type.name}")
       num_items = nuix_case.count(query)
       # Add line for this type if there are any items.
       if num_items > 0
@@ -118,24 +139,37 @@ module QCCull
   # Params:
   # +nuix_case+:: The case in which to search.
   # +info_hash+:: A hash with information about the ingestion.
+  # +report_settings+:: Settings used for more than simply inserting into the report.
   # +utilities+:: A reference to the Nuix utilities object.
-  def create_result_hash(nuix_case, info_hash, utilities)
+  def create_result_hash(nuix_case, info_hash, report_settings, utilities)
+    scoping_query = report_settings[:scoping_query]
     result_hash = {}
-    # Add ingestion information to report.
+    # 1 Ingestion details.
     for key,info in info_hash
         result_hash["FIELD_#{key}"] = info
     end
-    current_time = Time.now.strftime("%d/%m/%Y")
+    current_time = Time.now.strftime("%Y/%m/%d")
     result_hash['FIELD_qc_start_date'] = current_time
+
+    # 2 Ingestion statistics.
+    report_item_types(nuix_case, result_hash, 'FIELD_ingestion_statistics', scoping_query)
+
+    # 3 Source validation.
+    report_source_files(nuix_case, result_hash, report_settings[:num_source_files_provided], scoping_query)
+
+    # 4 Indexing issues.
+    ## 4.1 Encrypted files.
     report_encrypted_items(nuix_case, result_hash, utilities)
+    ## 4.2 Items without text.
+    report_item_types(nuix_case, result_hash, 'FIELD_no_text_statistics', 'has-exclusion:0 AND tag:"Avian|QC|Unsupported Items|No text"')
 
-    result_hash['FIELD_num_ocr_items'] = nuix_case.count('tag:"Avian|QC|OCR"').to_s
+    # 5 OCR.
+    report_ocr(nuix_case, result_hash, scoping_query)
 
-    report_culling(nuix_case, result_hash, utilities)
-
-    report_item_types(nuix_case, result_hash, 'FIELD_no_text', 'has-exclusion:0 AND tag:"Avian|QC|Unsupported|No text"')
-
-    report_item_types(nuix_case, result_hash, 'FIELD_ingestion_statistics')
+    # 6 Culling.
+    exclusion_reasons = nuix_case.all_exclusions
+    exclusion_hash = {'Excluded items' => Hash[exclusion_reasons.map { |reason| [reason, nuix_case.count("exclusion:\"#{reason}\"")] }]}
+    result_hash['FIELD_exclusion_statistics'] = report_two_layer_hash(exclusion_hash)
 
     return result_hash
   end
@@ -145,10 +179,13 @@ module QCCull
   # +template_path+:: The path to the report template.
   # +report_destination+:: The path in which to place the generated report.
   # +info_hash+:: A hash with information about the ingestion.
-  def generate_report(nuix_case, template_path, report_destination, info_hash, utilities)
+  # +report_settings+:: Settings used for more than simply inserting into the report.
+  # +utilities+:: Reference to the Nuix Utilities object.
+  def generate_report(nuix_case, template_path, report_destination, info_hash, report_settings, utilities)
     # Create hash.
-    result_hash = create_result_hash(nuix_case, info_hash, utilities)
+    result_hash = create_result_hash(nuix_case, info_hash, report_settings, utilities)
     # Copy report template.
+    Utils::ensure_path_exists(File.expand_path(File.join(report_destination, '..')))
     FileUtils.cp(template_path, report_destination)
     # Update report with results.
     QCCull::update_report(result_hash, report_destination)
