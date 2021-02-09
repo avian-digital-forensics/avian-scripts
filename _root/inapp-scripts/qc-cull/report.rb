@@ -161,7 +161,7 @@ module QCCull
     ## 4.1 Encrypted files.
     report_encrypted_items(nuix_case, result_hash, utilities)
     ## 4.2 Items without text.
-    report_item_types(nuix_case, result_hash, 'FIELD_no_text_statistics', 'has-exclusion:0 AND tag:"Avian|QC|Unsupported|No text"')
+    report_item_types(nuix_case, result_hash, 'FIELD_no_text_statistics', 'has-exclusion:0 AND tag:"Avian|QC|Unsupported Items|No text"')
 
     # 5 OCR.
     report_ocr(nuix_case, result_hash, scoping_query)
