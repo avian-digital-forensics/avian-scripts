@@ -112,7 +112,7 @@ module QCCull
   # +nuix_case+:: The case in which to search.
   # +result_hash+:: The hash to add the results to.
   # +utilities+:: A reference to the Nuix utilities object.
-  def report_encrypted_items(nuix_case, result_hash, utilities)
+  def report_encrypted_items(nuix_case, result_hash, utilities, scoping_query)
     encrypted_tag_hash = {
       'Avian|QC|Encrypted|PDF' => 'encrypted_pdf_num',
       'Avian|QC|Encrypted|Text Documents' => 'encrypted_text_num',
@@ -120,7 +120,7 @@ module QCCull
       'Avian|QC|Encrypted|Presentations' => 'encrypted_presentation_num'
     }
     for tag,field_key in encrypted_tag_hash
-      result_hash["FIELD_#{field_key}"] = Utils::search_count_deduplicated(nuix_case, Utils::create_tag_query(tag), utilities)
+      result_hash["FIELD_#{field_key}"] = Utils::search_count_deduplicated(nuix_case, Utils::join_queries(scoping_query, Utils::create_tag_query(tag)), utilities)
     end
   end
 
@@ -186,9 +186,9 @@ module QCCull
 
     # 4 Indexing issues.
     ## 4.1 Encrypted files.
-    report_encrypted_items(nuix_case, result_hash, utilities)
+    report_encrypted_items(nuix_case, result_hash, utilities, scoping_query)
     ## 4.2 Items without text.
-    report_item_types(nuix_case, result_hash, 'FIELD_no_text_statistics', 'has-exclusion:0 AND tag:"Avian|QC|Unsupported Items|No text"')
+    report_item_types(nuix_case, result_hash, 'FIELD_no_text_statistics', Utils::join_queries(scoping_query, 'has-exclusion:0 AND tag:"Avian|QC|Unsupported Items|No text"'))
 
     # 5 OCR.
     report_ocr(nuix_case, result_hash, scoping_query)
