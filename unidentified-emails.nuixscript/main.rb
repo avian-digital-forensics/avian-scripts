@@ -135,7 +135,7 @@ script.run do |progress_dialog|
     items = Set[]
     rfc_tag = script.to_script_tag('RFC822')
     if fix_unselected_items
-        items.merge(current_case.search("tag:\"Avian|#{email_tag}\""))
+        items.merge(current_case.search(Utils::create_tag_query("Avian|#{email_tag}")))
         if fix_rfc_items
             rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
             script.create_temporary_tag(rfc_tag, rfc_items, 'RFC822 items', progress_dialog)
@@ -143,11 +143,11 @@ script.run do |progress_dialog|
         end
     else
         selected_items_tag = script.create_temporary_tag('SelectedItems', current_selected_items, 'selected items', progress_dialog)
-        items.merge(current_case.search("tag:\"Avian|#{email_tag}\" AND tag:\"#{selected_items_tag}\""))
+        items.merge(current_case.search(Utils::join_queries(Utils::create_tag_query("Avian|#{email_tag}"), Utils::create_tag_query(selected_items_tag)))
         if fix_rfc_items
             rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
             script.create_temporary_tag(rfc_tag, rfc_items, 'RFC822 items', progress_dialog)
-            items.merge(current_case.search("tag:\"#{rfc_tag}\" AND tag:\"#{selected_items_tag}\""))
+            items.merge(current_case.search(Utils::join_queries(Utils::create_tag_query(rfc_tag), Utils::create_tag_query(selected_items_tag))))
         end
     end
 

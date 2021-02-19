@@ -102,7 +102,7 @@ if dialog.dialog_result
         entity_tags.each_with_index do |tag, tag_index| # For all tags starting with 'Avian|Entity|'
             tag_parts = tag.split('|')
             progress_dialog.set_sub_status("#{tag_index}/#{entity_tags.size}: Tag \"#{tag}\"")
-            items_with_tag = current_case.search("tag:\"#{tag}\"")
+            items_with_tag = current_case.search(Utils::create_tag_query(tag))
             progress_dialog.set_sub_progress(0,items_with_tag.size)
             items_with_tag.each_with_index do |item, item_index|
                 entities.add_entity(item.guid, CustomEntity::CustomEntity.new(tag_parts[2],tag_parts[3],1))

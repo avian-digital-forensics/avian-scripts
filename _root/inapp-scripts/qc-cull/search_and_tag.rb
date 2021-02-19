@@ -34,7 +34,7 @@ module QCCull
     timer.start('remove_qc_tags')
     qc_tags = nuix_case.all_tags.select { |tag| tag.start_with?('Avian|QC|') || tag.start_with?('Avian|Exclude|') }
     for tag in qc_tags
-      tag_query = Utils::join_queries(scoping_query, "tag:\"#{tag}\"")
+      tag_query = Utils::join_queries(scoping_query, Utils::create_tag_query(tag))
       Utils::bulk_remove_tag(utilities, progress_handler, tag, nuix_case.search(tag_query))
     end
     timer.stop('remove_qc_tags')

@@ -124,7 +124,7 @@ script.run do |progress_dialog|
   # Add a selected items tag to the scoping query if appropriate.
   if run_only_on_selected_items
     selected_item_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
-    scoping_query = Utils::join_queries(scoping_query, "tag:\"#{selected_item_tag}\"")
+    scoping_query = Utils::join_queries(scoping_query, Utils::create_tag_query(selected_item_tag))
   end
   items = current_case.search(scoping_query)
 

@@ -120,7 +120,7 @@ module QCCull
       'Avian|QC|Encrypted|Presentations' => 'encrypted_presentation_num'
     }
     for tag,field_key in encrypted_tag_hash
-      result_hash["FIELD_#{field_key}"] = Utils::search_count_deduplicated(nuix_case, "tag:\"#{tag}\"", utilities)
+      result_hash["FIELD_#{field_key}"] = Utils::search_count_deduplicated(nuix_case, Utils::create_tag_query(tag), utilities)
     end
   end
 

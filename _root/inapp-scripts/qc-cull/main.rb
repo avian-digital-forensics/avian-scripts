@@ -32,7 +32,7 @@ module QCCull
       when :exclude_from_qc
         progress_handler.set_main_status_and_log_it("Excluding items with QC metadata from further QC in accordance with chosen handling method '#{existing_qc_handling}'...")
         Utils::bulk_add_tag(utilities, progress_handler, has_previous_metadata_tag, items_with_qc_metadata)
-        scoping_query = Utils::join_queries(scoping_query, "NOT tag:\"#{has_previous_metadata_tag}\"")
+        scoping_query = Utils::join_queries(scoping_query, "NOT #{Utils::create_tag_query(has_previous_metadata_tag)}")
       when :tag_items_and_cancel_script
         progress_handler.set_main_status_and_log_it("Tagging items with QC metadata and cancelling QC in accordance with chosen handling method '#{existing_qc_handling}'...")
         Utils::bulk_add_tag(utilities, progress_handler, has_previous_metadata_tag, items_with_qc_metadata)
