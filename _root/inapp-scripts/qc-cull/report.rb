@@ -158,6 +158,21 @@ module QCCull
     result_hash['FIELD_percent_with_content_ocr'] = num_ocr == 0 ? '0' : (num_success_and_content.to_f/num_ocr * 100).round(0).to_s
   end
 
+  # Formats a list of date FIELDs in the result hash according the the specified date_format.
+  # Params:
+  # +result_hash+:: The result hash in which to format dates.
+  # +date_format+:: The date format to convert them to.
+  def format_dates(result_hash, date_format)
+    date_fields = ['FIELD_qc_start_date',
+                   'FIELD_ingestion_start_date',
+                   'FIELD_ingestion_end_date']
+    for date_field in date_fields.select { |field| !result_hash[field].nil? }
+      puts("helleflynder: #{date_field}:#{result_hash[date_field]}")
+      date = Date.parse(result_hash[date_field])
+      result_hash[date_field] = date.strftime(date_format)
+    end
+  end
+
   # Creates a hash of field key=>field value.
   # Used to gsub the report.
   # Params:
@@ -170,6 +185,7 @@ module QCCull
     result_hash = {}
     # 1 Ingestion details.
     for key,info in info_hash
+        puts('ål:' + key)
         result_hash["FIELD_#{key}"] = info
     end
     current_time = Time.now.strftime("%Y/%m/%d")
@@ -200,6 +216,9 @@ module QCCull
     exclusion_reasons = nuix_case.all_exclusions
     exclusion_hash = {'Excluded items' => Hash[exclusion_reasons.map { |reason| [reason, nuix_case.count("exclusion:\"#{reason}\"")] }.select { |reason| reason[1] != 0 }]}
     result_hash['FIELD_exclusion_statistics'] = report_two_layer_hash(exclusion_hash)
+
+    # Format dates
+    format_dates(result_hash, report_settings[:date_format])
 
     return result_hash
   end
