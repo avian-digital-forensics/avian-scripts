@@ -133,7 +133,6 @@ script.run do |progress_dialog|
     selected_item_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
     scoping_query = Utils::join_queries(scoping_query, Utils::create_tag_query(selected_item_tag))
   end
-  items = current_case.search(scoping_query)
 
   # Create a hash with information for the report.
   report_info_hash = {}
