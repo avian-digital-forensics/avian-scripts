@@ -131,7 +131,7 @@ script.run do |progress_dialog|
     # Create set of items to be processed.
     items = Set[]
     rfc_tag = script.to_script_tag('RFC822')
-    items.merge(current_case.search("tag:\"Avian|#{email_tag}\""))
+    items.merge(current_case.search(Utils::join_queries("tag:\"Avian|#{email_tag}\"", scoping_query)))
     if fix_rfc_items
         # Find and tag rfc mails.
         rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case, scoping_query)
