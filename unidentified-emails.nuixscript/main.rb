@@ -113,7 +113,7 @@ script.run do |progress_dialog|
     communication_field_aliases = {
         :date => ['date', 'Date', 'dato', 'Dato', 'sendt', 'Sendt', 'modtaget', 'Modtaget'],
         :subject => ['subject', 'Subject', 'emne', 'Emne'],
-        :from => ['from', 'From', 'fra', 'Fra', 'afsender', 'Afsender'],
+        :from => ['from', 'From', 'fra', 'Fra', 'afsender', 'Afsender', 'MeddelelseFra'],
         :to => ['to', 'To', 'til', 'Til', 'modtager', 'Modtager'],
         :cc => ['cc', 'Cc', 'kopi', 'Kopi'],
         :bcc => ['bcc', 'Bcc']
