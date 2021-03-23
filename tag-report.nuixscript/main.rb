@@ -38,7 +38,15 @@ script.dialog_append_date_picker('main_tab', 'latest_revision', 'Latest revision
 
 # Add file chooser for search and tag file.
 script.dialog_append_open_file_chooser('main_tab', 'search_and_tag_file_path', 'Search and Tag File', 'JavaScript Object Notation (.json)', '.json',
-    'The search and tag file to run before generating the report. Leave blank to skip this step.')
+    'The search and tag file to run before generating the report.')
+
+# Add text field for the tag prefix.
+script.dialog_append_text_field('main_tab', 'tag_prefix', 'Tag prefix',
+  'When generating the report, any tag with this prefix will have it removed. Automatically adds \'|\' to the end if this is missing.')
+
+# Add text field for the tag suffix.
+script.dialog_append_text_field('main_tab', 'tag_suffix', 'Tag suffix',
+    'When generating the report, any tag with this suffix will have it removed. Automatically adds \'|\' to the beginning if this is missing.')
 
 # Add a file chooser for the report destination.
 script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report destination', 'Rich Text File (.rtf)', 'rtf',
@@ -72,6 +80,8 @@ script.run do |progress_dialog|
     :collection_number => script.settings['collection_number'],
     :latest_revision => script.settings['latest_revision'],
     :search_and_tag_file_path => script.settings['search_and_tag_file_path'],
+    :tag_prefix => script.settings['tag_prefix'].end_with?('|') ? script.settings['tag_prefix'] : script.settings['tag_prefix'] + '|',
+    :tag_suffix => script.settings['tag_suffix'].start_with?('|') ? script.settings['tag_suffix'] : '|' + script.settings['tag_suffix'],
     :report_destination => script.settings['report_destination']
   }
 
