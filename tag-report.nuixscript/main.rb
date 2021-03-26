@@ -64,6 +64,11 @@ script.dialog_validate_before_closing do |values|
     CommonDialogs.show_warning('Search and tag file must have .json extension.')
     next false
   end
+
+  if values['latest_revision'] == '' || values['latest_revision'].nil?
+    CommonDialogs.show_warning('Please enter a latest revision date.')
+    next false
+  end
   
   # Everything is fine; close the dialog.
   next true
