@@ -12,7 +12,7 @@ end
 # Main directory path can be found in script.root_directory.
 # Add requires here.
 
-require File.join(root_directory,'inapp-scripts','tag_report','main')
+require File.join(script.root_directory,'inapp-scripts','tag-report','main')
 
 # Setup GUI here.
 # Fields added using InAppScript methods are saved automatically.
@@ -77,6 +77,7 @@ script.run do |progress_dialog|
   scoping_query = script.settings['scoping_query']
 
   settings_hash = {
+    :root_directory => script.root_directory,
     :collection_number => script.settings['collection_number'],
     :latest_revision => script.settings['latest_revision'],
     :search_and_tag_file_path => script.settings['search_and_tag_file_path'],
@@ -86,7 +87,7 @@ script.run do |progress_dialog|
   }
 
   # Add a selected items tag to the scoping query if appropriate.
-  if run_only_on_selected_items
+  if script.settings['run_only_on_selected_items']
     selected_item_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
     scoping_query = Utils::join_queries(scoping_query, Utils::create_tag_query(selected_item_tag))
   end
