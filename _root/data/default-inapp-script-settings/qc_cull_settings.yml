@@ -4,6 +4,7 @@ scoping_query: ''
 report_destination: 
 num_descendants_metadata_key: NumberOfDescendants
 num_source_files_provided: ''
+date_format: '%d/%m/%Y'
 nsrl: false
 info_project_name: 
 info_collection_number: 

@@ -153,6 +153,15 @@ module Utils
         queries.flatten.reject(&:nil?).map(&:strip).reject(&:empty?).map { |query| "(#{query})" }.join(' AND ')
     end
 
+    # Takes a tag and returns a query for items with that tag.
+    # Adds double-quotes around the tag and escapes any double-quotes in the tag.
+    # Params:
+    # +tag+:: The tag to create a query for.
+    def self.create_tag_query(tag)
+        tag = tag.gsub(/"/, '\"')
+        "tag:\"#{tag}\""
+    end
+
     # Ensures that the given directory exists.
     # Params:
     # +path+:: The path including the directory to ensure.

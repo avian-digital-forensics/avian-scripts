@@ -1,6 +1,6 @@
 require 'json'
 
-module QCCull
+module QcCull
   extend self
   
   def run(nuix_case, utilities, settings_hash, progress_handler)

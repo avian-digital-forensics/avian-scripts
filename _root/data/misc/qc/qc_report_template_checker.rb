@@ -24,6 +24,8 @@ keys = [
 	'FIELD_num_with_content_ocr',
 	'FIELD_percent_with_content_ocr',
 	'FIELD_exclusion_statistics',
+	'FIELD_language_counts',
+	'FIELD_detailed_ingestion_statistics'
 ]
 
 report_text = File.read(report_template_file_path)

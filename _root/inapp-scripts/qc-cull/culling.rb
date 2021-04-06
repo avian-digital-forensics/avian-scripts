@@ -43,7 +43,7 @@ module QCCull
       progress_handler.set_main_status_and_log_it('Finding exclusion items...')
       timer.start('find_exclude_items')
       # Create a search string matching all items with exclusion tags.
-      exclude_search = exclude_tags.map { |tag| "tag:\"#{tag}\""}.join(' OR ')
+      exclude_search = exclude_tags.map { |tag| Utils::create_tag_query(tag) }.join(' OR ')
       if exclude_search.empty?
         # If there are no exclusion tags, skip exclusion.
         progress_handler.log_message("Skipping exclusion for prefix '#{prefix}' since no matching tags were found.")
