@@ -45,7 +45,7 @@ module QCCull
     unless cancel_qc
       # Number of Descendants.
       container_query = 'kind:container NOT ( mime-type:filesystem/directory or text/calendar OR text/calendar-entry OR mime-type:application/java-archive OR mime-type:application/macbinary OR mime-type:application/vnd.ms-cab-compressed or mime-type:application/vnd.ms-installer OR mime-type:application/vnd.ms-mso OR mime-type:application/vnd.ms-ole10native-wrapper OR mime-type:application/vnd.ms-ole2-attachment OR mime-type:application/vnd.ms-ole2-clipboard OR mime-type:application/vnd.ms-onenote-toc OR mime-type:application/vnd.ms-outlook-folder OR mime-type:application/vnd.ms-photo-editor OR mime-type:application/vnd.ms-shell-scrap OR mime-type:application/x-self-extracting-archive OR mime-type:application/vnd.symantec-vault-stream-data OR mime-type:application/x-thumbs-db OR mime-type:application/vnd.ms-clipart-gallery )'
-      items = nuix_case.search(Utils::join_query(scoping_query, container_query))
+      items = nuix_case.search(Utils::join_queries(scoping_query, container_query))
       bulk_annotater = utilities.get_bulk_annotater
       NumberOfDescendants::number_of_descendants(nuix_case, progress_handler, timer, items, num_descendants_metadata_key, bulk_annotater)
 
