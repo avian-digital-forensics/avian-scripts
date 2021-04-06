@@ -32,7 +32,7 @@ module QCCull
       when :exclude_from_qc
         progress_handler.set_main_status_and_log_it("Excluding items with QC metadata from further QC in accordance with chosen handling method '#{existing_qc_handling}'...")
         Utils::bulk_add_tag(utilities, progress_handler, has_previous_metadata_tag, items_with_qc_metadata)
-        scoping_query = Utils::join_queries(scoping_query, "NOT tag:\"#{has_previous_metadata_tag}\"")
+        scoping_query = Utils::join_queries(scoping_query, "NOT #{Utils::create_tag_query(has_previous_metadata_tag)}")
       when :tag_items_and_cancel_script
         progress_handler.set_main_status_and_log_it("Tagging items with QC metadata and cancelling QC in accordance with chosen handling method '#{existing_qc_handling}'...")
         Utils::bulk_add_tag(utilities, progress_handler, has_previous_metadata_tag, items_with_qc_metadata)
@@ -44,7 +44,8 @@ module QCCull
   
     unless cancel_qc
       # Number of Descendants.
-      items = nuix_case.search(scoping_query)
+      container_query = 'kind:container NOT ( mime-type:filesystem/directory or text/calendar OR text/calendar-entry OR mime-type:application/java-archive OR mime-type:application/macbinary OR mime-type:application/vnd.ms-cab-compressed or mime-type:application/vnd.ms-installer OR mime-type:application/vnd.ms-mso OR mime-type:application/vnd.ms-ole10native-wrapper OR mime-type:application/vnd.ms-ole2-attachment OR mime-type:application/vnd.ms-ole2-clipboard OR mime-type:application/vnd.ms-onenote-toc OR mime-type:application/vnd.ms-outlook-folder OR mime-type:application/vnd.ms-photo-editor OR mime-type:application/vnd.ms-shell-scrap OR mime-type:application/x-self-extracting-archive OR mime-type:application/vnd.symantec-vault-stream-data OR mime-type:application/x-thumbs-db OR mime-type:application/vnd.ms-clipart-gallery )'
+      items = nuix_case.search(Utils::join_query(scoping_query, container_query))
       bulk_annotater = utilities.get_bulk_annotater
       NumberOfDescendants::number_of_descendants(nuix_case, progress_handler, timer, items, num_descendants_metadata_key, bulk_annotater)
 
@@ -69,7 +70,8 @@ module QCCull
       report_template_path = File.join(root_directory,'data','misc','qc','qc_report_template.rtf')
       report_settings = { 
         :num_source_files_provided => settings_hash[:num_source_files_provided],
-        :scoping_query => scoping_query
+        :scoping_query => scoping_query,
+        :date_format => settings_hash[:date_format]
       }
       # Generate report.
       QCCull::generate_report(nuix_case, report_template_path, report_path, report_info_hash, report_settings, utilities)

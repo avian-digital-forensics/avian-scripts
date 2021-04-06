@@ -165,7 +165,7 @@ module Script
                     for tag,group_name in @temporary_tags
                         @timer.start('remove_temp_tag_' + tag)
                         progress_dialog.set_main_status_and_log_it('Removing temporary tag from ' + group_name + '...')
-                        items_with_tag = @current_case.search("tag:\"#{tag}\"")
+                        items_with_tag = @current_case.search(Utils::create_tag_query(tag))
                         Utils.bulk_remove_tag(@utilities, progress_dialog, tag, items_with_tag)
                         @current_case.delete_tag(tag)
                         @timer.stop('remove_temp_tag_' + tag)

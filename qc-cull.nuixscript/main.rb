@@ -55,8 +55,13 @@ script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report
 script.dialog_append_text_field('main_tab', 'num_descendants_metadata_key', 'Number of descendants custom metadata name', 
     'All items will receive a custom metadata field with this key.')
 
+# Add text field for the number of source files provided when loading the case.
 script.dialog_append_text_field('main_tab', 'num_source_files_provided', 'Number of source files',
     'The number of original source files provided for ingestion. This is checked against the number of loose files in Nuix.')
+
+# Add text field for the format of dates in the report.
+script.dialog_append_text_field('main_tab', 'date_format', 'Date format',
+    'The format of dates in the report. For the full syntax, search `ruby strftime` on the web, but in short: %Y is the full year, %m is the month e.g. \'02\', and %d is the day e.g. \'04\' or \'25\'')
 
 # Add check box for running NSRL.
 script.dialog_append_check_box('main_tab', 'nsrl', 'Run NSRL',
@@ -106,6 +111,8 @@ script.run do |progress_dialog|
   settings_hash[:num_descendants_metadata_key] = script.settings['num_descendants_metadata_key']
   settings_hash[:num_source_files_provided] = script.settings['num_source_files_provided']
 
+  settings_hash[:date_format] = script.settings['date_format']
+
   # Add search and tag file paths
   qc_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
   culling_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
@@ -124,9 +131,8 @@ script.run do |progress_dialog|
   # Add a selected items tag to the scoping query if appropriate.
   if run_only_on_selected_items
     selected_item_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
-    scoping_query = Utils::join_queries(scoping_query, "tag:\"#{selected_item_tag}\"")
+    scoping_query = Utils::join_queries(scoping_query, Utils::create_tag_query(selected_item_tag))
   end
-  items = current_case.search(scoping_query)
 
   # Create a hash with information for the report.
   report_info_hash = {}
