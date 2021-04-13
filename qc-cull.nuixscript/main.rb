@@ -137,10 +137,10 @@ script.run do |progress_dialog|
   end
 
   # Set up exclusion tag prefix hash.
-  qc_settings[:exclude_tag_prefixes] = []
+  settings_hash[:exclude_tag_prefixes] = []
   if run_culling
     exclusion_sets_path = File.join(root_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
-    qc_settings[:exclude_tag_prefixes] << JSON.parse(File.read(exclusion_sets_path))
+    settings_hash[:exclude_tag_prefixes] << JSON.parse(File.read(exclusion_sets_path))
   end
 
   # Add a selected items tag to the scoping query if appropriate.
