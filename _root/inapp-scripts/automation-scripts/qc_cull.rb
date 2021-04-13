@@ -28,7 +28,7 @@ module QcCull
     if run_search_and_tag
       qc_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
       culling_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
-      qc_settings[:search_and_tag_files] << [qc_search_and_tag_path, culling_search_and_tag_path]
+      qc_settings[:search_and_tag_files] += [qc_search_and_tag_path, culling_search_and_tag_path]
       # If NSRL is turned on, add the search and tag file.
       if settings_hash.key?(:nsrl) && settings_hash[:nsrl]
         qc_settings[:search_and_tag_files] << File.join(root_directory, 'data', 'misc', 'qc', 'nsrl_search_and_tag.json')
