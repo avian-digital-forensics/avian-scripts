@@ -61,11 +61,19 @@ script.dialog_append_text_field('main_tab', 'num_source_files_provided', 'Number
 
 # Add text field for the format of dates in the report.
 script.dialog_append_text_field('main_tab', 'date_format', 'Date format',
-    'The format of dates in the report. For the full syntax, search `ruby strftime` on the web, but in short: %Y is the full year, %m is the month e.g. \'02\', and %d is the day e.g. \'04\' or \'25\'')
+    'The format of dates in the report. For the full syntax, search `ruby strftime` on the web, but in short: %Y is the full year, %m is the month e.g. \'02\', and %d is the day e.g. \'04\' or \'25\'.')
+
+# Add check box for running search and tag.
+script.dialog_append_check_box('main_tab', 'run_search_and_tag', 'Run Search and Tag',
+    'Whether to run search and tag.')
+
+# Add check box for running culling.
+script.dialog_append_check_box('main_tab', 'run_search_and_tag', 'Run Search and Tag',
+  'Whether to run search and tag.')
 
 # Add check box for running NSRL.
 script.dialog_append_check_box('main_tab', 'nsrl', 'Run NSRL',
-    'Whether to search for NSRL items. This may take a long time.')
+    'Whether to search for NSRL items. This may take a long time. Does nothing if Run Search and Tag is unchecked.')
 
 # Add information tab.
 script.dialog_add_tab('information', 'Info')
@@ -113,21 +121,28 @@ script.run do |progress_dialog|
 
   settings_hash[:date_format] = script.settings['date_format']
 
+  run_search_and_tag = script.settings['run_search_and_tag']
+  run_culling = script.settings['run_culling']
+
   # Add search and tag file paths
-  qc_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
-  culling_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
-  settings_hash[:search_and_tag_files] = [qc_search_and_tag_path, culling_search_and_tag_path]
-  # If NSRL is turned on, add the search and tag file.
-  if script.settings['nsrl']
-    settings_hash[:search_and_tag_files] << File.join(root_directory, 'data', 'misc', 'qc', 'nsrl_search_and_tag.json')
+  settings_hash[:search_and_tag_files] = []
+  if run_search_and_tag
+    qc_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
+    culling_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
+    settings_hash[:search_and_tag_files] << [qc_search_and_tag_path, culling_search_and_tag_path]
+    # If NSRL is turned on, add the search and tag file.
+    if script.settings['nsrl']
+      settings_hash[:search_and_tag_files] << File.join(root_directory, 'data', 'misc', 'qc', 'nsrl_search_and_tag.json')
+    end
   end
 
   # Set up exclusion tag prefix hash.
-  exclusion_sets_path = File.join(root_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
-  exclusion_sets_file = File.read(exclusion_sets_path)
-  settings_hash[:exclude_tag_prefixes] = JSON.parse(exclusion_sets_file)
+  qc_settings[:exclude_tag_prefixes] = []
+  if run_culling
+    exclusion_sets_path = File.join(root_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
+    qc_settings[:exclude_tag_prefixes] << JSON.parse(File.read(exclusion_sets_path))
+  end
 
-  
   # Add a selected items tag to the scoping query if appropriate.
   if run_only_on_selected_items
     selected_item_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)

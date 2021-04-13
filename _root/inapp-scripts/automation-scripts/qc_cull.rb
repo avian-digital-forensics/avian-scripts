@@ -18,18 +18,29 @@ module QcCull
     qc_settings[:num_descendants_metadata_key] = settings_hash[:num_descendants_metadata_key]
     qc_settings[:num_source_files_provided] = settings_hash[:num_source_files_provided]
 
+    qc_settings[:date_format] = settings_hash[:date_format]
+
+    run_search_and_tag = settings_hash.key?(:run_search_and_tag) ? settings_hash[:run_search_and_tag] : true
+    run_culling = settings_hash.key?(:run_culling) ? settings_hash[:run_culling] : true
+
     # Set up search and tag file paths.
-    qc_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
-    culling_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
-    qc_settings[:search_and_tag_files] = [qc_search_and_tag_path, culling_search_and_tag_path]
-    # If NSRL is turned on, add the search and tag file.
-    if settings_hash.key?(:nsrl) && settings_hash[:nsrl]
-      qc_settings[:search_and_tag_files] << File.join(root_directory, 'data', 'misc', 'qc', 'nsrl_search_and_tag.json')
+    qc_settings[:search_and_tag_files] = []
+    if run_search_and_tag
+      qc_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
+      culling_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
+      qc_settings[:search_and_tag_files] << [qc_search_and_tag_path, culling_search_and_tag_path]
+      # If NSRL is turned on, add the search and tag file.
+      if settings_hash.key?(:nsrl) && settings_hash[:nsrl]
+        qc_settings[:search_and_tag_files] << File.join(root_directory, 'data', 'misc', 'qc', 'nsrl_search_and_tag.json')
+      end
     end
 
     # Set up exclusion tag prefix hash.
-    exclusion_sets_path = File.join(root_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
-    qc_settings[:exclude_tag_prefixes] = JSON.parse(File.read(exclusion_sets_path))
+    qc_settings[:exclude_tag_prefixes] = []
+    if run_culling
+      exclusion_sets_path = File.join(root_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
+      qc_settings[:exclude_tag_prefixes] << JSON.parse(File.read(exclusion_sets_path))
+    end
 
     qc_settings[:report_path] = settings_hash[:report_path]
 

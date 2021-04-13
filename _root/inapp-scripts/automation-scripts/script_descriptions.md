@@ -131,6 +131,9 @@ Settings in *italics* are optional.
 * :num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
 * :report_path - where to place the finished report.
 * :num_source_files_provided - the number of original source files provided for ingestion. This is checked against the number of loose files in Nuix.
+* :date_format - the format of dates in the report. For the full syntax, search `ruby strftime` on the web, but in short: %Y is the full year, %m is the month e.g. \'02\', and %d is the day e.g. \'04\' or \'25\'.
+* *:run_search_and_tag* - whether to run search and tag.
+* *:run_culling* - whether to run culling.
 * *:nsrl* - whether to search for NSRL items. This may take a long time.
 * *:info_project_name* - the name of the project. Used when generating the report.
 * *:info_collection_number* - the collection number. Used when generating the report.
