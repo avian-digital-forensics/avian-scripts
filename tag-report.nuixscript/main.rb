@@ -49,7 +49,7 @@ script.dialog_append_text_field('main_tab', 'tag_suffix', 'Tag suffix',
     'When generating the report, any tag with this suffix will have it removed. Automatically adds \'|\' to the beginning if this is missing.')
 
 # Add a file chooser for the report destination.
-script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report destination', 'Rich Text File (.rtf)', 'rtf',
+script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report destination', 'Extensible Markup Language (.xml)', 'xml',
     'The generated report will be placed here.')
 
 # Checks the input before closing the dialog.
