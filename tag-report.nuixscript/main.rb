@@ -37,7 +37,7 @@ script.dialog_append_date_picker('main_tab', 'latest_revision', 'Latest revision
     'When the last revision took place. Used when generating the report.')
 
 # Add file chooser for search and tag file.
-script.dialog_append_open_file_chooser('main_tab', 'search_and_tag_file_path', 'Search and Tag File', 'JavaScript Object Notation (.json)', '.json',
+script.dialog_append_open_file_chooser('main_tab', 'search_and_tag_file_path', 'Search and Tag File', 'JavaScript Object Notation (.json)', 'json',
     'The search and tag file to run before generating the report.')
 
 # Add text field for the tag prefix.
