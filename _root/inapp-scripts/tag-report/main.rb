@@ -30,7 +30,7 @@ module TagReport
       tag_counts[tag_string] = { :tag_count => nuix_case.count(Utils::join_queries("tag:\"#{tag}\"", scoping_query)) }
     end
 
-    report_template_path = File.join(root_directory,'data','misc','tag_report','tag_report_template.rtf')
+    report_template_path = File.join(root_directory,'data','misc','tag_report','tag_report_template.xml')
     # Copy report template.
     Utils::ensure_path_exists(File.expand_path(File.join(report_destination, '..')))
     FileUtils.cp(report_template_path, report_destination)
