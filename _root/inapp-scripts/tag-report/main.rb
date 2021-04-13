@@ -28,7 +28,7 @@ module TagReport
       if tag_string.end_with?(tag_suffix)
         tag_string = tag_string[0..-(tag_suffix_length+1)]
       end
-      tag_counts[tag_string] = { :tag_count => nuix_case.count(Utils::join_queries("tag:\"#{tag}\"", scoping_query)) }
+      tag_counts[tag_string] = nuix_case.count(Utils::join_queries("tag:\"#{tag}\"", scoping_query))
     end
 
     report_template_path = File.join(root_directory,'data','misc','tag_report','tag_report_template.xml')
@@ -63,8 +63,8 @@ module TagReport
   #
   # Params:
   # +style+:: The style of all cells in the row using a StyleID defined earlier in the document.
-  # +tags+:: A hash from tags to the number of items with that tag.
-  def generate_rows(style, tags)
-    tags.map{ |key, value| ExcelUtils::generate_row(style, [key, value]) }.join()
+  # +tag_counts+:: A hash from tags to the number of items with that tag.
+  def generate_rows(style, tag_counts)
+    tag_counts.map{ |key, value| ExcelUtils::generate_row(style, [key, value]) }.join()
   end
 end
