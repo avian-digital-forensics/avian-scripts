@@ -51,11 +51,15 @@
    </Borders>
   </Style>
  </Styles>
- <Worksheet ss:Name="Tag report">
-  <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="FIELD_row_count(1)" x:FullColumns="1"
+ <Worksheet ss:Name="CFIELD_collection_number">
+  <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="FIELD_row_count(2)" x:FullColumns="1"
    x:FullRows="1" ss:DefaultRowHeight="15">
    <Column ss:AutoFitWidth="0" ss:Width="187.5"/>
    <Column ss:Width="84.75"/>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s62"><Data ss:Type="String">Collection number: FIELD_collection_number</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">Latest revision: FIELD_latest_revision</Data></Cell>
+   </Row>
    <Row ss:AutoFitHeight="0">
     <Cell ss:StyleID="s62"><Data ss:Type="String">Tag</Data></Cell>
     <Cell ss:StyleID="s62"><Data ss:Type="String">Number of items</Data></Cell>

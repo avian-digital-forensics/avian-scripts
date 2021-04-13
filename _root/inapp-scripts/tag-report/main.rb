@@ -46,6 +46,8 @@ module TagReport
         count = $1.to_i
         count + tag_counts.length()
     end
+    report_text.gsub!('FIELD_collection_number', settings_hash[:collection_number])
+    report_text.gsub!('FIELD_latest_revision', settings_hash[:latest_revision])
 
     File.write(report_destination, report_text)
     progress_handler.log_message('Report generated.')
