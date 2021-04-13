@@ -36,10 +36,10 @@ module QcCull
     end
 
     # Set up exclusion tag prefix hash.
-    qc_settings[:exclude_tag_prefixes] = []
+    qc_settings[:exclude_tag_prefixes] = {}
     if run_culling
       exclusion_sets_path = File.join(root_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
-      qc_settings[:exclude_tag_prefixes] << JSON.parse(File.read(exclusion_sets_path))
+      qc_settings[:exclude_tag_prefixes] = JSON.parse(File.read(exclusion_sets_path))
     end
 
     qc_settings[:report_path] = settings_hash[:report_path]
