@@ -39,12 +39,12 @@ module TagReport
     report_text = File.read(report_destination)
     report_text.gsub!(/FIELD_rows\((.*)\)/) do |_|
       style = $1.to_i
-      generate_rows(style, tags)
+      generate_rows(style, tag_counts)
     end
 
     report_text.gsub!(/FIELD_row_count\((.*)\)/) do |_|
         count = $1.to_i
-        count + tags.length()
+        count + tag_counts.length()
     end
 
     File.write(report_destination, report_text)
