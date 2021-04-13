@@ -1,3 +1,4 @@
+require_relative File.join('..', 'qc-cull', 'search_and_tag')
 require_relative File.join('..', '..', 'utils', 'utils')
 require_relative File.join('..', '..', 'utils', 'excel_utils')
 require 'json'
