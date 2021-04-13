@@ -68,8 +68,8 @@ script.dialog_append_check_box('main_tab', 'run_search_and_tag', 'Run Search and
     'Whether to run search and tag.')
 
 # Add check box for running culling.
-script.dialog_append_check_box('main_tab', 'run_search_and_tag', 'Run Search and Tag',
-  'Whether to run search and tag.')
+script.dialog_append_check_box('main_tab', 'run_culling', 'Run Culling',
+  'Whether to run culling.')
 
 # Add check box for running NSRL.
 script.dialog_append_check_box('main_tab', 'nsrl', 'Run NSRL',
