@@ -36,7 +36,7 @@ module TagReport
     Utils::ensure_path_exists(File.expand_path(File.join(report_destination, '..')))
     FileUtils.cp(report_template_path, report_destination)
     progress_handler.log_message('Creating report...')
-    report_text = File.read(report_file_path)
+    report_text = File.read(report_destination)
     report_text.gsub!(/FIELD_rows\((.*)\)/) do |style|
       style = style.to_i
       generate_rows(style, tags)
