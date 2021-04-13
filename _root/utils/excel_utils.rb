@@ -20,7 +20,8 @@ module ExcelUtils
     "\
    <Row ss:AutoFitHeight=\"0\">
     #{data.map{|datum| "<Cell ss:StyleID=\"s#{style.to_s}\"><Data ss:Type=\"#{numeric?(datum) ? 'Number' : 'String'}\">#{datum.to_s}</Data></Cell>"}.join("\n  ")}
-   </Row>"
+   </Row>
+"
   end
 end
   
