@@ -52,7 +52,7 @@
   </Style>
  </Styles>
  <Worksheet ss:Name="Tag report">
-  <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="FIELD_row_count" x:FullColumns="1"
+  <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="FIELD_row_count(1)" x:FullColumns="1"
    x:FullRows="1" ss:DefaultRowHeight="15">
    <Column ss:AutoFitWidth="0" ss:Width="187.5"/>
    <Column ss:Width="84.75"/>
