@@ -37,13 +37,13 @@ module TagReport
     FileUtils.cp(report_template_path, report_destination)
     progress_handler.log_message('Creating report...')
     report_text = File.read(report_destination)
-    report_text.gsub!(/FIELD_rows\((.*)\)/) do |style|
-      style = style.to_i
+    report_text.gsub!(/FIELD_rows\((.*)\)/) do |_|
+      style = $1.to_i
       generate_rows(style, tags)
     end
 
-    report_text.gsub!(/FIELD_row_count\((.*)\)/) do |count|
-        count = count.to_i
+    report_text.gsub!(/FIELD_row_count\((.*)\)/) do |_|
+        count = $1.to_i
         count + tags.length()
     end
 
