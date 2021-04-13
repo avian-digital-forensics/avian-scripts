@@ -42,6 +42,11 @@ module TagReport
       generate_rows(style, tags)
     end
 
+    report_text.gsub!(/FIELD_row_count\((.*)\)/) do |count|
+        count = count.to_i
+        count + tags.length()
+    end
+
     File.write(report_destination, report_text)
     progress_handler.log_message('Report generated.')
   end
