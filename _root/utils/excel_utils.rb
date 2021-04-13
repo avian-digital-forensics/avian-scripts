@@ -16,7 +16,7 @@ module ExcelUtils
   # Params:
   # +style+:: The style of all cells in the row using a StyleID defined earlier in the document.
   # +data+:: An array with the values for each cell in the row starting from the left.
-  def row(style, data)
+  def generate_row(style, data)
     "\
    <Row ss:AutoFitHeight=\"0\">
     #{data.map{|datum| "<Cell ss:StyleID=\"s#{style.to_s}\"><Data ss:Type=\"#{numeric?(datum) ? 'Number' : 'String'}\">#{datum.to_s}</Data></Cell>"}.join("\n  ")}
