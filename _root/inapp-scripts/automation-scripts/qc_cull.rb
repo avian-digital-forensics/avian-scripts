@@ -52,6 +52,12 @@ module QcCull
         qc_report_info[key[5..-1]] = value
       end
     end
+    unless qc_report_info.key?('ingestion_start_date')
+      qc_report_info['ingestion_start_date'] = ''
+    end
+    unless qc_report_info.key?('ingestion_end_date')
+      qc_report_info['ingestion_end_date'] = ''
+    end
 
     QCCull::qc_cull(root_directory, nuix_case, utilities, progress_handler, timer, scoping_query, qc_settings, qc_report_info)
     progress_handler.log_message("Script finished.")
