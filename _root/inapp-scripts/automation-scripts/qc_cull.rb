@@ -18,7 +18,7 @@ module QcCull
     qc_settings[:num_descendants_metadata_key] = settings_hash[:num_descendants_metadata_key]
     qc_settings[:num_source_files_provided] = settings_hash[:num_source_files_provided]
 
-    qc_settings[:date_format] = settings_hash[:date_format]
+    qc_settings[:date_format] = settings_hash.key?(:date_format) ? settings_hash[:date_format] : '%d/%m/%Y'
 
     run_search_and_tag = settings_hash.key?(:run_search_and_tag) ? settings_hash[:run_search_and_tag] : true
     run_culling = settings_hash.key?(:run_culling) ? settings_hash[:run_culling] : true
