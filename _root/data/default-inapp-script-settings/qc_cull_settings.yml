@@ -5,6 +5,8 @@ report_destination:
 num_descendants_metadata_key: NumberOfDescendants
 num_source_files_provided: ''
 date_format: '%d/%m/%Y'
+run_search_and_tag: true
+run_culling: true
 nsrl: false
 info_project_name: 
 info_collection_number: 

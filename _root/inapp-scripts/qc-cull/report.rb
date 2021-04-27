@@ -185,7 +185,6 @@ module QCCull
     result_hash = {}
     # 1 Ingestion details.
     for key,info in info_hash
-        puts('ål:' + key)
         result_hash["FIELD_#{key}"] = info
     end
     current_time = Time.now.strftime("%Y/%m/%d")
