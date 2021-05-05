@@ -56,13 +56,6 @@ Settings in *italics* are optional.
 * *:scoping_query* - only runs for items matching this query. 
 If left out, script will run on all items.
 
-### Settings
-Settings in *italics* are optional.
-* :root_directory - the path to the Avian scripts main directory.
-* :num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
-* :report_path - where to place the finished report.
-* *:scoping_query* - only runs for items matching this query.
-
 ## Tag Exchange Emails with Duplicates (NOT TESTED)
 Key: 'tag_exchange_emails_with_duplicates'
 
