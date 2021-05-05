@@ -167,7 +167,6 @@ module QCCull
                    'FIELD_ingestion_start_date',
                    'FIELD_ingestion_end_date']
     for date_field in date_fields.select { |field| !result_hash[field].nil? }
-      puts("helleflynder: #{date_field}:#{result_hash[date_field]}")
       date = Date.parse(result_hash[date_field])
       result_hash[date_field] = date.strftime(date_format)
     end
