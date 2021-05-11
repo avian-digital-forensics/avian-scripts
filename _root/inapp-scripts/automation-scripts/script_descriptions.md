@@ -94,7 +94,7 @@ Settings in *italics* are optional.
 Defaults to not accepting any characters (other than standard 7-bit ascii).
 * *scoping_query* - only runs on items matching this query.
 
-## QC and Culling (NOT TESTED)
+## QC and Culling
 Key: 'qc_cull'
 
 Automatically performs many of the processes involved in quality control.
