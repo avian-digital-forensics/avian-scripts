@@ -121,7 +121,7 @@ module Script
                         options_hash = @radio_button_groups[key]
                         settings[key] = NXUtils::radio_group_value(values, options_hash)
                     elsif type == 'date'
-                        @settings[key] = values[key] ? java::text::SimpleDateFormat.new('yyyy/MM/dd').format(values[key]) : nil
+                        settings[key] = values[key] ? java::text::SimpleDateFormat.new('yyyy/MM/dd').format(values[key]) : nil
                     end
                 end
                 result = @input_validater.call(settings)

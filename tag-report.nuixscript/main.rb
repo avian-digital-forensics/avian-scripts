@@ -54,13 +54,12 @@ script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report
 
 # Checks the input before closing the dialog.
 script.dialog_validate_before_closing do |values|
-  
-  if values['search_and_tag_file'] != nil && values['search_and_tag_file'] != '' && !File.file?(values['search_and_tag_file'])
+  if values['search_and_tag_file_path'] != nil && values['search_and_tag_file_path'] != '' && !File.file?(values['search_and_tag_file_path'])
     CommonDialogs.show_warning('Please provide an existing search and tag file or leave the field blank to skip that step.')
     next false
   end
 
-  if !values['search_and_tag_file'].end_with?('.json')
+  if !values['search_and_tag_file_path'].end_with?('.json')
     CommonDialogs.show_warning('Search and tag file must have .json extension.')
     next false
   end
