@@ -1,6 +1,7 @@
 require_relative File.join('..', '..', 'utils', 'utils')
 
 require_relative File.join('..', '..', 'utils', 'rtf_utils')
+require_relative File.join('..', '..', 'utils', 'excel_utils')
 require_relative File.join('..', '..', 'utils', 'language')
 
 module QCCull
@@ -12,25 +13,20 @@ module QCCull
   # +spreadsheet_report_file_path+:: The path to the spreadsheet report.
   def update_report(result_hash, report_file_path, spreadsheet_report_file_path)
     report_text = File.read(report_file_path)
+    spreadsheet_report_text = File.read(spreadsheet_report_file_path)
+
     for field,value in result_hash
-      if !report_text.include?(field)
-        puts('Cannot find field ' + field + ' in .rtf report template.')
+      if !report_text.include?(field) && !spreadsheet_report_text.include?(field)
+        puts('Cannot find field ' + field + ' in either .rtf report template or spreadsheet report template.')
       end
       report_text.gsub!(field,value.to_s)
+      spreadsheet_report_text.gsub!(field,value.to_s)
     end
     
     File.open(report_file_path, 'w') do |file|
       # Prepare special characters for ANSI.
       # Taken from https://stackoverflow.com/a/263324.
       file.write(report_text.unpack("U*").map{|c|c.chr}.join)
-    end
-
-    spreadsheet_report_text = File.read(spreadsheet_report_file_path)
-    for field,value in result_hash
-      if !spreadsheet_report_text.include?(field)
-        puts('Cannot find field ' + field + ' in spreadsheet report template')
-      end
-      spreadsheet_report_text.gsub!(field,value.to_s)
     end
     
     File.open(spreadsheet_report_file_path, 'w') do |file|
@@ -175,11 +171,21 @@ module QCCull
   # Params:
   # +nuix_case+:: The case to provide information about.
   # +result_hash+:: The hash to add the results to.
+  # +exclusion_tags+:: A hash of tag prefixes -> exclusion reasons.
   # +scoping_query+:: Limit search to this query.
-  def report_culling(nuix_case, result_hash, scoping_query)
+  def report_culling(nuix_case, result_hash, exclusion_tags, scoping_query)
     exclusion_reasons = nuix_case.all_exclusions
     exclusion_hash = {'Excluded items' => Hash[exclusion_reasons.map { |reason| [reason, nuix_case.count("exclusion:\"#{reason}\"")] }.select { |reason| reason[1] != 0 }]}
     result_hash['FIELD_exclusion_statistics'] = report_two_layer_hash(exclusion_hash)
+
+    row_num = 1
+    culling_rows = exclusion_tags.map do |tag, reason| 
+      num_items = nuix_case.count(Utils::join_queries(scoping_query, Utils::create_tag_query(tag)))
+      row_data = [row_num, "Exclude #{tag}", 'Completed', num_items, reason]
+      row_num += 1
+      ExcelUtils::generate_row('66', row_data)
+    end
+    result_hash['FIELD_culling_rows'] = culling_rows.join
   end
 
   # Formats a list of date FIELDs in the result hash according the the specified date_format.
@@ -235,7 +241,7 @@ module QCCull
     report_item_types(nuix_case, result_hash, 'FIELD_detailed_ingestion_statistics', scoping_query, true)
 
     # 7 Culling.
-    report_culling(nuix_case, result_hash, scoping_query)
+    report_culling(nuix_case, result_hash, report_settings[:exclusion_sets], scoping_query)
 
     # Format dates
     format_dates(result_hash, report_settings[:date_format])
@@ -260,6 +266,6 @@ module QCCull
     FileUtils.cp(template_path, report_destination)
     FileUtils.cp(spreadsheet_template_path, spreadsheet_report_destination)
     # Update report with results.
-    QCCull::update_report(result_hash, report_destination)
+    QCCull::update_report(result_hash, report_destination, spreadsheet_report_destination)
   end
 end

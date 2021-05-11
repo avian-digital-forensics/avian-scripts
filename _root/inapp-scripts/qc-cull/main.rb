@@ -10,7 +10,7 @@ module QCCull
   def qc_cull(root_directory, nuix_case, utilities, progress_handler, timer, scoping_query, settings_hash, report_info_hash)
     num_descendants_metadata_key = settings_hash[:num_descendants_metadata_key]
     search_and_tag_files = settings_hash[:search_and_tag_files]
-    exclude_tag_prefixes = settings_hash[:exclude_tag_prefixes]
+    exclusion_sets = settings_hash[:exclusion_sets]
     report_path = settings_hash[:report_path]
     spreadsheet_report_path = settings_hash[:spreadsheet_report_path]
     existing_qc_handling = settings_hash[:existing_qc_handling]
@@ -24,7 +24,7 @@ module QCCull
     cancel_qc = false
     if existing_qc_handling != :ignore
       prev_qc_items = QCCull::check_for_items_with_qc_tags(nuix_case, progress_handler, timer, scoping_query).to_a
-      prev_culled_items = QCCull::find_culled_items(nuix_case, progress_handler, timer, scoping_query, exclude_tag_prefixes).to_a
+      prev_culled_items = QCCull::find_culled_items(nuix_case, progress_handler, timer, scoping_query, exclusion_sets).to_a
       items_with_qc_metadata = prev_qc_items + prev_culled_items
 
       has_previous_metadata_tag = 'Avian|QC|HasPrevQCMetadata'
@@ -78,8 +78,8 @@ module QCCull
 
       # Culling.
       if run_culling
-        if exclude_tag_prefixes.any?
-          QCCull::exclude_items(nuix_case, scoping_query, exclude_tag_prefixes, progress_handler, timer, utilities)
+        if exclusion_sets.any?
+          QCCull::exclude_items(nuix_case, scoping_query, exclusion_sets, progress_handler, timer, utilities)
         else
           progress_handler.log_message('Skipping exclude because no exclude tag prefixes were specified.')
         end
@@ -92,11 +92,12 @@ module QCCull
         progress_handler.set_main_status_and_log_it('Generating report...')
         # Find report template.
         report_template_path = File.join(root_directory,'data','misc','qc','qc_report_template.rtf')
-        spreadsheet_report_template_path = File.join(root_directory,'data','misc','qc','qc_spreadsheet_report_template.rtf')
+        spreadsheet_report_template_path = File.join(root_directory,'data','misc','qc','qc_spreadsheet_report_template.xml')
         report_settings = { 
           :num_source_files_provided => settings_hash[:num_source_files_provided],
           :scoping_query => scoping_query,
-          :date_format => settings_hash[:date_format]
+          :date_format => settings_hash[:date_format],
+          :exclusion_sets => settings_hash[:exclusion_sets]
         }
         # Generate report.
         QCCull::generate_report(nuix_case, report_template_path, spreadsheet_report_template_path, report_path, spreadsheet_report_path, report_info_hash, report_settings, utilities)

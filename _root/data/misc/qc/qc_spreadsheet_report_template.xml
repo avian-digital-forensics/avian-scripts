@@ -86,6 +86,7 @@
    x:FullRows="1" ss:StyleID="s62" ss:DefaultRowHeight="15">
    <Column ss:StyleID="s63" ss:AutoFitWidth="0"/>
    <Column ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="624"/>
+   <Column ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="60"/>
    <Column ss:Index="4" ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="129.75"/>
    <Column ss:StyleID="s62" ss:Width="69.75"/>
    <Row ss:AutoFitHeight="0" ss:StyleID="s64">
@@ -95,83 +96,7 @@
     <Cell ss:StyleID="s65"><Data ss:Type="String">Number of excluded items</Data></Cell>
     <Cell ss:StyleID="s65"><Data ss:Type="String">Exclusion set</Data></Cell>
    </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">1</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Run search and tag Avian Culling</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"/>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">2</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Exclude Avian|Exclude|Mime-Type|Folders and containers</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Mime-type</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">3</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Exclude Avian|Exclude|Mime-Type|VML</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Mime-type</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">4</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Exclude Avian|Exclude|Technical files|Extracted PDF files</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Technical Files</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">5</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Exclude Avian|Exclude|Technical files|Fonts</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Technical Files</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">6</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Exclude Avian|Exclude|Technical files|attachedtoolbar.bin</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Technical Files</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">7</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Exclude Avain|Exclude|Technical files|Outook Property block</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Technical Files</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">8</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Exclude Avian|Exclude|Technical files|Ole objects</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Technical Files</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">9</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Exclude Avian|Exclude|Technical files|OST Integrity Check</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Technical Files</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">10</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Exclude Avain|Exclude|NSLR (Make sure NSLR is present i Digest list*)</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">NSLR</Data></Cell>
-   </Row>
-   <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s66"><Data ss:Type="Number">11</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Exclude Avian|Exclude|Technical files|Att files not content</Data></Cell>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Waiting</Data></Cell>
-    <Cell ss:StyleID="s66"/>
-    <Cell ss:StyleID="s66"><Data ss:Type="String">Technical Files</Data></Cell>
-   </Row>
+   FIELD_culling_rows
    <Row ss:AutoFitHeight="0">
     <Cell ss:StyleID="s67"/>
     <Cell ss:StyleID="s67"><Data ss:Type="String">Total</Data></Cell>

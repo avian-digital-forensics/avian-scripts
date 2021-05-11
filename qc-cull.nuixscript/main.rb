@@ -52,7 +52,7 @@ script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report
     'The generated report will be placed here.')
 
 # Add a file chooser for the spreadsheet report destination.
-script.dialog_append_save_file_chooser('main_tab', 'spreadsheet_report_destination', 'Spreadsheet report destination', 'Rich Text File (.rtf)', 'rtf',
+script.dialog_append_save_file_chooser('main_tab', 'spreadsheet_report_destination', 'Spreadsheet report destination', 'XML Spreadsheet 2003 (.xml)', 'xml',
     'The generated spreadsheet report will be placed here.')
 
 # Add a text field for the custom metadata name for number of descendants.
@@ -134,8 +134,10 @@ script.run do |progress_dialog|
 
   settings_hash[:date_format] = script.settings['date_format']
 
-  run_search_and_tag = script.settings['run_search_and_tag']
-  run_culling = script.settings['run_culling']
+  settings_hash[:run_number_of_descendants] = script.settings['run_number_of_descendants']
+  settings_hash[:run_search_and_tag] = script.settings['run_search_and_tag']
+  settings_hash[:run_culling] = script.settings['run_culling']
+  settings_hash[:run_create_report] = script.settings['run_create_report']
 
   # Add search and tag file paths
   settings_hash[:search_and_tag_files] = []
@@ -149,7 +151,7 @@ script.run do |progress_dialog|
 
   # Set up exclusion tag prefix hash.
   exclusion_sets_path = File.join(root_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
-  settings_hash[:exclude_tag_prefixes] = JSON.parse(File.read(exclusion_sets_path))
+  settings_hash[:exclusion_sets] = JSON.parse(File.read(exclusion_sets_path))
 
   # Add a selected items tag to the scoping query if appropriate.
   if run_only_on_selected_items
