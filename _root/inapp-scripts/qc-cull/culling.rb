@@ -32,13 +32,11 @@ module QCCull
     progress_handler.set_main_status_and_log_it("Excluding items...")
     exclusion_sets.each do |tag, reason|
       # Find exclusion items.
-      progress_handler.set_main_status_and_log_it("Finding items with exclusion tag '#{tag}'...")
       timer.start('find_exclude_items')
       exclude_items = nuix_case.search(Utils::join_queries(scoping_query, Utils::create_tag_query(tag)))
       timer.stop('find_exclude_items')
 
       # Exclude items.
-      progress_handler.set_main_status_and_log_it("Excluding items with exclusion tag '#{tag}'...")
       timer.start('exclude_found_items')
       Utils::bulk_exclude(utilities, progress_handler, exclude_items, reason)
       timer.stop('exclude_found_items')
