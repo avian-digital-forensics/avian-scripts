@@ -9,11 +9,12 @@ module QCCull
   # Updates the report at the specified path by substituting the values in the result_hash for the keys.
   # +result_hash+:: A hash where the keys are the keys for the fields in the report and the values are the values of those fields.
   # +report_file_path+:: The path to the report.
-  def update_report(result_hash, report_file_path)
+  # +spreadsheet_report_file_path+:: The path to the spreadsheet report.
+  def update_report(result_hash, report_file_path, spreadsheet_report_file_path)
     report_text = File.read(report_file_path)
     for field,value in result_hash
       if !report_text.include?(field)
-        puts('Cannot find field ' + field)
+        puts('Cannot find field ' + field + ' in .rtf report template.')
       end
       report_text.gsub!(field,value.to_s)
     end
@@ -22,6 +23,18 @@ module QCCull
       # Prepare special characters for ANSI.
       # Taken from https://stackoverflow.com/a/263324.
       file.write(report_text.unpack("U*").map{|c|c.chr}.join)
+    end
+
+    spreadsheet_report_text = File.read(spreadsheet_report_file_path)
+    for field,value in result_hash
+      if !spreadsheet_report_text.include?(field)
+        puts('Cannot find field ' + field + ' in spreadsheet report template')
+      end
+      spreadsheet_report_text.gsub!(field,value.to_s)
+    end
+    
+    File.open(spreadsheet_report_file_path, 'w') do |file|
+      file.write(spreadsheet_report_text)
     end
   end
   
@@ -158,6 +171,17 @@ module QCCull
     result_hash['FIELD_percent_with_content_ocr'] = num_ocr == 0 ? '0' : (num_success_and_content.to_f/num_ocr * 100).round(0).to_s
   end
 
+  # Adds culling information to the result_hash.
+  # Params:
+  # +nuix_case+:: The case to provide information about.
+  # +result_hash+:: The hash to add the results to.
+  # +scoping_query+:: Limit search to this query.
+  def report_culling(nuix_case, result_hash, scoping_query)
+    exclusion_reasons = nuix_case.all_exclusions
+    exclusion_hash = {'Excluded items' => Hash[exclusion_reasons.map { |reason| [reason, nuix_case.count("exclusion:\"#{reason}\"")] }.select { |reason| reason[1] != 0 }]}
+    result_hash['FIELD_exclusion_statistics'] = report_two_layer_hash(exclusion_hash)
+  end
+
   # Formats a list of date FIELDs in the result hash according the the specified date_format.
   # Params:
   # +result_hash+:: The result hash in which to format dates.
@@ -211,9 +235,7 @@ module QCCull
     report_item_types(nuix_case, result_hash, 'FIELD_detailed_ingestion_statistics', scoping_query, true)
 
     # 7 Culling.
-    exclusion_reasons = nuix_case.all_exclusions
-    exclusion_hash = {'Excluded items' => Hash[exclusion_reasons.map { |reason| [reason, nuix_case.count("exclusion:\"#{reason}\"")] }.select { |reason| reason[1] != 0 }]}
-    result_hash['FIELD_exclusion_statistics'] = report_two_layer_hash(exclusion_hash)
+    report_culling(nuix_case, result_hash, scoping_query)
 
     # Format dates
     format_dates(result_hash, report_settings[:date_format])
@@ -224,16 +246,19 @@ module QCCull
   # Generates the report from a template.
   # Params:
   # +template_path+:: The path to the report template.
+  # +spreadsheet_template_path+:: The path to the spreadsheet report template.
   # +report_destination+:: The path in which to place the generated report.
+  # +spreadsheet_report_destination+:: The path in which to place the generated spreadsheet report.
   # +info_hash+:: A hash with information about the ingestion.
   # +report_settings+:: Settings used for more than simply inserting into the report.
   # +utilities+:: Reference to the Nuix Utilities object.
-  def generate_report(nuix_case, template_path, report_destination, info_hash, report_settings, utilities)
+  def generate_report(nuix_case, template_path, spreadsheet_template_path, report_destination, spreadsheet_report_destination, info_hash, report_settings, utilities)
     # Create hash.
     result_hash = create_result_hash(nuix_case, info_hash, report_settings, utilities)
     # Copy report template.
     Utils::ensure_path_exists(File.expand_path(File.join(report_destination, '..')))
     FileUtils.cp(template_path, report_destination)
+    FileUtils.cp(spreadsheet_template_path, spreadsheet_report_destination)
     # Update report with results.
     QCCull::update_report(result_hash, report_destination)
   end

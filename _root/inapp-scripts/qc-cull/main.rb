@@ -12,6 +12,7 @@ module QCCull
     search_and_tag_files = settings_hash[:search_and_tag_files]
     exclude_tag_prefixes = settings_hash[:exclude_tag_prefixes]
     report_path = settings_hash[:report_path]
+    spreadsheet_report_path = settings_hash[:spreadsheet_report_path]
     existing_qc_handling = settings_hash[:existing_qc_handling]
 
     run_number_of_descendants = settings_hash[:run_number_of_descendants] 
@@ -91,13 +92,14 @@ module QCCull
         progress_handler.set_main_status_and_log_it('Generating report...')
         # Find report template.
         report_template_path = File.join(root_directory,'data','misc','qc','qc_report_template.rtf')
+        spreadsheet_report_template_path = File.join(root_directory,'data','misc','qc','qc_spreadsheet_report_template.rtf')
         report_settings = { 
           :num_source_files_provided => settings_hash[:num_source_files_provided],
           :scoping_query => scoping_query,
           :date_format => settings_hash[:date_format]
         }
         # Generate report.
-        QCCull::generate_report(nuix_case, report_template_path, report_path, report_info_hash, report_settings, utilities)
+        QCCull::generate_report(nuix_case, report_template_path, spreadsheet_report_template_path, report_path, spreadsheet_report_path, report_info_hash, report_settings, utilities)
       else
         progress_handler.log_message('Skipping report creation as specified in config.')
       end

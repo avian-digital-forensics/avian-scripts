@@ -2,6 +2,7 @@
 run_only_on_selected_items: false
 scoping_query: ''
 report_destination: 
+spreadsheet_report_destination: 
 num_descendants_metadata_key: NumberOfDescendants
 num_source_files_provided: ''
 date_format: '%d/%m/%Y'

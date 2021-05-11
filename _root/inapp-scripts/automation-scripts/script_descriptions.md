@@ -119,6 +119,7 @@ Options are as follows:
     * `ignore` - does not check for existing QC metadata and places new metadata on top of any existing QC metadata.
 * num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
 * report_path - where to place the finished report.
+* spreadsheet_report_path - where to place the finished spreadsheet report.
 * num_source_files_provided - the number of original source files provided for ingestion. This is checked against the number of loose files in Nuix.
 * *date_format* - the format of dates in the report.
 For the full syntax, search `ruby strftime` on the web, but in short: %Y is the full year, %m is the month e.g. \'02\', and %d is the day e.g. \'04\' or \'25\'.

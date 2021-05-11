@@ -51,6 +51,10 @@ script.dialog_append_combo_box('main_tab', 'existing_qc_handling', 'Handling of 
 script.dialog_append_save_file_chooser('main_tab', 'report_destination', 'Report destination', 'Rich Text File (.rtf)', 'rtf',
     'The generated report will be placed here.')
 
+# Add a file chooser for the spreadsheet report destination.
+script.dialog_append_save_file_chooser('main_tab', 'spreadsheet_report_destination', 'Spreadsheet report destination', 'Rich Text File (.rtf)', 'rtf',
+    'The generated spreadsheet report will be placed here.')
+
 # Add a text field for the custom metadata name for number of descendants.
 script.dialog_append_text_field('main_tab', 'num_descendants_metadata_key', 'Number of descendants custom metadata name', 
     'All items will receive a custom metadata field with this key.')
@@ -121,8 +125,9 @@ script.run do |progress_dialog|
   scoping_query = script.settings['scoping_query']
 
   settings_hash[:existing_qc_handling] = existing_qc_handling_options[script.settings['existing_qc_handling']]
-
+  
   settings_hash[:report_path] = script.settings['report_destination']
+  settings_hash[:spreadsheet_report_path] = script.settings['spreadsheet_report_destination']
 
   settings_hash[:num_descendants_metadata_key] = script.settings['num_descendants_metadata_key']
   settings_hash[:num_source_files_provided] = script.settings['num_source_files_provided']

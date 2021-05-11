@@ -42,6 +42,7 @@ module QcCull
     qc_settings[:exclude_tag_prefixes] = JSON.parse(File.read(exclusion_sets_path))
 
     qc_settings[:report_path] = settings_hash[:report_path]
+    qc_settings[:spreadsheet_report_path] = settings_hash[:spreadsheet_report_path]
 
     # Get QC report information.
     # Create a hash with information for the report.
