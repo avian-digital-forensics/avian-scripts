@@ -109,6 +109,14 @@ This information can be used in later steps.
 ### Settings
 Settings in *italics* are optional.
 * root_directory - the path to the Avian scripts main directory.
+* existing_qc_handling - how to handling existing metadata from previous runs of this script.
+Options are as follows:
+    * `remove_metadata` - removes previous QC metadata.
+    Allows for a clean run.
+    * `exclude_from_qc` - excludes the items with previous QC metadata from the current QC.
+    * `tag_items_and_cancel_script` - tags the items with existing QC and cancels the script.
+    This is useful if you do not expect any existing QC metadata and would like to inspect it if it shows up.
+    * `ignore` - does not check for existing QC metadata and places new metadata on top of any existing QC metadata.
 * num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
 * report_path - where to place the finished report.
 * num_source_files_provided - the number of original source files provided for ingestion. This is checked against the number of loose files in Nuix.
