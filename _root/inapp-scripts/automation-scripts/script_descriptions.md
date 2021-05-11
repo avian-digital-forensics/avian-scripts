@@ -28,10 +28,10 @@ The scripts writes the result to a csv file with the following headers:
 
 ### Settings
 Settings in *italics* are optional.
-* :root_directory - the path to the Avian scripts main directory.
-* :primary_address - the address to examine.
-* :output_path - the generated csv will be placed here.
-* *:delimiter* - used as delimiter in the produced CSV file.
+* root_directory - the path to the Avian scripts main directory.
+* primary_address - the address to examine.
+* output_path - the generated csv will be placed here.
+* *delimiter* - used as delimiter in the produced CSV file.
 Defaults to `,`.
 
 ## Import Printed Images
@@ -40,9 +40,9 @@ Key: 'import_printed_images'
 For every pdf in the source directory, finds the item with the right GUID and gives it the printed image.
 ### Settings
 Settings in *italics* are optional.
-* :root_directory - the path to the Avian scripts main directory.
-* :source_path - path to the directory where the images to be imported are located.
-* *:scoping_query* - only replaces the printed images for items matching this query, even if there are other pdf's in the source directory.
+* root_directory - the path to the Avian scripts main directory.
+* source_path - path to the directory where the images to be imported are located.
+* *scoping_query* - only replaces the printed images for items matching this query, even if there are other pdf's in the source directory.
 If left out, all items will be checked for a printed image.
 
 ## Number of Descendants
@@ -51,9 +51,9 @@ Key: 'number_of_descendants'
 Gives every item in the scoping query a custom metadata value of how many descendants the item has.
 ### Settings
 Settings in *italics* are optional.
-* :root_directory - the path to the Avian scripts main directory.
-* :metadata_key - the key for the custom metadata.
-* *:scoping_query* - only runs for items matching this query. 
+* root_directory - the path to the Avian scripts main directory.
+* metadata_key - the key for the custom metadata.
+* *scoping_query* - only runs for items matching this query. 
 If left out, script will run on all items.
 
 ## Tag Exchange Emails with Duplicates (NOT TESTED)
@@ -72,13 +72,13 @@ Then gives all these emails a custom metadata field saying whether there is anot
 
 ### Settings
 Settings in *italics* are optional.
-* :root_directory - the path to the Avian scripts main directory.
-* :archived_prefix - all emails containing this text will be treated as exchange server emails.
-* :archived_tag - all emails containing the above prefix will receive this tag.
-* :archived_has_duplicate_tag - all archived emails with duplicates will receive this tag.
-* :archived_missing_duplicate_tag - all archived emails without duplicates will receive this tag.
-* :has_missing_attachments_tag - all archived emails with children but no duplicate receive this tag.
-* :exclude_archived_items_with_duplicates - all archived emails with duplicates will be excluded if this is set to true.
+* root_directory - the path to the Avian scripts main directory.
+* archived_prefix - all emails containing this text will be treated as exchange server emails.
+* archived_tag - all emails containing the above prefix will receive this tag.
+* archived_has_duplicate_tag - all archived emails with duplicates will receive this tag.
+* archived_missing_duplicate_tag - all archived emails without duplicates will receive this tag.
+* has_missing_attachments_tag - all archived emails with children but no duplicate receive this tag.
+* exclude_archived_items_with_duplicates - all archived emails with duplicates will be excluded if this is set to true.
 
 ## Tag Weird Characters
 Key: 'tag_weird_characters'
@@ -88,11 +88,11 @@ A 'weird' character is any character that is not in standard 7-bit ascii and is 
 
 ### Settings
 Settings in *italics* are optional.
-* :root_directory - the path to the Avian scripts main directory.
-* :tag_name - the name of the tag given.
-* *:accepted_character_codes* - the unicode character codes of the accepted items, given as a comma seperated list of numbers.
+* root_directory - the path to the Avian scripts main directory.
+* tag_name - the name of the tag given.
+* *accepted_character_codes* - the unicode character codes of the accepted items, given as a comma seperated list of numbers.
 Defaults to not accepting any characters (other than standard 7-bit ascii).
-* *:scoping_query* - only runs on items matching this query.
+* *scoping_query* - only runs on items matching this query.
 
 ## QC and Culling (NOT TESTED)
 Key: 'qc_cull'
@@ -108,23 +108,23 @@ This information can be used in later steps.
 
 ### Settings
 Settings in *italics* are optional.
-* :root_directory - the path to the Avian scripts main directory.
-* :num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
-* :report_path - where to place the finished report.
-* :num_source_files_provided - the number of original source files provided for ingestion. This is checked against the number of loose files in Nuix.
-* *:date_format* - the format of dates in the report.
+* root_directory - the path to the Avian scripts main directory.
+* num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
+* report_path - where to place the finished report.
+* num_source_files_provided - the number of original source files provided for ingestion. This is checked against the number of loose files in Nuix.
+* *date_format* - the format of dates in the report.
 For the full syntax, search `ruby strftime` on the web, but in short: %Y is the full year, %m is the month e.g. \'02\', and %d is the day e.g. \'04\' or \'25\'.
 Defaults to `%d/%m/%Y`.
-* *:run_search_and_tag* - whether to run search and tag.
-* *:run_culling* - whether to run culling.
-* *:nsrl* - whether to search for NSRL items.
+* *run_search_and_tag* - whether to run search and tag.
+* *run_culling* - whether to run culling.
+* *nsrl* - whether to search for NSRL items.
 This may take a long time.
 Defaults to false.
-* *:info_project_name* - the name of the project. Used when generating the report.
-* *:info_collection_number* - the collection number. Used when generating the report.
-* *:info_requested_by* - who requested the ingestion. Used when generating the report.
-* *:info_ingestion_start_date* - when ingestion started. Used when generating the report.
-* *:info_ingestion_end_date* - when ingestion ended. Used when generating the report.
-* *:info_ingestion_performed_by* - who performed the ingestion. Used when generating the report.
-* *:info_qc_performed_by* - who performed the qc. Used when generating the report.
-* *:scoping_query* - only runs for items matching this query.
+* *info_project_name* - the name of the project. Used when generating the report.
+* *info_collection_number* - the collection number. Used when generating the report.
+* *info_requested_by* - who requested the ingestion. Used when generating the report.
+* *info_ingestion_start_date* - when ingestion started. Used when generating the report.
+* *info_ingestion_end_date* - when ingestion ended. Used when generating the report.
+* *info_ingestion_performed_by* - who performed the ingestion. Used when generating the report.
+* *info_qc_performed_by* - who performed the qc. Used when generating the report.
+* *scoping_query* - only runs for items matching this query.
