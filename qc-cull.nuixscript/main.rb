@@ -113,6 +113,16 @@ script.dialog_validate_before_closing do |values|
     next false
   end
   
+  if values['report_destination'] == nil || values['report_destination'].strip.empty?
+    CommonDialogs.show_warning('Please provide a destination path for the report.', gui_title)
+    next false
+  end
+  
+  if values['spreadsheet_report_destination'] == nil || values['spreadsheet_report_destination'].strip.empty?
+    CommonDialogs.show_warning('Please provide a destination path for the spreadsheet report.', gui_title)
+    next false
+  end
+
   # Everything is fine; close the dialog.
   next true
 end
