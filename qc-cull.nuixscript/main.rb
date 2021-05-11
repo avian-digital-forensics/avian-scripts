@@ -63,6 +63,10 @@ script.dialog_append_text_field('main_tab', 'num_source_files_provided', 'Number
 script.dialog_append_text_field('main_tab', 'date_format', 'Date format',
     'The format of dates in the report. For the full syntax, search `ruby strftime` on the web, but in short: %Y is the full year, %m is the month e.g. \'02\', and %d is the day e.g. \'04\' or \'25\'.')
 
+# Add check box for running number of descendants.
+script.dialog_append_check_box('main_tab', 'run_number_of_descendants', 'Run Number of Descendants',
+  'Whether to run number of descendants.')
+
 # Add check box for running search and tag.
 script.dialog_append_check_box('main_tab', 'run_search_and_tag', 'Run Search and Tag',
     'Whether to run search and tag.')
@@ -70,6 +74,10 @@ script.dialog_append_check_box('main_tab', 'run_search_and_tag', 'Run Search and
 # Add check box for running culling.
 script.dialog_append_check_box('main_tab', 'run_culling', 'Run Culling',
   'Whether to run culling.')
+  
+# Add check box for creating report.
+script.dialog_append_check_box('main_tab', 'run_search_and_tag', 'Create report',
+  'Whether to create report.')
 
 # Add check box for running NSRL.
 script.dialog_append_check_box('main_tab', 'nsrl', 'Run NSRL',
