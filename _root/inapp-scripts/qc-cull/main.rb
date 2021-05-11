@@ -14,10 +14,10 @@ module QCCull
     report_path = settings_hash[:report_path]
     existing_qc_handling = settings_hash[:existing_qc_handling]
 
-    run_number_of_descendants = qc_settings[:run_number_of_descendants] 
-    run_search_and_tag = qc_settings[:run_search_and_tag]
-    run_culling = qc_settings[:run_culling]
-    run_create_report = qc_settings[:run_create_report]
+    run_number_of_descendants = settings_hash[:run_number_of_descendants] 
+    run_search_and_tag = settings_hash[:run_search_and_tag]
+    run_culling = settings_hash[:run_culling]
+    run_create_report = settings_hash[:run_create_report]
 
 
     cancel_qc = false
