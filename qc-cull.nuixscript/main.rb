@@ -39,7 +39,7 @@ script.dialog_append_text_field('main_tab', 'scoping_query', 'Scoping query',
     'QC and Culling will be run only on items matching this query.')
 
 existing_qc_handling_options = {
-  'Remove Metadata' => :remove_metadata, 
+  'Clean' => :clean, 
   'Exclude Items from QC' => :exclude_from_qc, 
   'Tag Items and Cancel QC' => :tag_items_and_cancel_script, 
   'Ignore' => :ignore
@@ -126,22 +126,17 @@ script.run do |progress_dialog|
 
   # Add search and tag file paths
   settings_hash[:search_and_tag_files] = []
-  if run_search_and_tag
-    qc_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
-    culling_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
-    settings_hash[:search_and_tag_files] += [qc_search_and_tag_path, culling_search_and_tag_path]
-    # If NSRL is turned on, add the search and tag file.
-    if script.settings['nsrl']
-      settings_hash[:search_and_tag_files] << File.join(root_directory, 'data', 'misc', 'qc', 'nsrl_search_and_tag.json')
-    end
+  qc_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'qc_search_and_tag.json')
+  culling_search_and_tag_path = File.join(root_directory, 'data', 'misc', 'qc', 'culling_search_and_tag.json')
+  settings_hash[:search_and_tag_files] += [qc_search_and_tag_path, culling_search_and_tag_path]
+  # If NSRL is turned on, add the search and tag file.
+  if script.settings['nsrl']
+    settings_hash[:search_and_tag_files] << File.join(root_directory, 'data', 'misc', 'qc', 'nsrl_search_and_tag.json')
   end
 
   # Set up exclusion tag prefix hash.
-  settings_hash[:exclude_tag_prefixes] = {}
-  if run_culling
-    exclusion_sets_path = File.join(root_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
-    settings_hash[:exclude_tag_prefixes] = JSON.parse(File.read(exclusion_sets_path))
-  end
+  exclusion_sets_path = File.join(root_directory, 'data', 'misc', 'qc', 'exclusion_sets.json')
+  settings_hash[:exclude_tag_prefixes] = JSON.parse(File.read(exclusion_sets_path))
 
   # Add a selected items tag to the scoping query if appropriate.
   if run_only_on_selected_items

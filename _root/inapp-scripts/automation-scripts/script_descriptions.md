@@ -111,7 +111,7 @@ Settings in *italics* are optional.
 * root_directory - the path to the Avian scripts main directory.
 * existing_qc_handling - how to handling existing metadata from previous runs of this script.
 Options are as follows:
-    * `remove_metadata` - removes previous QC metadata.
+    * `clean` - removes previous QC metadata.
     Allows for a clean run.
     * `exclude_from_qc` - excludes the items with previous QC metadata from the current QC.
     * `tag_items_and_cancel_script` - tags the items with existing QC and cancels the script.
