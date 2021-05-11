@@ -76,7 +76,7 @@ script.dialog_append_check_box('main_tab', 'run_culling', 'Run Culling',
   'Whether to run culling.')
   
 # Add check box for creating report.
-script.dialog_append_check_box('main_tab', 'run_search_and_tag', 'Create report',
+script.dialog_append_check_box('main_tab', 'run_create_report', 'Create report',
   'Whether to create report.')
 
 # Add check box for running NSRL.
