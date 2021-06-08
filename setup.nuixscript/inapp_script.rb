@@ -1,6 +1,7 @@
 # This file is placed in the setup.nuixscript directory because it must be in the avian-inapp-scripts yet should not show up in the script list.
 
 require 'yaml'
+require_relative '../_root/utils/inapp_script_utils'
 
 java_import 'java.text.SimpleDateFormat'
 
@@ -97,8 +98,7 @@ module Script
             # All options for all radio button groups.
             @radio_button_groups = {}
 
-            # A list of all the temporary tags added by the script.
-            @temporary_tags = {}
+            @temporary_tag_manager = TemporaryTagManager::new(@utilities, @timer)
         end
 
         # Sets the dialog's input validater.
@@ -159,19 +159,7 @@ module Script
 
                     # Run actual script.
                     script_finished_message = run.call(progress_dialog)
-                    # Remove temporary tags.
-                    progress_dialog.set_main_status_and_log_it('Removing temporary tags...')
-                    @timer.start('remove_temporary_tags')
-                    for tag,group_name in @temporary_tags
-                        @timer.start('remove_temp_tag_' + tag)
-                        progress_dialog.set_main_status_and_log_it('Removing temporary tag from ' + group_name + '...')
-                        items_with_tag = @current_case.search(Utils::create_tag_query(tag))
-                        Utils.bulk_remove_tag(@utilities, progress_dialog, tag, items_with_tag)
-                        @current_case.delete_tag(tag)
-                        @timer.stop('remove_temp_tag_' + tag)
-                    end
-                    @timer.stop('remove_temporary_tags')
-
+                    @temporary_tag_manager.delete(progress_dialog)
                     @timer.stop('total')
         
                     @timer.print_timings
@@ -185,26 +173,6 @@ module Script
             end
         end
 
-        # Returns the string placed between Avian| and |<tag_name> in tags from this script.
-        def self.find_script_tag_prefix(script_name)
-            script_name.split('_').map{|e| e.capitalize}.join
-        end
-
-        # Returns the given tag in script tag format, i.e. Avian|<script name>|<tag>.
-        # If tag already has some of the prefix, this is not duplicated.
-        def to_script_tag(tag)
-            script_tag_prefix = InAppScript.find_script_tag_prefix(@script_name)
-            if tag.start_with?('Avian|' + script_tag_prefix + '|')
-                return tag
-            elsif tag.start_with?('Avian|')
-                return 'Avian|' + InAppScript.find_script_tag_prefix(@script_name) + '|' + tag[6..-1]
-            elsif tag.start_with?(script_tag_prefix + '|')
-                return 'Avian|' + tag
-            else
-                return 'Avian|' + script_tag_prefix + '|' + tag
-            end
-        end
-
         # Add tag to the specified items.
         # The tag will be modified to ensure the proper prefix. The modified tag is returned.
         # Tag will be removed from all items in the case when the script is finished.
@@ -214,14 +182,7 @@ module Script
         # +item_group_name+:: What to call the items in messages, e.g. item_group_name='RFC mails' -> 'Adding temporary tag to RFC mails for internal use...'
         # +progress_dialog+:: The ProgressDialog used to update the user on progress.
         def create_temporary_tag(tag, items, item_group_name, progress_dialog)
-            # Add Avian| prefix to tag if it isn't there already.
-            tag = to_script_tag(tag)
-            @timer.start('add_temp_tag_' + tag)
-            progress_dialog.set_main_status_and_log_it('Adding temporary tag to ' + item_group_name + ' for internal use...')
-            Utils.bulk_add_tag(@utilities, progress_dialog, tag, items)
-            @temporary_tags[tag] = item_group_name
-            @timer.stop('add_temp_tag_' + tag)
-            return tag
+            @temporary_tag_manager.create_temporary_tag(tag, items, item_group_name, progress_dialog)
         end
 
         # Add tab to the script's settings dialog.
