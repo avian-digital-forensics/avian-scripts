@@ -46,6 +46,7 @@ module HistorySearch
         tag_tag = settings_hash[:tag_tag]
         unless tag_tag.nil? || tag_tag.empty? || (!tag_added && !tag_removed)
             progress_handler.set_main_status_and_log_it('Finding specified tag events...')
+            timer.start('find_specified_tag_events')
             annotation_history = search_history(nuix_case, start_date_range_start, start_date_range_end, users, ['annotation'])
             events = annotation_history.select do |event|
                 unless event.details.key?('tag') && event.details.key?('added')
@@ -59,6 +60,7 @@ module HistorySearch
                 end
                 next true
             end
+            timer.stop('find_specified_tag_events')
             progress_handler.set_main_status_and_log_it('Finding items with the specified tag events...')
             timer.start('tag_events_to_items')
             items = history_event_items(events)
