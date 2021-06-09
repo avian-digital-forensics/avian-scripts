@@ -20,15 +20,23 @@ module HistorySearch
         global_tag = settings_hash[:global_tag]
 
         unless global_tag.empty?
+            progress_handler.set_main_status_and_log_it('Finding specified events...')
             unless global_tag.start_with?('Avian|')
                 global_tag = "Avian|#{global_tag}"
             end
             history = search_history(nuix_case, start_date_range_start, start_date_range_end, users, nil)
+            progress_handler.set_main_status_and_log_it('Finding items with the specified events...')
+            timer.start('events_to_items')
             history_items = history_event_items(history)
+            timer.stop('events_to_items')
             unless scoping_query.empty?
+                progress_handler.set_main_status_and_log_it('Restricting found items to scoping query...')
+                timer.start('restrict_found_global_items_to_scoping_query')
                 tag = temporary_tag_manager.create_temporary_tag('global_event_items', history_items, 'all items with events in range', progress_handler)
+                timer.stop('restrict_found_global_items_to_scoping_query')
                 history_items = nuix_case.search(Utils::join_queries(Utils::create_tag_query(tag), scoping_query))
             end
+
             Utils.bulk_add_tag(utilities, progress_handler, global_tag, history_items.select{|item| item.matches_search(scoping_query)})
         end
 
@@ -37,6 +45,7 @@ module HistorySearch
         tag_removed = settings_hash[:tag_removed]
         tag_tag = settings_hash[:tag_tag]
         unless tag_tag.nil? || tag_tag.empty? || (!tag_added && !tag_removed)
+            progress_handler.set_main_status_and_log_it('Finding specified tag events...')
             annotation_history = search_history(nuix_case, start_date_range_start, start_date_range_end, users, ['annotation'])
             events = annotation_history.select do |event|
                 unless event.details.key?('tag') && event.details.key?('added')
@@ -50,9 +59,18 @@ module HistorySearch
                 end
                 next true
             end
+            progress_handler.set_main_status_and_log_it('Finding items with the specified tag events...')
+            timer.start('tag_events_to_items')
             items = history_event_items(events)
-            tag = temporary_tag_manager.create_temporary_tag('tag_event_items', items, 'all items with specified tag events', progress_handler)
-            items = nuix_case.search(Utils::join_queries(Utils::create_tag_query(tag), scoping_query))
+            timer.stop('tag_events_to_items')
+            
+            unless scoping_query.empty?
+                progress_handler.set_main_status_and_log_it('Restricting found items to scoping query...')
+                timer.start('restrict_found_tag_event_items_to_scoping_query')
+                tag = temporary_tag_manager.create_temporary_tag('tag_event_items', items, 'all items with specified tag events', progress_handler)
+                timer.stop('restrict_found_tag_event_items_to_scoping_query')
+                items = nuix_case.search(Utils::join_queries(Utils::create_tag_query(tag), scoping_query))
+            end
             Utils.bulk_add_tag(utilities, progress_handler, tag_tag, items.select{|item| item.matches_search(scoping_query)})
         end
     end
