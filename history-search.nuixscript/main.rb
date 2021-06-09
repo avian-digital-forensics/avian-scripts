@@ -32,7 +32,7 @@ script.dialog_append_date_picker('main_tab', 'start_date_range_end', 'Event star
 script.dialog_append_text_field('main_tab', 'users', 'Users', 
     'A comma seperated list of strings denoting user names. Script only considers history events by one of these users. Use the same names as Nuix shows in history.')
 script.dialog_append_text_field('main_tab', 'global_tag', 'Tag', 
-    'A tag given to all items with events with in the start date range done by one of the specified users. Leave empty to skip this step.')
+    'A tag given to all items with events within the start date range done by one of the specified users. Leave empty to skip this step.')
 
 script.dialog_add_tab('tag_tab', 'Tags')
 script.dialog_append_text_field('tag_tab', 'event_tag', 'Event tag', 
