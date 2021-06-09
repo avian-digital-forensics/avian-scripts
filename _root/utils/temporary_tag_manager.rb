@@ -5,9 +5,10 @@ module TemporaryTagManager
     extend self
 
     class TemporaryTagManager
-        def initialize(utilities, timer)
+        def initialize(utilities, timer, script_name)
             @utilities = utilities
             @timer = timer
+            @script_name = script_name
 
             # A list of all the temporary tags added by the script.
             @temporary_tags = {}
@@ -23,7 +24,7 @@ module TemporaryTagManager
         # +progress_handler+:: The ProgressDialog used to update the user on progress.
         def create_temporary_tag(tag, items, item_group_name, progress_handler)
             # Add Avian| prefix to tag if it isn't there already.
-            tag = InappScriptUtils::to_script_tag(tag)
+            tag = InappScriptUtils::to_script_tag(@script_name, tag)
             @timer.start('add_temp_tag_' + tag)
             progress_handler.set_main_status_and_log_it('Adding temporary tag to ' + item_group_name + ' for internal use...')
             Utils.bulk_add_tag(@utilities, progress_handler, tag, items)

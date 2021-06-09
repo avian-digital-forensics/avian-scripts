@@ -99,7 +99,7 @@ module Script
             # All options for all radio button groups.
             @radio_button_groups = {}
 
-            @temporary_tag_manager = TemporaryTagManager::TemporaryTagManager.new(@utilities, @timer)
+            @temporary_tag_manager = TemporaryTagManager::TemporaryTagManager.new(@utilities, @timer, @script_name)
         end
 
         # Sets the dialog's input validater.
