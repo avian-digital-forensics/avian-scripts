@@ -1,4 +1,5 @@
 require_relative 'utils'
+require_relative 'inapp_script_utils'
 
 module TemporaryTagManager
     extend self
@@ -22,7 +23,7 @@ module TemporaryTagManager
         # +progress_handler+:: The ProgressDialog used to update the user on progress.
         def create_temporary_tag(tag, items, item_group_name, progress_handler)
             # Add Avian| prefix to tag if it isn't there already.
-            tag = to_script_tag(tag)
+            tag = InappScriptUtils::to_script_tag(tag)
             @timer.start('add_temp_tag_' + tag)
             progress_handler.set_main_status_and_log_it('Adding temporary tag to ' + item_group_name + ' for internal use...')
             Utils.bulk_add_tag(@utilities, progress_handler, tag, items)
