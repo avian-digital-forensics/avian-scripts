@@ -81,5 +81,5 @@ script.run do |progress_dialog|
   timer = script.timer
   HistorySearch::history_search(script.root_directory, current_case, utilities, progress_dialog, script, timer, scoping_query, settings_hash)
   
-  return ''
+  ''
 end
