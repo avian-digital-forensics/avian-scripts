@@ -21,10 +21,12 @@ module HistorySearch
 
         unless global_tag.empty?
             progress_handler.set_main_status_and_log_it('Finding specified events...')
+            timer.start('find_specified_events')
             unless global_tag.start_with?('Avian|')
                 global_tag = "Avian|#{global_tag}"
             end
             history = search_history(nuix_case, start_date_range_start, start_date_range_end, users, nil)
+            timer.stop('find_specified_events')
             progress_handler.set_main_status_and_log_it('Finding items with the specified events...')
             timer.start('events_to_items')
             history_items = history_event_items(history)
