@@ -1,0 +1,12 @@
+---
+  run_only_on_selected_items: true
+  scoping_query: ''
+  start_date_range_start: 
+  start_date_range_end: 
+  users: ''
+  global_tag: ''
+  event_tag: ''
+  tag_added: false
+  tag_removed: false
+  tag_tag: ''
+  

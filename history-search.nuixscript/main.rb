@@ -37,9 +37,9 @@ script.dialog_append_text_field('main_tab', 'global_tag', 'Tag',
 script.dialog_add_tab('tag_tab', 'Tags')
 script.dialog_append_text_field('tag_tab', 'event_tag', 'Event tag', 
     'The tag to search for events about. Leave empty to find all tag events.')
-script.dialog_append_text_field('tag_tab', 'tag_added', 'Tag added', 
+script.dialog_append_check_box('tag_tab', 'tag_added', 'Tag added', 
     'Whether to act on events where the specified tag was added.')
-script.dialog_append_text_field('tag_tab', 'tag_removed', 'Tag removed', 
+script.dialog_append_check_box('tag_tab', 'tag_removed', 'Tag removed', 
     'Whether to act on events where the specified tag was removed.')
 script.dialog_append_text_field('tag_tab', 'tag_tag', 'Tag', 
     'The tag to give to all items with events where \'Event tag\' was added or removed if those are specified. Leave empty to skip this step.')
