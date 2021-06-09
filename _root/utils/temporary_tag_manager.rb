@@ -4,7 +4,7 @@ module TemporaryTagManager
     extend self
 
     class TemporaryTagManager
-        def initialize(utilities)
+        def initialize(utilities, timer)
             @utilities = utilities
             @timer = timer
 
