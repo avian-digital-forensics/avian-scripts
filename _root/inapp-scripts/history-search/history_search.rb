@@ -108,6 +108,10 @@ module HistorySearch
             return search_history_single_user(nuix_case, start_date_range_start, start_date_range_end, nil, types)
         end
 
+        if types.nil?
+            types = [nil]
+        end
+                
         result = []
         for user in users
             for type in types
