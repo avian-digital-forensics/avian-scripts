@@ -14,7 +14,7 @@ module HistorySearch
     #   :tag_removed => Whether to act on events where the specified tag was removed.
     #   :tag_tag => The tag to give to all items with events where :event_tag was added or removed if those are specified. Leave empty to skip this step.
     def history_search(root_directory, nuix_case, utilities, progress_handler, temporary_tag_manager, timer, scoping_query, settings_hash)
-        start_date_range_start, start_date_range_end = prepare_dates([settings_hash[:start_date_range_start], settings_hash[:start_date_range_end])
+        start_date_range_start, start_date_range_end = prepare_dates([settings_hash[:start_date_range_start], settings_hash[:start_date_range_end]])
         users = prepare_user_list(settings_hash[:users])
         global_tag = settings_hash[:global_tag]
 
