@@ -160,7 +160,7 @@ module Script
 
                     # Run actual script.
                     script_finished_message = run.call(progress_dialog)
-                    @temporary_tag_manager.delete(progress_dialog)
+                    @temporary_tag_manager.delete(@current_case, progress_dialog)
                     @timer.stop('total')
         
                     @timer.print_timings

@@ -33,16 +33,16 @@ module TemporaryTagManager
             return tag
         end
 
-        def delete(progress_handler)
+        def delete(nuix_case, progress_handler)
             # Remove temporary tags.
             progress_handler.set_main_status_and_log_it('Removing temporary tags...')
             @timer.start('remove_temporary_tags')
             for tag,group_name in @temporary_tags
                 @timer.start('remove_temp_tag_' + tag)
                 progress_handler.set_main_status_and_log_it('Removing temporary tag from ' + group_name + '...')
-                items_with_tag = @current_case.search(Utils::create_tag_query(tag))
+                items_with_tag = nuix_case.search(Utils::create_tag_query(tag))
                 Utils.bulk_remove_tag(@utilities, progress_handler, tag, items_with_tag)
-                @current_case.delete_tag(tag)
+                nuix_case.delete_tag(tag)
                 @timer.stop('remove_temp_tag_' + tag)
             end
             @timer.stop('remove_temporary_tags')
