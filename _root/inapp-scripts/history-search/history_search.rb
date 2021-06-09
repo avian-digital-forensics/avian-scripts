@@ -1,4 +1,5 @@
 require 'set'
+require 'date'
 require_relative '../../utils/utils'
 module HistorySearch
     extend self
