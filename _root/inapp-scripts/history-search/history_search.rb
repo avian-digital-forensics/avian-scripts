@@ -101,12 +101,12 @@ module HistorySearch
 
     def search_history_single_user(nuix_case, start_date_range_start, start_date_range_end, user, types)
         if types.nil?
-            return nuix_case.history({'startDateAfter' => start_date_range_start, 'startDateBefore' => start_date_range_end, 'user' => user})
+            return nuix_case.history({'startDateAfter' => start_date_range_start, 'startDateBefore' => start_date_range_end, 'user' => user}).to_a
         end
 
         result = []
         for type in types
-            result += nuix_case.history({'startDateAfter' => start_date_range_start, 'startDateBefore' => start_date_range_end, 'user' => user, 'type' => type})
+            result += nuix_case.history({'startDateAfter' => start_date_range_start, 'startDateBefore' => start_date_range_end, 'user' => user, 'type' => type}).to_a
         end
         result
     end
