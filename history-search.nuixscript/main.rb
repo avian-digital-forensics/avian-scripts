@@ -69,7 +69,7 @@ script.run do |progress_dialog|
   settings_hash = {
     :start_date_range_start => script.settings['start_date_range_start'],
     :start_date_range_end => script.settings['start_date_range_end'],
-    :users => script.settings['users'],
+    :users => script.settings['users'].split(','),
     :global_tag => script.settings['global_tag'],
     
     :event_tag => script.settings['event_tag'],
