@@ -2,6 +2,7 @@
 
 require 'yaml'
 require_relative '../_root/utils/inapp_script_utils'
+require_relative '../_root/utils/temporary_tag_manager'
 
 java_import 'java.text.SimpleDateFormat'
 
