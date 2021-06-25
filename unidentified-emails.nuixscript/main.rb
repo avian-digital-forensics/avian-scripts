@@ -11,11 +11,16 @@ end
 require_relative 'find_unidentified_emails'
 require_relative 'fix_unidentified_emails'
 
+require File.join(script.root_directory,'utils','utils')
+
 # Add find tab.
 script.dialog_add_tab('find_tab', 'Find Unidentified Emails')
 
-script.dialog_append_check_box('find_tab', 'find_unselected_items', 'Run on unselected items',
-        'Whether to run the script only on selected items, or to run the script on the result of a preliminary search.')
+script.dialog_append_check_box('find_tab', 'run_only_on_selected_items', 'Run only on selected items',
+        'If this is checked, run the script only on selected items. This affects both find and fix.')
+
+script.dialog_append_text_field('find_tab', 'scoping_query', 'Scoping query', 
+        'Run only on items matching this Nuix search query. Affects both find and fix.')
 
 script.dialog_append_text_field('find_tab', 'allowed_start_offset', 'Allowed start offset', 
         'Number of non-whitespace characters allowed before "from".')
@@ -29,14 +34,8 @@ script.dialog_append_text_field('find_tab', 'email_tag', 'Email tag',
 # Add fix tab.
 script.dialog_add_tab('fix_tab', 'Fix Unidentified Emails')
 
-script.dialog_append_check_box('fix_tab', 'fix_unselected_items', 'Run on unselected items',
-        'Whether to run the script only on selected items, or to ignore selection.')
-
 script.dialog_append_check_box('fix_tab', 'fix_rfc_items', 'Run on RFC mails',
         'Whether to run the script on all (selected) RFC mails or only items identified by the Find Unidentified Emails script.')
-        
-script.dialog_append_check_box('fix_tab', 'export_printed_images', 'Export printed images',
-        'Whether to export printed images for items whose types change. This can then be used by a WSS to keep the images on reload.')
 
 script.dialog_append_text_field('fix_tab', 'fixed_item_tag', 'Fixed email tag', 
         'The tag given to all fixed emails. "Avian|" will automatically be added as prefix.')
@@ -87,7 +86,8 @@ script.run do |progress_dialog|
 
     timer = script.timer
     
-    find_unselected_items = script.settings['find_unselected_items']
+    run_only_on_selected_items = script.settings['run_only_on_selected_items']
+    scoping_query = script.settings['scoping_query']
     allowed_start_offset = Integer(script.settings['allowed_start_offset'])
     start_area_line_num = Integer(script.settings['start_area_line_num'])
     email_tag = script.settings['email_tag']
@@ -95,19 +95,16 @@ script.run do |progress_dialog|
     fix_unselected_items = script.settings['fix_unselected_items']
     fix_rfc_items = script.settings['fix_rfc_items']
     email_mime_type = 'message/rfc822'
-    export_printed_images = script.settings['export_printed_images']
     fixed_item_tag = script.to_script_tag(script.settings['fixed_item_tag'])
 
     bulk_annotater = utilities.get_bulk_annotater
-        
-    # Find which items to run on.
-    if find_unselected_items
-        progress_dialog.set_main_status_and_log_it('Making preliminary search...')
-        items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer)
-    else
-        progress_dialog.log_message('Using selection. Skipping preliminary search.')
-        items = current_selected_items
+    if run_only_on_selected_items
+        selected_items_tag = script.create_temporary_tag('SELECTED_ITEMS', current_selected_items, 'selected items', progress_dialog)
+        scoping_query = Utils::join_queries(scoping_query, "tag:\"#{selected_items_tag}\"")
     end
+
+    progress_dialog.set_main_status_and_log_it('Making preliminary search...')
+    items = FindUnidentifiedEmails::preliminary_search(current_case, progress_dialog, timer, scoping_query)
     
     num_emails = FindUnidentifiedEmails::find_unidentified_emails(current_case, items, progress_dialog, timer, allowed_start_offset, start_area_line_num, email_tag, bulk_annotater)
     
@@ -116,9 +113,9 @@ script.run do |progress_dialog|
     communication_field_aliases = {
         :date => ['date', 'Date', 'dato', 'Dato', 'sendt', 'Sendt', 'modtaget', 'Modtaget'],
         :subject => ['subject', 'Subject', 'emne', 'Emne'],
-        :from => ['from', 'From', 'fra', 'Fra', 'afsender', 'Afsender'],
+        :from => ['from', 'From', 'fra', 'Fra', 'afsender', 'Afsender', 'MeddelelseFra'],
         :to => ['to', 'To', 'til', 'Til', 'modtager', 'Modtager'],
-        :cc => ['cc', 'Cc'],
+        :cc => ['cc', 'Cc', 'kopi', 'Kopi'],
         :bcc => ['bcc', 'Bcc']
     }
 
@@ -134,21 +131,12 @@ script.run do |progress_dialog|
     # Create set of items to be processed.
     items = Set[]
     rfc_tag = script.to_script_tag('RFC822')
-    if fix_unselected_items
-        items.merge(current_case.search(Utils::create_tag_query("Avian|#{email_tag}")))
-        if fix_rfc_items
-            rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
-            script.create_temporary_tag(rfc_tag, rfc_items, 'RFC822 items', progress_dialog)
-            items.merge(current_case.search('tag:"' + rfc_tag + '"'))
-        end
-    else
-        selected_items_tag = script.create_temporary_tag('SelectedItems', current_selected_items, 'selected items', progress_dialog)
-        items.merge(current_case.search(Utils::join_queries(Utils::create_tag_query("Avian|#{email_tag}"), Utils::create_tag_query(selected_items_tag)))
-        if fix_rfc_items
-            rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case)
-            script.create_temporary_tag(rfc_tag, rfc_items, 'RFC822 items', progress_dialog)
-            items.merge(current_case.search(Utils::join_queries(Utils::create_tag_query(rfc_tag), Utils::create_tag_query(selected_items_tag))))
-        end
+    items.merge(current_case.search(Utils::join_queries("tag:\"Avian|#{email_tag}\"", scoping_query)))
+    if fix_rfc_items
+        # Find and tag rfc mails.
+        rfc_items = FixUnidentifiedEmails::find_rfc_mails(current_case, scoping_query)
+        script.create_temporary_tag(rfc_tag, rfc_items, 'RFC822 items', progress_dialog)
+        items.merge(rfc_items)
     end
 
     # Find the case data directory.
@@ -156,7 +144,7 @@ script.run do |progress_dialog|
 
     progress_dialog.log_message('Found ' + items.size.to_s + ' items to process.')
     timer.start('fix_unidentified_emails')
-    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items.to_a, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, export_printed_images, fixed_item_tag) { |string| string.split(/[,;]\s/).map(&:strip) }
+    FixUnidentifiedEmails::fix_unidentified_emails(case_data_dir, current_case, items.to_a, progress_dialog, timer, utilities, communication_field_aliases, start_area_line_num, rfc_tag, address_regexps, email_mime_type, fixed_item_tag) { |string| string.split(/[,;]\s/).map(&:strip) }
     timer.stop('fix_unidentified_emails')
 
     # No script finished message.

@@ -116,34 +116,49 @@ module Utils
         item_utility.deduplicate(nuix_case.search_unsorted(search)).size.to_s
     end
 
-    # Exports the printed images of the given images to the specified directory.
+    # Exports the printed images of the given images to all the specified directories.
+    # Returns the number of images exported.
     # Params:
     # +items+:: The items whose printed images to export.
-    # +directory+:: The directory to export them to.
+    # +directories+:: The directories to export them to. If only one item, it doesn't have to be an array.
     # +utilities+:: A reference to the Nuix Utitilies class.
-    # +progress_dialog+:: The progress dialog to show results in. Only used if non-null.
-    def self.export_printed_images(items, directory, utilities, progress_dialog=nil)
-        FileUtils.mkdir_p(directory)
-		items_processed = 0
-        if progress_dialog
-            progress_dialog.set_main_status_and_log_it('Exporting printed images...')
-            progress_dialog.set_main_progress(0, items.size)
-            progress_dialog.set_sub_status("Printed images exported: " + items_processed.to_s)
+    # +progress_handler+:: Log messages will be given to this.
+    def self.export_printed_images(items, directories, utilities, progress_handler)
+        # Use splat operator to turn directories into an array if only one item was given.
+        directories_array = *directories
+        for directory in directories_array
+            FileUtils.mkdir_p(directory)
         end
+		items_processed = 0
+        
+        progress_handler.set_main_status_and_log_it('Exporting printed images...')
+        progress_handler.set_main_progress(0, items.size)
+        progress_handler.set_sub_status("Printed images exported: " + items_processed.to_s)
+        
+        images_exported = 0
         
         # Use single export because batch export seems to be only slightly faster, while this is far simpler.
         exporter = utilities.pdf_print_exporter
         for item in items
 			if item.is_kind?('no-data')
-				progress_dialog.log_message("Unable to export printed image for item '#{item.name}'. Could not find data. GUID:#{item.guid}")
-			else
-				exporter.export_item(item, "#{directory}/#{item.guid}.pdf")
+				progress_handler.log_message("Unable to export printed image for item '#{item.name}'. Could not find data. GUID:#{item.guid}")
+            else
+                for directory in directories_array
+                    exporter.export_item(item, "#{directory}/#{item.guid}.pdf")
+                end
+                images_exported += 1
 			end
-            if progress_dialog
-                progress_dialog.increment_main_progress
-                progress_dialog.set_sub_status("Printed images exported: " + (items_processed += 1).to_s)
-            end
+            progress_handler.increment_main_progress
+            progress_handler.set_sub_status("Printed images exported: " + (items_processed += 1).to_s)
         end
+        images_exported
+    end
+
+    # Combines all given search queries with ANDs.
+    # Params:
+    # +queries+:: Arbitrarily many queries or arrays of queries to be combined.
+    def self.join_queries(*queries)
+        queries.flatten.map { |query| query == '' ? nil : "(#{query})" }.reject(&:nil?).join(' AND ')
     end
 
     # Combines all given search queries with ANDs.
