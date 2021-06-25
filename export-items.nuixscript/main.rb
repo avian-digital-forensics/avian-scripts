@@ -1,5 +1,6 @@
-require_relative File.join('..','setup.nuixscript','inapp_script')
-
+script_directory = File.dirname(__FILE__)
+setup_directory = File.join(script_directory,'..','setup.nuixscript')
+require File.join(setup_directory,'inapp_script')
 
 unless script = Script::create_inapp_script(setup_directory, 'Export Items', 'export_items', current_case, utilities)
   STDERR.puts('Could not find root directory.')

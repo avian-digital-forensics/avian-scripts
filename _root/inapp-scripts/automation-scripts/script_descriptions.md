@@ -56,25 +56,6 @@ Settings in *italics* are optional.
 * *:scoping_query* - only runs for items matching this query. 
 If left out, script will run on all items.
 
-## QC and Culling (NOT TESTED)
-Key: 'qc_cull'
-
-Automatically performs many of the processes involved in quality control.
-
-1. Number of Descendants. Runs the script [NumberOfDescendants](#number-of-descendants) on the selected items.
-This gives items a custom metadata field telling how many the descendants it has.
-This information can be used in later steps.
-2. Search and Tag. Runs NUIX' in-built search and tag functionality.
-3. Culling. Excludes items with tags beginning with a specific prefixes.
-4. Report. Writes some of the results of the above steps to an .rtf file.
-
-### Settings
-Settings in *italics* are optional.
-* :root_directory - the path to the Avian scripts main directory.
-* :num_descendants_metadata_key - the name of the custom metadata given to items by the NumberOfDescendants script.
-* :report_path - where to place the finished report.
-* *:scoping_query* - only runs for items matching this query.
-
 ## Tag Exchange Emails with Duplicates (NOT TESTED)
 Key: 'tag_exchange_emails_with_duplicates'
 

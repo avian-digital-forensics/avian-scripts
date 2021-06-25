@@ -44,4 +44,26 @@ module Dates
 		
         return JodaTime::DateTime.new(date.year, date.month, date.day, date_time.hour, date_time.minute, date_time.second, time_zone)
     end
+
+    # Returns the ruby datetime on which summertime starts in a given year.
+    # Params:
+    # +year+:: The year.
+    def summer_time_start(year)
+        # Formula taken from the summer time wikipedia page. Valid 1900 to 2099.
+        day = 31-((((5*year)/4).floor+4)%7)
+        DateTime.new(year,3,day,1,0,0)
+    end
+
+    # Returns the ruby datetime on which summertime ends in a given year.
+    # Params:
+    # +year+:: The year.
+    def summer_time_end(year)
+        # Formula taken from the summer time wikipedia page. Valid 1900 to 2099.
+        day = 31-((((5*year)/4).floor+1)%7)
+        DateTime.new(year,10,day,1,0,0)
+    end
+
+    def is_eu_daylight_savings(ruby_date_time)
+        (summer_time_start(ruby_date_time.year)..summer_time_end(ruby_date_time.year)).cover?(ruby_date_time)
+    end
 end
