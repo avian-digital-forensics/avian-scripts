@@ -35,6 +35,11 @@ module AddCommunicationToUnidentifiedEmails
 				# Set the item's communication to the created CustomCommunication.
                 worker_item.set_item_communication(communication)
 
+                # Set subject.
+                properties = worker_item.source_item.properties
+                properties['Subject'] = communication.subject
+                worker_item.set_item_properties(properties)
+
                 # Get the desired MIME-type.
                 mime_type = data[worker_item.item_guid][1]
 

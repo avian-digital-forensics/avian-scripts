@@ -46,5 +46,5 @@ script.run do |progress_dialog|
   
   # TODO: ADD SCRIPT HERE.
   
-  return 'RESULT_MESSAGE'
+  next 'RESULT_MESSAGE'
 end
